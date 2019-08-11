@@ -1,4 +1,4 @@
-![Radar](https://raw.githubusercontent.com/radarlabs/capacitor-radar/master/logo.png)
+![Radar](https://github.com/radarlabs/capacitor-radar/raw/master/logo.png)
 
 [![npm](https://img.shields.io/npm/v/capacitor-radar.svg)](https://www.npmjs.com/package/capacitor-radar)
 
