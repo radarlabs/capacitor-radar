@@ -119,7 +119,7 @@ RadarPlugin.trackOnce().then((result) => {
 });
 ```
 
-`result.err` will be a string, one of:
+`err` will be a string, one of:
 
 - `ERROR_PUBLISHABLE_KEY`: the SDK was not initialized
 - `ERROR_PERMISSIONS`: the user has not granted location permissions for the app
@@ -171,7 +171,7 @@ const locationListener = RadarPlugin.addListener('location', (result) => {
 });
 
 const errorListener = RadarPlugin.addListener('error', (result) => {
-  // do something with result.err
+  // do something with result.status
 });
 ```
 
