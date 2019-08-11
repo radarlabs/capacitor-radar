@@ -86,12 +86,12 @@ Before tracking the user's location, the user must have granted location permiss
 To determine the whether user has granted location permissions for the app, call:
 
 ```javascript
-RadarPlugin.getPermissionsStatus().then((status) => {
-  // do something with status
+RadarPlugin.getPermissionsStatus().then((result) => {
+  // do something with result.status
 });
 ```
 
-`status` will be a string, one of:
+`result.status` will be a string, one of:
 
 - `GRANTED`
 - `DENIED`
@@ -114,12 +114,12 @@ To track the user's location in the foreground, call:
 ```javascript
 RadarPlugin.trackOnce().then((result) => {
   // do something with result.location, result.events, result.user.geofences
-}).catch((err) => {
+}).catch((result) => {
   // optionally, do something with err
 });
 ```
 
-`err` will be a string, one of:
+`result.err` will be a string, one of:
 
 - `ERROR_PUBLISHABLE_KEY`: the SDK was not initialized
 - `ERROR_PERMISSIONS`: the user has not granted location permissions for the app
@@ -162,16 +162,16 @@ You only need to call these methods once, as these settings will be persisted ac
 To listen for events, location updates, and errors, you can add event listeners:
 
 ```javascript
-const eventsListener = RadarPlugin.addListener('events', (data) => {
-  // do something with data.events, data.user
+const eventsListener = RadarPlugin.addListener('events', (result) => {
+  // do something with result.events, result.user
 });
 
-const locationListener = RadarPlugin.addListener('location', (data) => {
-  // do something with data.location, data.user
+const locationListener = RadarPlugin.addListener('location', (result) => {
+  // do something with result.location, result.user
 });
 
-const errorListener = RadarPlugin.addListener('error', (data) => {
-  // do something with data.status
+const errorListener = RadarPlugin.addListener('error', (result) => {
+  // do something with result.err
 });
 ```
 
