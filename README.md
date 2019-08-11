@@ -32,6 +32,8 @@ import io.radar.sdk.Radar;
 Radar.initialize(publishableKey);
 ```
 
+On web, you can initialize the SDK in JavaScript.
+
 To get a Radar publishable API key, [sign up for a Radar account](https://radar.io).
 
 ## Usage
@@ -103,7 +105,9 @@ To request location permissions for the app, call:
 RadarPlugin.requestPermissions({ background });
 ```
 
-where `background` is a boolean indicating whether to request background location permissions or foreground location permissions. On Android, `background` will be ignored.
+where `background` is a boolean indicating whether to request background location permissions or foreground location permissions.
+
+**On Android and web, `background` will be ignored.**
 
 ### Foreground tracking
 
@@ -129,9 +133,9 @@ RadarPlugin.trackOnce().then((result) => {
 - `ERROR_SERVER`: an internal server error occurred
 - `ERROR_UNKNOWN`: an unknown error occurred
 
-### Background tracking
+### Background tracking (iOS and Android only)
 
-Once you have initialized the SDK, you have identified the user, and the user has granted permissions, you can start tracking the user's location in the background.
+On iOS and Android, once you have initialized the SDK, you have identified the user, and the user has granted permissions, you can start tracking the user's location in the background.
 
 To start tracking the user's location in the background, call:
 
@@ -184,6 +188,8 @@ locationListener.remove();
 
 errorListener.remove();
 ```
+
+**On web, background tracking is not supported and these calls will be ignored.**
 
 ### Manual tracking
 
