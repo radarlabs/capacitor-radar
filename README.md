@@ -72,7 +72,7 @@ where `metadata` is a JSON object with up to 16 keys and values of type string, 
 Finally, to set an optional description for the user, displayed in the dashboard, call:
 
 ```javascript
-RadarPlugin.setDescription({ description} );
+RadarPlugin.setDescription({ description });
 ```
 
 where `description` is a string.
