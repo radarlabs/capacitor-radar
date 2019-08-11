@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -128,9 +129,43 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void updateLocation(final PluginCall call) {
-        double latitude = call.getDouble("latitude");
-        double longitude = call.getDouble("longitude");
-        float accuracy = call.getFloat("accuracy");
+        double latitude;
+        Double latitudeDouble = call.getDouble("latitude");
+        if (latitudeDouble == null) {
+            Integer latitudeInteger = call.getInt("latitude");
+            if (latitudeInteger == null) {
+                call.reject("latitude is required");
+                return;
+            }
+            latitude = latitudeInteger.doubleValue();
+        } else {
+            latitude = latitudeDouble.doubleValue();
+        }
+        double longitude;
+        Double longitudeDouble = call.getDouble("longitude");
+        if (longitudeDouble == null) {
+            Integer longitudeInteger = call.getInt("longitude");
+            if (longitudeInteger == null) {
+                call.reject("longitude is required");
+                return;
+            }
+            longitude = longitudeInteger.doubleValue();
+        }
+        else {
+            longitude = longitudeDouble.doubleValue();
+        }
+        float accuracy;
+        Float accuracyFloat = call.getFloat("accuracy");
+        if (accuracyFloat == null) {
+            Integer accuracyInteger = call.getInt("accuracy");
+            if (accuracyInteger == null) {
+                call.reject("accuracy is required");
+                return;
+            }
+            accuracy = accuracyInteger.floatValue();
+        } else {
+            accuracy = accuracyFloat.floatValue();
+        }
         Location location = new Location("RadarSDK");
         location.setLatitude(latitude);
         location.setLongitude(longitude);
