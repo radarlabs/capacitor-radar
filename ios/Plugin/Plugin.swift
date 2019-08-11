@@ -8,7 +8,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     let locationManager = CLLocationManager()
 
     public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser) {
-        self.notifyListeners("event", data: [
+        self.notifyListeners("events", data: [
             "events": RadarPlugin.arrayForEvents(events),
             "user": RadarPlugin.dictionaryForUser(user)
         ])
@@ -62,7 +62,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         call.success()
     }
 
-    @objc func getPermissionsStatus(_ call: CAPPluginCall) {
+    @objc func getLocationPermissionsStatus(_ call: CAPPluginCall) {
         let authorizationStatus = CLLocationManager.authorizationStatus()
         let authorizationStatusStr = RadarPlugin.stringForAuthorizationStatus(authorizationStatus)
         call.success([
@@ -70,7 +70,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         ])
     }
 
-    @objc func requestPermissions(_ call: CAPPluginCall) {
+    @objc func requestLocationPermissions(_ call: CAPPluginCall) {
         guard let background = call.getBool("background") else {
             call.reject("background is required")
             return
@@ -83,28 +83,34 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     }
 
     @objc func startTracking(_ call: CAPPluginCall) {
-        let optionsDict = call.getObject("options") ?? [:]
-        let options = RadarPlugin.optionsForDictionary(optionsDict)
-        Radar.startTracking(trackingOptions: options)
+        DispatchQueue.main.async {
+            let optionsDict = call.getObject("options") ?? [:]
+            let options = RadarPlugin.optionsForDictionary(optionsDict)
+            Radar.startTracking(trackingOptions: options)
+        }
     }
 
     @objc func stopTracking(_ call: CAPPluginCall) {
-        Radar.stopTracking()
+        DispatchQueue.main.async {
+            Radar.stopTracking()
+        }
     }
 
     @objc func trackOnce(_ call: CAPPluginCall) {
-        Radar.trackOnce(completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
-            if status == .success {
-                call.resolve([
-                    "status": RadarPlugin.stringForStatus(status),
-                    "location": RadarPlugin.dictionaryForLocation(location),
-                    "events": RadarPlugin.arrayForEvents(events),
-                    "user": RadarPlugin.dictionaryForUser(user)
-                ])
-            } else {
-                call.reject(RadarPlugin.stringForStatus(status))
-            }
-        })
+        DispatchQueue.main.async {
+            Radar.trackOnce(completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
+                if status == .success {
+                    call.resolve([
+                        "status": RadarPlugin.stringForStatus(status),
+                        "location": RadarPlugin.dictionaryForLocation(location),
+                        "events": RadarPlugin.arrayForEvents(events),
+                        "user": RadarPlugin.dictionaryForUser(user)
+                    ])
+                } else {
+                    call.reject(RadarPlugin.stringForStatus(status))
+                }
+            })
+        }
     }
 
     @objc func updateLocation(_ call: CAPPluginCall) {
@@ -122,18 +128,20 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
         let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
         let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
-        Radar.updateLocation(location, completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
-            if status == .success {
-                call.resolve([
-                    "status": RadarPlugin.stringForStatus(status),
-                    "location": RadarPlugin.dictionaryForLocation(location),
-                    "events": RadarPlugin.arrayForEvents(events),
-                    "user": RadarPlugin.dictionaryForUser(user)
-                ])
-            } else {
-                call.reject(RadarPlugin.stringForStatus(status))
-            }
-        })
+        DispatchQueue.main.async {
+            Radar.updateLocation(location, completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
+                if status == .success {
+                    call.resolve([
+                        "status": RadarPlugin.stringForStatus(status),
+                        "location": RadarPlugin.dictionaryForLocation(location),
+                        "events": RadarPlugin.arrayForEvents(events),
+                        "user": RadarPlugin.dictionaryForUser(user)
+                    ])
+                } else {
+                    call.reject(RadarPlugin.stringForStatus(status))
+                }
+            })
+        }
     }
 
     @objc func acceptEvent(_ call: CAPPluginCall) {

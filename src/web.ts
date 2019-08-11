@@ -1,5 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
-import { RadarCallback, RadarPlugin } from './definitions';
+import { RadarCallback, RadarLocationPermissionsCallback, RadarPlugin } from './definitions';
 import Radar from 'radar-sdk-js';
 
 export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
@@ -30,17 +30,75 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     Radar.setDescription(options.description);
   }
 
+  setMetadata(): void {
+    // not implemented
+  }
+
+  getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback> {
+    return new Promise(resolve => {
+      // not implemented
+      resolve({
+        status: 'UNKNOWN'
+      });
+    });
+  }
+
+  requestLocationPermissions(): void {
+    // not implemented
+  }
+
+  startTracking(): void {
+    // not implemented
+  }
+
+  stopTracking(): void {
+    // not implemented
+  }
+
   async trackOnce(): Promise<RadarCallback> {
     return new Promise(resolve => {
       Radar.trackOnce((status, location, user, events) => {
-        resolve({
-          status,
-          location,
-          user,
-          events
-        });
+        if (status === Radar.STATUS.SUCCESS) {
+          if (events && events.length) {
+            this.notifyListeners('events', {
+              events,
+              user
+            });
+          }
+
+          this.notifyListeners('location', {
+            location,
+            user
+          });
+
+          resolve({
+            status,
+            location,
+            user,
+            events
+          });
+        } else {
+          this.notifyListeners('error', {
+            status
+          });
+        }
       });
     });
+  }
+
+  async updateLocation(): Promise<RadarCallback> {
+    return new Promise(resolve => {
+      // not implemented
+      resolve();
+    });
+  }
+
+  acceptEvent(): void {
+    // not implemented
+  }
+
+  rejectEvent(): void {
+    // not implemented
   }
 
 }

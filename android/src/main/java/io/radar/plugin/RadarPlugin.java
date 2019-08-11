@@ -38,7 +38,7 @@ import io.radar.sdk.model.RadarUserInsightsState;
 public class RadarPlugin extends Plugin {
 
     @PluginMethod()
-    public void setUserId(PluginCall call) {
+    public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
         Radar.initialize(publishableKey);
         call.success();
@@ -76,7 +76,7 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void getPermissionsStatus(PluginCall call) {
+    public void getLocationPermissionsStatus(PluginCall call) {
         boolean hasGrantedPermissions = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         JSObject ret = new JSObject();
         ret.put("status", RadarPlugin.stringForPermissionsStatus(hasGrantedPermissions));
@@ -84,8 +84,8 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void requestPermissions(PluginCall call) {
-        Activity activity = getActivity();
+    public void requestLocationPermissions(PluginCall call) {
+        Activity activity = getBridge().getActivity();
         if (activity != null) {
             ActivityCompat.requestPermissions(activity, new String[]{ Manifest.permission.ACCESS_FINE_LOCATION }, 0);
         }
