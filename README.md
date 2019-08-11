@@ -12,7 +12,7 @@ Install the package from npm:
 npm install --save capacitor-radar
 ```
 
-On iOS, you must add location usage descriptions and background modes to your `Info.plist`, then add the SDK to your project, preferably using CocoaPods. To support background tracking, the SDK must be initialized on app launch in native code. Initialize the SDK in `application:didFinishLaunchingWithOptions:` in `AppDelegate.m`, passing in your Radar publishable API key.
+On iOS, you must add location usage descriptions and background modes to your `Info.plist`, then add the SDK to your project, preferably using CocoaPods. **To support background tracking, the SDK must be initialized on app launch in native code.** Initialize the SDK in `application:didFinishLaunchingWithOptions:` in `AppDelegate.m`, passing in your Radar publishable API key.
 
 ```objc
 #import <RadarSDK/RadarSDK.h>
@@ -22,7 +22,7 @@ On iOS, you must add location usage descriptions and background modes to your `I
 [Radar initializeWithPublishableKey:publishableKey];
 ```
 
-On Android, you must add the Google Play Services library to your project, then add the SDK to your project, preferably using Gradle. To support background tracking, the SDK must be initialized on app launch in native code. Initialize the SDK in `onCreate()` in `MainApplication.java`, passing in your Radar publishable API key:
+On Android, you must add the Google Play Services library to your project, then add the SDK to your project, preferably using Gradle. **To support background tracking, the SDK must be initialized on app launch in native code.** Initialize the SDK in `onCreate()` in `MainApplication.java`, passing in your Radar publishable API key:
 
 ```java
 import io.radar.sdk.Radar;
@@ -174,8 +174,6 @@ const errorListener = RadarPlugin.addListener('error', (result) => {
   // do something with result.status
 });
 ```
-
-Add event listeners outside of your component lifecycle (e.g., outside of `componentDidMount`) if you want them to work when the app is in the background.
 
 You can also remove event listeners:
 
