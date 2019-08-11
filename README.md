@@ -114,7 +114,7 @@ To track the user's location in the foreground, call:
 ```javascript
 RadarPlugin.trackOnce().then((result) => {
   // do something with result.location, result.events, result.user.geofences
-}).catch((result) => {
+}).catch((err) => {
   // optionally, do something with err
 });
 ```
