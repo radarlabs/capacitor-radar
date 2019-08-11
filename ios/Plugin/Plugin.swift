@@ -336,7 +336,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             "_id": geofence?._id,
             "tag": geofence?.tag,
             "externalId": geofence?.externalId,
-            "description": geofence?.description,
+            "description": geofence?._description,
             "metadata": geofence?.metadata
         ]
     }
