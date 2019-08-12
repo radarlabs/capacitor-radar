@@ -1,5 +1,17 @@
 
   <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="io.radar.plugin.capacitorradar">
+
+      <application>
+          <receiver
+              android:name="io.radar.plugin.RadarPlugin$RadarPluginReceiver"
+              android:enabled="true"
+              android:exported="false">
+              <intent-filter>
+                <action android:name="io.radar.sdk.RECEIVED" />
+              </intent-filter>
+          </receiver>
+      </application>
+
   </manifest>
   

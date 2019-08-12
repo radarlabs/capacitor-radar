@@ -2,10 +2,10 @@ package io.radar.plugin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -25,6 +25,7 @@ import io.radar.sdk.Radar;
 import io.radar.sdk.Radar.RadarTrackingOffline;
 import io.radar.sdk.Radar.RadarTrackingPriority;
 import io.radar.sdk.Radar.RadarTrackingSync;
+import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
@@ -37,6 +38,36 @@ import io.radar.sdk.model.RadarUserInsightsState;
 
 @NativePlugin()
 public class RadarPlugin extends Plugin {
+
+    public class RadarPluginReceiver extends RadarReceiver {
+
+        @Override
+        public void onEventsReceived(@NotNull Context context, @NotNull RadarEvent[] events, @NotNull RadarUser user) {
+            JSObject ret = new JSObject();
+            ret.put("events", RadarPlugin.arrayForEvents(events));
+            ret.put("user", RadarPlugin.objectForUser(user));
+
+            RadarPlugin.this.getBridge().triggerJSEvent("events", ret.toString());
+        }
+
+        @Override
+        public void onLocationUpdated(@NotNull Context context, @NotNull Location location, @NotNull RadarUser user) {
+            JSObject ret = new JSObject();
+            ret.put("location", RadarPlugin.objectForLocation(location));
+            ret.put("user", RadarPlugin.objectForUser(user));
+
+            RadarPlugin.this.getBridge().triggerJSEvent("location", ret.toString());
+        }
+
+        @Override
+        public void onError(@NotNull Context context, @NotNull Radar.RadarStatus status) {
+            JSObject ret = new JSObject();
+            ret.put("status", RadarPlugin.stringForStatus(status));
+
+            RadarPlugin.this.getBridge().triggerJSEvent("error", ret.toString());
+        }
+
+    }
 
     @PluginMethod()
     public void initialize(PluginCall call) {
