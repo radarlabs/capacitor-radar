@@ -1,6 +1,6 @@
 
   <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="io.radar.plugin.capacitorradar">
+      package="io.radar.capacitor">
 
   </manifest>
   

@@ -1,10 +1,7 @@
-package io.radar.plugin;
+package io.radar.capacitor;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.support.v4.app.ActivityCompat;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
