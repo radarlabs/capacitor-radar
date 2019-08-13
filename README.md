@@ -135,7 +135,7 @@ RadarPlugin.requestPermissions({ background });
 
 where `background` is a boolean indicating whether to request background location permissions or foreground location permissions.
 
-**On Android and web, `background` will be ignored.**
+On Android and web, `background` will be ignored.
 
 ### Foreground tracking
 
@@ -191,7 +191,7 @@ RadarPlugin.stopTracking();
 
 You only need to call these methods once, as these settings will be persisted across app sessions.
 
-**On web, background tracking is not supported and these calls will be ignored.**
+On web, background tracking is not supported and these calls will be ignored.
 
 ### Manual tracking
 
