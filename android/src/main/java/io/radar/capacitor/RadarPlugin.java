@@ -74,6 +74,7 @@ public class RadarPlugin extends Plugin {
             return;
         }
         Radar.setPlacesProvider(RadarPlugin.placesProviderForString(placesProviderStr));
+        call.success();
     }
 
     @PluginMethod()
@@ -99,11 +100,13 @@ public class RadarPlugin extends Plugin {
         } else {
             Radar.startTracking();
         }
+        call.success();
     }
 
     @PluginMethod()
     public void stopTracking(PluginCall call) {
         Radar.stopTracking();
+        call.success();
     }
 
     @PluginMethod()
@@ -190,12 +193,14 @@ public class RadarPlugin extends Plugin {
         String eventId = call.getString("eventId");
         String verifiedPlaceId = call.getString("verifiedPlaceId");
         Radar.acceptEvent(eventId, verifiedPlaceId);
+        call.success();
     }
 
     @PluginMethod()
     public void rejectEvent(PluginCall call) {
         String eventId = call.getString("eventId");
         Radar.rejectEvent(eventId);
+        call.success();
     }
 
     private static String stringForPermissionsStatus(boolean hasGrantedPermissions) {
