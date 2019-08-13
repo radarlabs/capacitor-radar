@@ -12,24 +12,44 @@ Install the package from npm:
 npm install --save capacitor-radar
 ```
 
-On iOS, you must add location usage descriptions and background modes to your `Info.plist`, then add the SDK to your project, preferably using CocoaPods. **To support background tracking, the SDK must be initialized on app launch in native code.** Initialize the SDK in `application:didFinishLaunchingWithOptions:` in `AppDelegate.m`, passing in your Radar publishable API key.
+On iOS, you must add location usage descriptions and background modes to your `Info.plist`, then add the SDK to your project, preferably using CocoaPods. Initialize the SDK in `application:didFinishLaunchingWithOptions:` in  your `AppDelegate`, passing in your Radar publishable API key:
 
-```objc
-#import <RadarSDK/RadarSDK.h>
+```swift
+import Capacitor
+import RadarSDK
 
-// ...
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
-[Radar initializeWithPublishableKey:publishableKey];
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    Radar.initialize(publishableKey: PUBLISHABLE_KEY)
+
+    return true
+  }
+
+}
 ```
 
-On Android, you must add the Google Play Services library to your project, then add the SDK to your project, preferably using Gradle. **To support background tracking, the SDK must be initialized on app launch in native code.** Initialize the SDK in `onCreate()` in `MainApplication.java`, passing in your Radar publishable API key:
+On Android, you must add the Google Play Services library to your project, then add the SDK to your project, preferably using Gradle. Initialize the SDK and the plugin in your `MainActivity`, passing in your Radar publishable API key:
 
 ```java
 import io.radar.sdk.Radar;
+import io.radar.plugin.RadarPlugin;
 
-// ...
+public class MainActivity extends BridgeActivity {
 
-Radar.initialize(publishableKey);
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    Radar.initialize(PUBLISHABLE_KEY);
+
+    this.init(savedInstanceState, new ArrayList<Class<? extends Plugin>>() {{
+      add(RadarPlugin.class);
+    }});
+  }
+
+}
 ```
 
 On web, you can initialize the SDK in JavaScript.
