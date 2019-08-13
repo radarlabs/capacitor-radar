@@ -2,12 +2,10 @@ package io.radar.plugin;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 
-import com.getcapacitor.Bridge;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -36,7 +34,11 @@ import io.radar.sdk.model.RadarUserInsights;
 import io.radar.sdk.model.RadarUserInsightsLocation;
 import io.radar.sdk.model.RadarUserInsightsState;
 
-@NativePlugin()
+@NativePlugin(
+    permissions={
+        Manifest.permission.ACCESS_FINE_LOCATION
+    }
+)
 public class RadarPlugin extends Plugin {
 
     @PluginMethod()
@@ -79,18 +81,16 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void getLocationPermissionsStatus(PluginCall call) {
-        boolean hasGrantedPermissions = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean hasRequiredPermissions = hasRequiredPermissions();
         JSObject ret = new JSObject();
-        ret.put("status", RadarPlugin.stringForPermissionsStatus(hasGrantedPermissions));
+        ret.put("status", RadarPlugin.stringForPermissionsStatus(hasRequiredPermissions));
         call.success(ret);
     }
 
     @PluginMethod()
     public void requestLocationPermissions(PluginCall call) {
-        Activity activity = getBridge().getActivity();
-        if (activity != null) {
-            ActivityCompat.requestPermissions(activity, new String[]{ Manifest.permission.ACCESS_FINE_LOCATION }, 0);
-        }
+        pluginRequestAllPermissions();
+        call.success();
     }
 
     @PluginMethod()

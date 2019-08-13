@@ -12,6 +12,12 @@ Install the package from npm:
 npm install --save capacitor-radar
 ```
 
+Then, update dependencies:
+
+```bash
+npx cap sync
+```
+
 On iOS, you must add location usage descriptions and background modes to your `Info.plist`, then add the SDK to your project, preferably using CocoaPods. Initialize the SDK in `application:didFinishLaunchingWithOptions:` in  your `AppDelegate`, passing in your Radar publishable API key:
 
 ```swift
