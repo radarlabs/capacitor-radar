@@ -3,29 +3,9 @@ import CoreLocation
 import Capacitor
 
 @objc(RadarPlugin)
-public class RadarPlugin: CAPPlugin, RadarDelegate {
+public class RadarPlugin: CAPPlugin {
 
     let locationManager = CLLocationManager()
-
-    public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser) {
-        self.notifyListeners("events", data: [
-            "events": RadarPlugin.arrayForEvents(events),
-            "user": RadarPlugin.dictionaryForUser(user)
-        ])
-    }
-
-    public func didUpdateLocation(_ location: CLLocation, user: RadarUser) {
-        self.notifyListeners("location", data: [
-            "location": RadarPlugin.dictionaryForLocation(location),
-            "user": RadarPlugin.dictionaryForUser(user)
-        ])
-    }
-
-    public func didFail(status: RadarStatus) {
-        self.notifyListeners("error", data: [
-            "status": RadarPlugin.stringForStatus(status)
-        ])
-    }
 
     @objc func initialize(_ call: CAPPluginCall) {
         guard let publishableKey = call.getString("publishableKey") else {
@@ -33,7 +13,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             return
         }
         Radar.initialize(publishableKey: publishableKey)
-        Radar.setDelegate(self)
         call.success()
     }
 

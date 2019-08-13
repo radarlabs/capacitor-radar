@@ -163,32 +163,6 @@ RadarPlugin.stopTracking();
 
 You only need to call these methods once, as these settings will be persisted across app sessions.
 
-To listen for events, location updates, and errors, you can add event listeners:
-
-```javascript
-const eventsListener = RadarPlugin.addListener('events', (result) => {
-  // do something with result.events, result.user
-});
-
-const locationListener = RadarPlugin.addListener('location', (result) => {
-  // do something with result.location, result.user
-});
-
-const errorListener = RadarPlugin.addListener('error', (result) => {
-  // do something with result.status
-});
-```
-
-You can also remove event listeners:
-
-```javascript
-eventsListener.remove();
-
-locationListener.remove();
-
-errorListener.remove();
-```
-
 **On web, background tracking is not supported and these calls will be ignored.**
 
 ### Manual tracking

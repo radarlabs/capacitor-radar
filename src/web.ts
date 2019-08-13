@@ -59,27 +59,11 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     return new Promise(resolve => {
       Radar.trackOnce((status, location, user, events) => {
         if (status === Radar.STATUS.SUCCESS) {
-          if (events && events.length) {
-            this.notifyListeners('events', {
-              events,
-              user
-            });
-          }
-
-          this.notifyListeners('location', {
-            location,
-            user
-          });
-
           resolve({
             status,
             location,
             user,
             events
-          });
-        } else {
-          this.notifyListeners('error', {
-            status
           });
         }
       });
