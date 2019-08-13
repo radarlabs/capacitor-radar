@@ -52,8 +52,6 @@ public class MainActivity extends BridgeActivity {
 }
 ```
 
-On web, you can initialize the SDK in JavaScript.
-
 To get a Radar publishable API key, [sign up for a Radar account](https://radar.io).
 
 ## Usage
@@ -67,6 +65,14 @@ import { Plugins } from '@capacitor/core';
 import 'capacitor-radar';
 
 const { RadarPlugin } = Plugins;
+```
+
+### Initialize SDK
+
+Initialize the SDK again in JavaScript:
+
+```javascript
+RadarPlugin.initialize({ publishableKey });
 ```
 
 ### Identify user
