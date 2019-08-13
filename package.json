@@ -1,6 +1,6 @@
 {
   "name": "capacitor-radar",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Capacitor plugin for Radar, the location context platform",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -11,7 +11,8 @@
     "prepublishOnly": "npm run build"
   },
   "author": "Radar Labs, Inc.",
-  "license": "MIT",
+  "homepage": "https://radar.io",
+  "license": "Apache-2.0",
   "dependencies": {
     "@capacitor/core": "latest",
     "radar-sdk-js": "^1.1.0"

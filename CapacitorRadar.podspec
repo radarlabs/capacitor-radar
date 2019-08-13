@@ -1,9 +1,10 @@
 
   Pod::Spec.new do |s|
+    package = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'package.json')))
     s.name = 'CapacitorRadar'
-    s.version = '0.0.1'
-    s.summary = 'Capacitor plugin for Radar, the location context platform'
-    s.license = 'MIT'
+    s.version = package['version']
+    s.summary = package['description']
+    s.license = package['license']
     s.homepage = 'radarlabs/capacitor-radar'
     s.author = 'Radar Labs, Inc.'
     s.source = { :git => 'radarlabs/capacitor-radar', :tag => s.version.to_s }
