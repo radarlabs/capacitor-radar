@@ -75,6 +75,8 @@ Initialize the SDK again in JavaScript:
 RadarPlugin.initialize({ publishableKey });
 ```
 
+where `publishableKey` is a string containing your publishable API key.
+
 ### Identify user
 
 Until you identify the user, Radar will automatically identify the user by device ID.
