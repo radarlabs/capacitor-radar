@@ -55,7 +55,7 @@ On Android, you must add the Google Play Services library to your project, then 
 
 ```java
 import io.radar.sdk.Radar;
-import io.radar.plugin.RadarPlugin;
+import io.radar.capacitor.RadarPlugin;
 
 public class MainActivity extends BridgeActivity {
 
