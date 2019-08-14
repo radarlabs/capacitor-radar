@@ -8,56 +8,70 @@ public class RadarPlugin: CAPPlugin {
     let locationManager = CLLocationManager()
 
     @objc func initialize(_ call: CAPPluginCall) {
-        guard let publishableKey = call.getString("publishableKey") else {
-            call.reject("publishableKey is required")
-            return
+        DispatchQueue.main.async {
+            guard let publishableKey = call.getString("publishableKey") else {
+                call.reject("publishableKey is required")
+                return
+            }
+            Radar.initialize(publishableKey: publishableKey)
+            call.success()
         }
-        Radar.initialize(publishableKey: publishableKey)
-        call.success()
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
-        let userId = call.getString("userId")
-        Radar.setUserId(userId)
-        call.success()
+        DispatchQueue.main.async {
+            let userId = call.getString("userId")
+            Radar.setUserId(userId)
+            call.success()
+        }
     }
 
     @objc func setDescription(_ call: CAPPluginCall) {
-        let description = call.getString("description")
-        Radar.setDescription(description)
-        call.success()
+        DispatchQueue.main.async {
+            let description = call.getString("description")
+            Radar.setDescription(description)
+            call.success()
+        }
     }
 
     @objc func setMetadata(_ call: CAPPluginCall) {
-        let metadata = call.getObject("metadata")
-        Radar.setMetadata(metadata)
-        call.success()
+        DispatchQueue.main.async {
+            let metadata = call.getObject("metadata")
+            Radar.setMetadata(metadata)
+            call.success()
+        }
     }
 
     @objc func setPlacesProvider(_ call: CAPPluginCall) {
-        let placesProviderStr = call.getString("placesProvider")
-        let placesProvider = RadarPlugin.placesProviderForString(placesProviderStr)
-        Radar.setPlacesProvider(placesProvider)
-        call.success()
+        DispatchQueue.main.async {
+            let placesProviderStr = call.getString("placesProvider")
+            let placesProvider = RadarPlugin.placesProviderForString(placesProviderStr)
+            Radar.setPlacesProvider(placesProvider)
+            call.success()
+        }
     }
 
     @objc func getLocationPermissionsStatus(_ call: CAPPluginCall) {
-        let authorizationStatus = CLLocationManager.authorizationStatus()
-        let authorizationStatusStr = RadarPlugin.stringForAuthorizationStatus(authorizationStatus)
-        call.success([
-            "status": authorizationStatusStr
-        ])
+        DispatchQueue.main.async {
+            let authorizationStatus = CLLocationManager.authorizationStatus()
+            let authorizationStatusStr = RadarPlugin.stringForAuthorizationStatus(authorizationStatus)
+            call.success([
+                "status": authorizationStatusStr
+            ])
+        }
     }
 
     @objc func requestLocationPermissions(_ call: CAPPluginCall) {
-        guard let background = call.getBool("background") else {
-            call.reject("background is required")
-            return
-        }
-        if background {
-            locationManager.requestAlwaysAuthorization()
-        } else {
-            locationManager.requestWhenInUseAuthorization()
+        DispatchQueue.main.async {
+            guard let background = call.getBool("background") else {
+                call.reject("background is required")
+                return
+            }
+            if background {
+                self.locationManager.requestAlwaysAuthorization()
+            } else {
+                self.locationManager.requestWhenInUseAuthorization()
+            }
         }
     }
 
@@ -93,21 +107,21 @@ public class RadarPlugin: CAPPlugin {
     }
 
     @objc func updateLocation(_ call: CAPPluginCall) {
-        guard let latitude = call.getDouble("latitude") else {
-            call.reject("latitude is required")
-            return
-        }
-        guard let longitude = call.getDouble("longitude") else {
-            call.reject("longitude is required")
-            return
-        }
-        guard let accuracy = call.getDouble("accuracy") else {
-            call.reject("accuracy is required")
-            return
-        }
-        let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
-        let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
         DispatchQueue.main.async {
+            guard let latitude = call.getDouble("latitude") else {
+                call.reject("latitude is required")
+                return
+            }
+            guard let longitude = call.getDouble("longitude") else {
+                call.reject("longitude is required")
+                return
+            }
+            guard let accuracy = call.getDouble("accuracy") else {
+                call.reject("accuracy is required")
+                return
+            }
+            let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
+            let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
             Radar.updateLocation(location, completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
                 if status == .success {
                     call.resolve([
@@ -124,22 +138,26 @@ public class RadarPlugin: CAPPlugin {
     }
 
     @objc func acceptEvent(_ call: CAPPluginCall) {
-        guard let eventId = call.getString("eventId") else {
-            call.reject("eventId is required")
-            return
+        DispatchQueue.main.async {
+            guard let eventId = call.getString("eventId") else {
+                call.reject("eventId is required")
+                return
+            }
+            let verifiedPlaceId = call.getString("verifiedPlaceId") ?? nil
+            Radar.acceptEventId(eventId, verifiedPlaceId: verifiedPlaceId)
+            call.success()
         }
-        let verifiedPlaceId = call.getString("verifiedPlaceId") ?? nil
-        Radar.acceptEventId(eventId, verifiedPlaceId: verifiedPlaceId)
-        call.success()
     }
 
     @objc func rejectEvent(_ call: CAPPluginCall) {
-        guard let eventId = call.getString("eventId") else {
-            call.reject("eventId is required")
-            return
+        DispatchQueue.main.async {
+            guard let eventId = call.getString("eventId") else {
+                call.reject("eventId is required")
+                return
+            }
+            Radar.rejectEventId(eventId)
+            call.success()
         }
-        Radar.rejectEventId(eventId)
-        call.success()
     }
 
     static func stringForAuthorizationStatus(_ status: CLAuthorizationStatus?) -> String {
