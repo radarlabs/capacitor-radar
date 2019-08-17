@@ -56,7 +56,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
   }
 
   async trackOnce(): Promise<RadarCallback> {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       Radar.trackOnce((status, location, user, events) => {
         if (status === Radar.STATUS.SUCCESS) {
           resolve({
@@ -65,6 +65,8 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
             user,
             events
           });
+        } else {
+          reject(status);
         }
       });
     });
