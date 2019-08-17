@@ -33,7 +33,7 @@ If successful, you will see:
 ✔ update ios
 ```
 
-On iOS, you must add location usage descriptions and background modes to your `Info.plist`, then add the SDK to your project using CocoaPods. Initialize the SDK in `application:didFinishLaunchingWithOptions:` in  your `AppDelegate`, passing in your Radar publishable API key:
+On iOS, complete the steps in [Configure project](https://radar.io/documentation/sdk#ios-configure), then add the SDK to your project using CocoaPods. Initialize the SDK in `application:didFinishLaunchingWithOptions:` in  your `AppDelegate`, passing in your Radar publishable API key:
 
 ```swift
 import Capacitor
@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 ```
 
-On Android, you must add the Google Play Services library to your project, then add the SDK to your project using Gradle. Initialize the SDK and the plugin in your `MainActivity`, passing in your Radar publishable API key:
+On Android, complete the steps in [Configure project](https://radar.io/documentation/sdk#android-configure), then add the SDK to your project using Gradle. Initialize the SDK and the plugin in your `MainActivity`, passing in your Radar publishable API key:
 
 ```java
 import io.radar.sdk.Radar;
