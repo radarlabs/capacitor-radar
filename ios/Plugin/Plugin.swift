@@ -161,6 +161,9 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func stringForAuthorizationStatus(_ status: CLAuthorizationStatus?) -> String {
+        guard let status = status else {
+            return "UNKNOWN"
+        }
         switch status {
         case .denied:
             return "DENIED"
@@ -176,6 +179,9 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func stringForStatus(_ status: RadarStatus?) -> String {
+        guard let status = status else {
+            return "ERROR_UNKNOWN"
+        }
         switch status {
         case .success:
             return "SUCCESS"
@@ -199,6 +205,9 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func stringForEventType(_ type: RadarEventType?) -> String? {
+        guard let type = type else {
+            return nil
+        }
         switch type {
         case .userEnteredGeofence:
             return "user.entered_geofence"
@@ -240,6 +249,9 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func numberForEventConfidence(_ confidence: RadarEventConfidence?) -> Int {
+        guard let confidence = confidence else {
+            return 0
+        }
         switch confidence {
         case .high:
             return 3
@@ -253,6 +265,9 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func stringForUserInsightsLocationType(_ type: RadarUserInsightsLocationType?) -> String? {
+        guard let type = type else {
+            return nil
+        }
         switch type {
         case .home:
             return "home"
@@ -264,6 +279,9 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func numberForUserInsightsLocationConfidence(_ confidence: RadarUserInsightsLocationConfidence?) -> Int {
+        guard let confidence = confidence else {
+            return 0
+        }
         switch confidence {
         case .high:
             return 3
@@ -277,6 +295,9 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func placesProviderForString(_ str: String?) -> RadarPlacesProvider {
+        guard let str = str else {
+            return .none
+        }
         switch str {
         case "facebook":
             return .facebook
