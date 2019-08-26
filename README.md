@@ -137,7 +137,7 @@ Before tracking the user's location, the user must have granted location permiss
 To determine the whether user has granted location permissions for the app, call:
 
 ```javascript
-RadarPlugin.getPermissionsStatus().then((result) => {
+RadarPlugin.getLocationPermissionsStatus().then((result) => {
   // do something with result.status
 });
 ```
@@ -151,7 +151,7 @@ RadarPlugin.getPermissionsStatus().then((result) => {
 To request location permissions for the app, call:
 
 ```javascript
-RadarPlugin.requestPermissions({ background });
+RadarPlugin.requestLocationPermissions({ background });
 ```
 
 where `background` is a boolean indicating whether to request background location permissions or foreground location permissions.
