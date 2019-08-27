@@ -307,34 +307,34 @@ public class RadarPlugin extends Plugin {
         JSObject obj = new JSObject();
         obj.put("_id", user.getId());
         if (user.getUserId() != null) {
-          obj.put("userId", user.getUserId());
+            obj.put("userId", user.getUserId());
         }
         if (user.getDeviceId() != null) {
-          obj.put("deviceId", user.getDeviceId());
+            obj.put("deviceId", user.getDeviceId());
         }
         if (user.getDescription() != null) {
-          obj.put("description", user.getDescription());
+            obj.put("description", user.getDescription());
         }
         if (user.getGeofences() != null) {
-          obj.put("geofences", RadarPlugin.arrayForGeofences(user.getGeofences()));
+            obj.put("geofences", RadarPlugin.arrayForGeofences(user.getGeofences()));
         }
         if (user.getInsights() != null) {
-          obj.put("insights", RadarPlugin.objectForUserInsights(user.getInsights()));
+            obj.put("insights", RadarPlugin.objectForUserInsights(user.getInsights()));
         }
         if (user.getPlace() != null) {
-          obj.put("place", RadarPlugin.objectForPlace(user.getPlace()));
+            obj.put("place", RadarPlugin.objectForPlace(user.getPlace()));
         }
         if (user.getCountry() != null) {
-          obj.put("country", RadarPlugin.objectForRegion(user.getCountry()));
+            obj.put("country", RadarPlugin.objectForRegion(user.getCountry()));
         }
         if (user.getState() != null) {
-          obj.put("state", RadarPlugin.objectForRegion(user.getState()));
+            obj.put("state", RadarPlugin.objectForRegion(user.getState()));
         }
         if (user.getDma() != null) {
-          obj.put("dma", RadarPlugin.objectForRegion(user.getDma()));
+            obj.put("dma", RadarPlugin.objectForRegion(user.getDma()));
         }
         if (user.getPostalCode() != null) {
-          obj.put("postalCode", RadarPlugin.objectForRegion(user.getPostalCode()));
+            obj.put("postalCode", RadarPlugin.objectForRegion(user.getPostalCode()));
         }
         return obj;
     }
@@ -346,13 +346,13 @@ public class RadarPlugin extends Plugin {
 
         JSObject obj = new JSObject();
         if (insights.getHomeLocation() != null){
-          obj.put("homeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getHomeLocation()));
+            obj.put("homeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getHomeLocation()));
         }
         if (insights.getOfficeLocation() != null) {
-          obj.put("officeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getOfficeLocation()));
+            obj.put("officeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getOfficeLocation()));
         }
         if (insights.getState() != null) {
-          obj.put("state", RadarPlugin.objectForUserInsightsState(insights.getState()));
+            obj.put("state", RadarPlugin.objectForUserInsightsState(insights.getState()));
         }
         return obj;
     }
@@ -402,10 +402,10 @@ public class RadarPlugin extends Plugin {
         obj.put("_id", geofence.getId());
         obj.put("description", geofence.getDescription());
         if (geofence.getTag() != null) {
-          obj.put("tag", geofence.getTag());
+            obj.put("tag", geofence.getTag());
         }
         if (geofence.getExternalId() != null) {
-          obj.put("externalId", geofence.getExternalId());
+            obj.put("externalId", geofence.getExternalId());
         }
         return obj;
     }
@@ -474,16 +474,16 @@ public class RadarPlugin extends Plugin {
         obj.put("live", event.getLive());
         obj.put("type", RadarPlugin.stringForEventType(event.getType()));
         if (event.getGeofence() != null) {
-          obj.put("geofence", RadarPlugin.objectForGeofence(event.getGeofence()));
+            obj.put("geofence", RadarPlugin.objectForGeofence(event.getGeofence()));
         }
         if (event.getPlace() != null) {
-          obj.put("place", RadarPlugin.objectForPlace(event.getPlace()));
+            obj.put("place", RadarPlugin.objectForPlace(event.getPlace()));
         }
         if (event.getAlternatePlaces() != null) {
-          obj.put("alternatePlaces", RadarPlugin.arrayForPlaces(event.getAlternatePlaces()));
+            obj.put("alternatePlaces", RadarPlugin.arrayForPlaces(event.getAlternatePlaces()));
         }
         if (event.getRegion() != null) {
-          obj.put("region", RadarPlugin.objectForRegion(event.getRegion()));
+            obj.put("region", RadarPlugin.objectForRegion(event.getRegion()));
         }
         obj.put("confidence", RadarPlugin.numberForEventConfidence(event.getConfidence()));
         return obj;
@@ -498,7 +498,7 @@ public class RadarPlugin extends Plugin {
         obj.put("latitude", location.getLatitude());
         obj.put("longitude", location.getLongitude());
         if (location.getAccuracy() != 0) {
-          obj.put("accuracy", location.getAccuracy());
+            obj.put("accuracy", location.getAccuracy());
         }
         return obj;
     }
@@ -514,7 +514,7 @@ public class RadarPlugin extends Plugin {
             while (keys.hasNext()) {
                 String key = keys.next();
                 if (jsonObj.get(key) != null) {
-                  obj.put(key, jsonObj.get(key));
+                    obj.put(key, jsonObj.get(key));
                 }
             }
             return obj;
