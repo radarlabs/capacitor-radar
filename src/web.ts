@@ -63,7 +63,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
             status,
             location,
             user,
-            events
+            events,
           });
         } else {
           reject(status);
