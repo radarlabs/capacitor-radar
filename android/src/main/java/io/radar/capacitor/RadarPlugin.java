@@ -140,7 +140,7 @@ public class RadarPlugin extends Plugin {
             }
             latitude = latitudeInteger.doubleValue();
         } else {
-            latitude = latitudeDouble.doubleValue();
+            latitude = latitudeDouble;
         }
         double longitude;
         Double longitudeDouble = call.getDouble("longitude");
@@ -153,7 +153,7 @@ public class RadarPlugin extends Plugin {
             longitude = longitudeInteger.doubleValue();
         }
         else {
-            longitude = longitudeDouble.doubleValue();
+            longitude = longitudeDouble;
         }
         float accuracy;
         Float accuracyFloat = call.getFloat("accuracy");
@@ -165,7 +165,7 @@ public class RadarPlugin extends Plugin {
             }
             accuracy = accuracyInteger.floatValue();
         } else {
-            accuracy = accuracyFloat.floatValue();
+            accuracy = accuracyFloat;
         }
         Location location = new Location("RadarSDK");
         location.setLatitude(latitude);
@@ -306,15 +306,36 @@ public class RadarPlugin extends Plugin {
 
         JSObject obj = new JSObject();
         obj.put("_id", user.getId());
-        obj.put("userId", user.getUserId());
-        obj.put("description", user.getDescription());
-        obj.put("geofences", RadarPlugin.arrayForGeofences(user.getGeofences()));
-        obj.put("insights", RadarPlugin.objectForUserInsights(user.getInsights()));
-        obj.put("place", RadarPlugin.objectForPlace(user.getPlace()));
-        obj.put("country", RadarPlugin.objectForRegion(user.getCountry()));
-        obj.put("state", RadarPlugin.objectForRegion(user.getState()));
-        obj.put("dma", RadarPlugin.objectForRegion(user.getDma()));
-        obj.put("postalCode", RadarPlugin.objectForRegion(user.getPostalCode()));
+        if (user.getUserId() != null) {
+          obj.put("userId", user.getUserId());
+        }
+        if (user.getDeviceId() != null) {
+          obj.put("deviceId", user.getDeviceId());
+        }
+        if (user.getDescription() != null) {
+          obj.put("description", user.getDescription());
+        }
+        if (user.getGeofences() != null) {
+          obj.put("geofences", RadarPlugin.arrayForGeofences(user.getGeofences()));
+        }
+        if (user.getInsights() != null) {
+          obj.put("insights", RadarPlugin.objectForUserInsights(user.getInsights()));
+        }
+        if (user.getPlace() != null) {
+          obj.put("place", RadarPlugin.objectForPlace(user.getPlace()));
+        }
+        if (user.getCountry() != null) {
+          obj.put("country", RadarPlugin.objectForRegion(user.getCountry()));
+        }
+        if (user.getState() != null) {
+          obj.put("state", RadarPlugin.objectForRegion(user.getState()));
+        }
+        if (user.getDma() != null) {
+          obj.put("dma", RadarPlugin.objectForRegion(user.getDma()));
+        }
+        if (user.getPostalCode() != null) {
+          obj.put("postalCode", RadarPlugin.objectForRegion(user.getPostalCode()));
+        }
         return obj;
     }
 
@@ -324,9 +345,15 @@ public class RadarPlugin extends Plugin {
         }
 
         JSObject obj = new JSObject();
-        obj.put("homeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getHomeLocation()));
-        obj.put("officeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getOfficeLocation()));
-        obj.put("state", RadarPlugin.objectForUserInsightsState(insights.getState()));
+        if (insights.getHomeLocation() != null){
+          obj.put("homeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getHomeLocation()));
+        }
+        if (insights.getOfficeLocation() != null) {
+          obj.put("officeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getOfficeLocation()));
+        }
+        if (insights.getState() != null) {
+          obj.put("state", RadarPlugin.objectForUserInsightsState(insights.getState()));
+        }
         return obj;
     }
 
@@ -373,9 +400,13 @@ public class RadarPlugin extends Plugin {
 
         JSObject obj = new JSObject();
         obj.put("_id", geofence.getId());
-        obj.put("tag", geofence.getTag());
-        obj.put("externalId", geofence.getExternalId());
         obj.put("description", geofence.getDescription());
+        if (geofence.getTag() != null) {
+          obj.put("tag", geofence.getTag());
+        }
+        if (geofence.getExternalId() != null) {
+          obj.put("externalId", geofence.getExternalId());
+        }
         return obj;
     }
 
@@ -442,12 +473,19 @@ public class RadarPlugin extends Plugin {
         obj.put("_id", event.getId());
         obj.put("live", event.getLive());
         obj.put("type", RadarPlugin.stringForEventType(event.getType()));
-        obj.put("geofence", RadarPlugin.objectForGeofence(event.getGeofence()));
-        obj.put("place", RadarPlugin.objectForPlace(event.getPlace()));
-        obj.put("alternatePlaces", RadarPlugin.arrayForPlaces(event.getAlternatePlaces()));
-        obj.put("region", RadarPlugin.objectForRegion(event.getRegion()));
+        if (event.getGeofence() != null) {
+          obj.put("geofence", RadarPlugin.objectForGeofence(event.getGeofence()));
+        }
+        if (event.getPlace() != null) {
+          obj.put("place", RadarPlugin.objectForPlace(event.getPlace()));
+        }
+        if (event.getAlternatePlaces() != null) {
+          obj.put("alternatePlaces", RadarPlugin.arrayForPlaces(event.getAlternatePlaces()));
+        }
+        if (event.getRegion() != null) {
+          obj.put("region", RadarPlugin.objectForRegion(event.getRegion()));
+        }
         obj.put("confidence", RadarPlugin.numberForEventConfidence(event.getConfidence()));
-        obj.put("duration", event.getDuration());
         return obj;
     }
 
@@ -459,7 +497,9 @@ public class RadarPlugin extends Plugin {
         JSObject obj = new JSObject();
         obj.put("latitude", location.getLatitude());
         obj.put("longitude", location.getLongitude());
-        obj.put("accuracy", location.getAccuracy());
+        if (location.getAccuracy() != 0) {
+          obj.put("accuracy", location.getAccuracy());
+        }
         return obj;
     }
 
@@ -473,7 +513,9 @@ public class RadarPlugin extends Plugin {
             Iterator<String> keys = jsonObj.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
-                obj.put(key, jsonObj.get(key));
+                if (jsonObj.get(key) != null) {
+                  obj.put(key, jsonObj.get(key));
+                }
             }
             return obj;
         } catch (JSONException j) {

@@ -4,18 +4,11 @@ declare module '@capacitor/core' {
   }
 }
 
-interface Location {
-  accuracy: number;
+export interface Location {
   latitude: number;
   longitude: number;
+  accuracy: number;
 }
-
-/**
- * Recursive nullable object type
- */
-type Nullable<Props extends object> = {
-  [K in keyof Props]: Props[K] extends object ? Nullable<Props[K]> : Props[K] | null
-};
 
 export interface RadarCallback {
   status: string;
@@ -24,39 +17,30 @@ export interface RadarCallback {
   events: RadarEvent[];
 }
 
-interface RadarChain {
+export interface RadarChain {
   name: string;
   slug: string;
-  externalId: null | string;
-  metadata: null | {
-    [key: string]: string | boolean | number;
-  };
 }
 
-interface RadarEvent {
+export interface RadarEvent {
   _id: string;
-  actualCreatedAt: string;
-  alternatePlaces: null | RadarPlace;
-  confidence: RadarEventConfidence;
-  createdAt: string;
-  duration: number;
-  geofence: null | RadarGeofence;
   live: boolean;
-  place: null | RadarPlace;
-  region: null | RadarRegion;
   type: RadarEventType;
-  verification: RadarEventVerification;
-  verifiedPlace: null | RadarPlace;
+  geofence: null | RadarGeofence;
+  place: null | RadarPlace;
+  alternatePlaces: null | RadarPlace;
+  region: null | RadarRegion;
+  confidence: RadarEventConfidence;
 }
 
-enum RadarEventConfidence {
+export enum RadarEventConfidence {
   none = 0,
   low = 1,
   medium = 2,
   high = 3
 }
 
-type RadarEventType =
+export type RadarEventType =
   | 'unknown'
   | 'user.entered_geofence'
   | 'user.entered_home'
@@ -76,39 +60,37 @@ type RadarEventType =
   | 'user.started_traveling'
   | 'user.stopped_traveling';
 
-enum RadarEventVerification {
+export enum RadarEventVerification {
   accept = 1,
   unverify = 0,
   reject = -1
 }
 
-interface RadarGeofence {
+export interface RadarGeofence {
   _id: string;
+  description: string;
   tag: null | string;
   externalId: null | string;
-  metadata: null | {
-    [key: string]: string | boolean | number;
+}
+
+export interface RadarInsights {
+  homeLocation: null | RadarInsightsLocation;
+  officeLocation: null | RadarInsightsLocation;
+  state: null | {
+    home: boolean;
+    office: boolean;
+    traveling: boolean;
   };
 }
 
-interface RadarInsights {
-  homeLocation: Nullable<RadarInsightsLocation>;
-  officeLocation: Nullable<RadarInsightsLocation>;
-  state: {
-    home: null | boolean;
-    office: null | boolean;
-    traveling: null | boolean;
-  };
-}
-
-enum RadarInsightsConfidence {
+export enum RadarInsightsConfidence {
   none = 0,
   low = 1,
   medium = 2,
   high = 3
 }
 
-interface RadarInsightsLocation {
+export interface RadarInsightsLocation {
   type: string;
   location: RadarInsightsLocation;
   confidence: RadarInsightsConfidence;
@@ -118,12 +100,11 @@ export interface RadarLocationPermissionsCallback {
   status: string;
 }
 
-interface RadarPlace {
+export interface RadarPlace {
   _id: string;
   name: string;
-  chain: Nullable<RadarChain>;
   categories: string[];
-  location?: Nullable<Location>;
+  chain: null | RadarChain;
 }
 
 export interface RadarPlugin {
@@ -144,27 +125,23 @@ export interface RadarPlugin {
   rejectEvent(options: { eventId: string }): void;
 }
 
-interface RadarRegion {
+export interface RadarRegion {
   _id: string;
   type: string;
   code: string;
   name: string;
 }
 
-interface RadarUser {
+export interface RadarUser {
   _id: string;
   userId: null | string;
   deviceId: null | string;
   description: null | string;
-  metadata: null | {
-    [key: string]: string | boolean | number;
-  };
-  location: Nullable<Location>;
-  geofences: Nullable<RadarGeofence>[];
-  insights: RadarInsights;
-  place: Nullable<RadarPlace>;
-  country: Nullable<RadarRegion>;
-  state: Nullable<RadarRegion>;
-  dma: Nullable<RadarRegion>;
-  postalCode: Nullable<RadarRegion>;
+  geofences: null | RadarGeofence[];
+  insights: null | RadarInsights;
+  place: null | RadarPlace;
+  country: null | RadarRegion;
+  state: null | RadarRegion;
+  dma: null | RadarRegion;
+  postalCode: null | RadarRegion;
 }

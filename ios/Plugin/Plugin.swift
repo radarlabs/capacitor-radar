@@ -307,26 +307,53 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func dictionaryForUser(_ user: RadarUser?) -> [String: Any?] {
-        return [
-            "_id": user?._id,
-            "userId": user?.userId,
-            "description": user?._description,
-            "geofences": RadarPlugin.arrayForGeofences(user?.geofences),
-            "insights": RadarPlugin.dictionaryForUserInsights(user?.insights),
-            "place": RadarPlugin.dictionaryForPlace(user?.place),
-            "country": RadarPlugin.dictionaryForRegion(user?.country),
-            "state": RadarPlugin.dictionaryForRegion(user?.state),
-            "dma": RadarPlugin.dictionaryForRegion(user?.dma),
-            "postalCode": RadarPlugin.dictionaryForRegion(user?.postalCode)
-        ]
+        var dict = [String: Any?]()
+        dict["_id"] = user?._id
+        if let userId = user?.userId {
+            dict["userId"] = userId
+        }
+        if let deviceId = user?.deviceId {
+            dict["deviceId"] = deviceId
+        }
+        if let description = user?._description {
+            dict["description"] = description
+        }
+        if let geofences = user?.geofences {
+            dict["geofences"] = RadarPlugin.arrayForGeofences(geofences)
+        }
+        if let insights = user?.insights {
+            dict["insights"] = RadarPlugin.dictionaryForUserInsights(insights)
+        }
+        if let place = user?.place {
+            dict["place"] = RadarPlugin.dictionaryForPlace(place)
+        }
+        if let country = user?.country {
+            dict["country"] = RadarPlugin.dictionaryForRegion(country)
+        }
+        if let state = user?.state {
+            dict["state"] = RadarPlugin.dictionaryForRegion(state)
+        }
+        if let dma = user?.dma {
+            dict["dma"] = RadarPlugin.dictionaryForRegion(dma)
+        }
+        if let postalCode = user?.postalCode {
+            dict["postalCode"] = RadarPlugin.dictionaryForRegion(postalCode)
+        }
+        return dict
     }
 
     static func dictionaryForUserInsights(_ insights: RadarUserInsights?) -> [String: Any?] {
-        return [
-            "homeLocation": RadarPlugin.dictionaryForUserInsightsLocation(insights?.homeLocation),
-            "officeLocation": RadarPlugin.dictionaryForUserInsightsLocation(insights?.officeLocation),
-            "state": RadarPlugin.dictionaryForUserInsightsState(insights?.state)
-        ]
+        var dict = [String: Any?]()
+        if let homeLocation = insights?.homeLocation {
+            dict["homeLocation"] = RadarPlugin.dictionaryForUserInsightsLocation(homeLocation)
+        }
+        if let officeLocation = insights?.officeLocation {
+            dict["officeLocation"] = RadarPlugin.dictionaryForUserInsightsLocation(officeLocation)
+        }
+        if let state = insights?.state {
+            dict["state"] = RadarPlugin.dictionaryForUserInsightsState(state)
+        }
+        return dict
     }
 
     static func dictionaryForUserInsightsLocation(_ location: RadarUserInsightsLocation?) -> [String: Any?] {
@@ -358,13 +385,16 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func dictionaryForGeofence(_ geofence: RadarGeofence?) -> [String: Any?] {
-        return [
-            "_id": geofence?._id,
-            "tag": geofence?.tag,
-            "externalId": geofence?.externalId,
-            "description": geofence?._description,
-            "metadata": geofence?.metadata
-        ]
+        var dict = [String: Any?]()
+        dict["_id"] = geofence?._id
+        dict["description"] = geofence?.description
+        if let tag = geofence?.tag {
+            dict["tag"] = tag
+        }
+        if let externalId = geofence?.externalId {
+            dict["externalId"] = externalId
+        }
+        return dict
     }
 
     static func arrayForPlaces(_ places: [RadarPlace]?) -> [[String: Any?]] {
@@ -380,15 +410,17 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func dictionaryForPlace(_ place: RadarPlace?) -> [String: Any?] {
-        return [
-            "_id": place?._id,
-            "name": place?.name,
-            "categories": place?.categories,
-            "chain": [
-                "slug": place?.chain?.slug,
-                "name": place?.chain?.name
-            ]
-        ]
+        var dict = [String: Any?]()
+        dict["_id"] = place?._id
+        dict["name"] = place?.name
+        dict["categories"] = place?.categories
+        if let chain = place?.chain {
+          dict["chain"] = [
+              "slug": chain.slug,
+              "name": chain.name
+          ]
+        }
+        return dict
     }
 
     static func dictionaryForRegion(_ region: RadarRegion?) -> [String: Any?] {
@@ -413,16 +445,24 @@ public class RadarPlugin: CAPPlugin {
     }
 
     static func dictionaryForEvent(_ event: RadarEvent?) -> [String: Any?] {
-        return [
-            "_id": event?._id,
-            "live": event?.live,
-            "type": RadarPlugin.stringForEventType(event?.type),
-            "geofence": RadarPlugin.dictionaryForGeofence(event?.geofence),
-            "place": RadarPlugin.dictionaryForPlace(event?.place),
-            "alternatePlaces": RadarPlugin.arrayForPlaces(event?.alternatePlaces),
-            "region": RadarPlugin.dictionaryForRegion(event?.region),
-            "confidence": RadarPlugin.numberForEventConfidence(event?.confidence)
-        ]
+        var dict = [String: Any?]()
+        dict["_id"] = event?._id
+        dict["live"] = event?.live
+        dict["type"] = RadarPlugin.stringForEventType(event?.type)
+        if let geofence = event?.geofence {
+            dict["geofence"] = RadarPlugin.dictionaryForGeofence(geofence)
+        }
+        if let place = event?.place {
+            dict["place"] = RadarPlugin.dictionaryForPlace(place)
+        }
+        if let alternatePlaces = event?.alternatePlaces {
+            dict["alternatePlaces"] = RadarPlugin.arrayForPlaces(alternatePlaces)
+        }
+        if let region = event?.region {
+            dict["region"] = RadarPlugin.dictionaryForRegion(region)
+        }
+        dict["confidence"] = RadarPlugin.numberForEventConfidence(event?.confidence)
+        return dict
     }
 
     static func dictionaryForLocation(_ location: CLLocation?) -> [String: Any?] {
