@@ -4,92 +4,56 @@ declare module '@capacitor/core' {
   }
 }
 
-export interface RadarCallback {
-  status: string;
-  location: NativeLocation;
-  user: RadarUser;
-  events: RadarEvent[];
-}
-
-interface Chain {
-  name: string;
-  slug: string;
-}
-
-interface CodedLocation {
-  _id: string;
-  code: number;
-  name: string;
-  type: string;
-}
-
-type Country = CodedLocation;
-
-type DMA = CodedLocation;
-
-interface Geofence {
-  _id: string;
-  externalId: string;
-  geometry: NativeLocation;
-  tag: string;
-  metadata: {
-    [key: string]: string;
-  };
-}
-
-interface Insights {
-  homeLocation: Nullable<Location>;
-  officeLocation: Nullable<Location>;
-  state: {
-    home: null | boolean;
-    office: null | boolean;
-    traveling: null | boolean;
-  };
-}
-
 interface Location {
-  confidence: RadarEventConfidence;
-  location: NativeLocation;
-  type: string;
-}
-
-interface NativeLocation {
   accuracy: number;
   latitude: number;
   longitude: number;
 }
 
-interface Place {
-  _id: string;
-  categories: string[];
-  chain: Nullable<Chain>;
-  location?: Nullable<Location>;
-  name: string;
+/**
+ * Recursive nullable object type
+ */
+type Nullable<Props extends object> = {
+  [K in keyof Props]: Props[K] extends object ? Nullable<Props[K]> : Props[K] | null
+};
+
+export interface RadarCallback {
+  status: string;
+  location: Location;
+  user: RadarUser;
+  events: RadarEvent[];
 }
 
-type PostalCode = CodedLocation;
+interface RadarChain {
+  name: string;
+  slug: string;
+  externalId: null | string;
+  metadata: null | {
+    [key: string]: string | boolean | number;
+  };
+}
+
+interface RadarEvent {
+  _id: string;
+  actualCreatedAt: string;
+  alternatePlaces: null | RadarPlace;
+  confidence: RadarEventConfidence;
+  createdAt: string;
+  duration: number;
+  geofence: null | RadarGeofence;
+  live: boolean;
+  place: null | RadarPlace;
+  region: null | RadarRegion;
+  type: RadarEventType;
+  verification: RadarEventVerification;
+  verifiedPlace: null | RadarPlace;
+}
 
 enum RadarEventConfidence {
   none = 0,
   low = 1,
   medium = 2,
   high = 3
-}
-
-interface RadarEvent {
-  _id: string;
-  actualCreatedAt: string;
-  alternatePlaces: null | Place;
-  confidence: RadarEventConfidence;
-  createdAt: string;
-  duration: number;
-  geofence: null | Geofence;
-  live: boolean;
-  place: null | Place;
-  region: null | Region;
-  type: RadarEventType;
-  verification: RadarEventVerification;
-  verifiedPlace: null | Place;
 }
 
 type RadarEventType =
@@ -118,8 +82,48 @@ enum RadarEventVerification {
   reject = -1
 }
 
+interface RadarGeofence {
+  _id: string;
+  tag: null | string;
+  externalId: null | string;
+  metadata: null | {
+    [key: string]: string | boolean | number;
+  };
+}
+
+interface RadarInsights {
+  homeLocation: Nullable<RadarInsightsLocation>;
+  officeLocation: Nullable<RadarInsightsLocation>;
+  state: {
+    home: null | boolean;
+    office: null | boolean;
+    traveling: null | boolean;
+  };
+}
+
+enum RadarInsightsConfidence {
+  none = 0,
+  low = 1,
+  medium = 2,
+  high = 3
+}
+
+interface RadarInsightsLocation {
+  type: string;
+  location: RadarInsightsLocation;
+  confidence: RadarInsightsConfidence;
+}
+
 export interface RadarLocationPermissionsCallback {
   status: string;
+}
+
+interface RadarPlace {
+  _id: string;
+  name: string;
+  chain: Nullable<RadarChain>;
+  categories: string[];
+  location?: Nullable<Location>;
 }
 
 export interface RadarPlugin {
@@ -140,31 +144,27 @@ export interface RadarPlugin {
   rejectEvent(options: { eventId: string }): void;
 }
 
+interface RadarRegion {
+  _id: string;
+  type: string;
+  code: string;
+  name: string;
+}
+
 interface RadarUser {
   _id: string;
-  country: Nullable<Country>;
-  dma: Nullable<DMA>;
-  geofences: Nullable<Geofence>[];
-  insights: Insights;
-  location: Nullable<NativeLocation>;
-  place: Nullable<Place>;
-  postalCode: Nullable<PostalCode>;
-  state: Nullable<State>;
   userId: null | string;
+  deviceId: null | string;
+  description: null | string;
+  metadata: null | {
+    [key: string]: string | boolean | number;
+  };
+  location: Nullable<Location>;
+  geofences: Nullable<RadarGeofence>[];
+  insights: RadarInsights;
+  place: Nullable<RadarPlace>;
+  country: Nullable<RadarRegion>;
+  state: Nullable<RadarRegion>;
+  dma: Nullable<RadarRegion>;
+  postalCode: Nullable<RadarRegion>;
 }
-
-interface Region {
-  country: Nullable<Country>;
-  dma: Nullable<DMA>;
-  postalCode: Nullable<PostalCode>;
-  state: Nullable<State>;
-}
-
-type State = CodedLocation;
-
-/**
- * Recursive nullable object type
- */
-type Nullable<Props extends object> = {
-  [K in keyof Props]: Props[K] extends object ? Nullable<Props[K]> : Props[K] | null
-};
