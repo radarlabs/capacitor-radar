@@ -387,7 +387,7 @@ public class RadarPlugin: CAPPlugin {
     static func dictionaryForGeofence(_ geofence: RadarGeofence?) -> [String: Any?] {
         var dict = [String: Any?]()
         dict["_id"] = geofence?._id
-        dict["description"] = geofence?.description
+        dict["description"] = geofence?._description
         if let tag = geofence?.tag {
             dict["tag"] = tag
         }
