@@ -26,10 +26,10 @@ export interface RadarEvent {
   _id: string;
   live: boolean;
   type: RadarEventType;
-  geofence: null | RadarGeofence;
-  place: null | RadarPlace;
-  alternatePlaces: null | RadarPlace;
-  region: null | RadarRegion;
+  geofence?: RadarGeofence;
+  place?: RadarPlace;
+  alternatePlaces?: RadarPlace;
+  region?: RadarRegion;
   confidence: RadarEventConfidence;
 }
 
@@ -69,14 +69,14 @@ export enum RadarEventVerification {
 export interface RadarGeofence {
   _id: string;
   description: string;
-  tag: null | string;
-  externalId: null | string;
+  tag?: string;
+  externalId?: string;
 }
 
 export interface RadarInsights {
-  homeLocation: null | RadarInsightsLocation;
-  officeLocation: null | RadarInsightsLocation;
-  state: null | {
+  homeLocation?: RadarInsightsLocation;
+  officeLocation?: RadarInsightsLocation;
+  state?: {
     home: boolean;
     office: boolean;
     traveling: boolean;
@@ -104,7 +104,7 @@ export interface RadarPlace {
   _id: string;
   name: string;
   categories: string[];
-  chain: null | RadarChain;
+  chain?: RadarChain;
 }
 
 export interface RadarPlugin {
@@ -134,14 +134,14 @@ export interface RadarRegion {
 
 export interface RadarUser {
   _id: string;
-  userId: null | string;
-  deviceId: null | string;
-  description: null | string;
-  geofences: null | RadarGeofence[];
-  insights: null | RadarInsights;
-  place: null | RadarPlace;
-  country: null | RadarRegion;
-  state: null | RadarRegion;
-  dma: null | RadarRegion;
-  postalCode: null | RadarRegion;
+  userId?: string;
+  deviceId?: string;
+  description?: string;
+  geofences?: RadarGeofence[];
+  insights?: RadarInsights;
+  place?: RadarPlace;
+  country?: RadarRegion;
+  state?: RadarRegion;
+  dma?: RadarRegion;
+  postalCode?: RadarRegion;
 }
