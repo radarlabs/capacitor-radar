@@ -358,7 +358,7 @@ public class RadarPlugin: CAPPlugin {
 
     static func dictionaryForUserInsightsLocation(_ location: RadarUserInsightsLocation?) -> [String: Any?] {
         return [
-            "type": location?.type,
+            "type": RadarPlugin.stringForUserInsightsLocationType(location?.type),
             "location": RadarPlugin.dictionaryForLocation(location?.location),
             "confidence": RadarPlugin.numberForUserInsightsLocationConfidence(location?.confidence)
         ]
