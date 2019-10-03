@@ -72,6 +72,7 @@ public class RadarPlugin: CAPPlugin {
             } else {
                 self.locationManager.requestWhenInUseAuthorization()
             }
+            call.success()
         }
     }
 
@@ -80,12 +81,14 @@ public class RadarPlugin: CAPPlugin {
             let optionsDict = call.getObject("options") ?? [:]
             let options = RadarPlugin.optionsForDictionary(optionsDict)
             Radar.startTracking(trackingOptions: options)
+            call.success()
         }
     }
 
     @objc func stopTracking(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.stopTracking()
+            call.success()
         }
     }
 
