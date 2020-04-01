@@ -1,7 +1,7 @@
 {
   "name": "capacitor-radar",
-  "version": "0.0.10",
-  "description": "Capacitor plugin for Radar, the location context platform",
+  "version": "0.0.11",
+  "description": "Capacitor plugin for Radar, location data infrastructure",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "scripts": {
