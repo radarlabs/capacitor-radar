@@ -12,14 +12,8 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
 
   STATUS = Radar.STATUS
 
-  PLACES_PROVIDER = Radar.PLACES_PROVIDER
-
   initialize(options: { publishableKey: string }): void {
     Radar.initialize(options.publishableKey);
-  }
-
-  setPlacesProvider(options: { placesProvider: string }): void {
-    Radar.setPlacesProvider(options.placesProvider);
   }
 
   setUserId(options: { userId: string }): void {
@@ -47,12 +41,8 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
-  startTracking(): void {
-    // not implemented
-  }
+  async getLocation(): Promise<RadarLocationCallback> {
 
-  stopTracking(): void {
-    // not implemented
   }
 
   async trackOnce(): Promise<RadarCallback> {
@@ -72,11 +62,24 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async updateLocation(): Promise<RadarCallback> {
-    return new Promise(resolve => {
-      // not implemented
-      resolve();
-    });
+  startTrackingEfficient(): void {
+    // not implemented
+  }
+
+  startTrackingResponsive(): void {
+    // not implemented
+  }
+
+  startTrackingContinuous(): void {
+    // not implemented
+  }
+
+  startTrackingCustom(): void {
+    // not implemented
+  }
+
+  stopTracking(): void {
+    // not implemented
   }
 
   acceptEvent(): void {
@@ -84,6 +87,42 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
   }
 
   rejectEvent(): void {
+    // not implemented
+  }
+
+  async getContext(): Promise<RadarContextCallback> {
+    // not implemented
+  }
+
+  async searchPlaces(): Promise<RadarSearchPlacesCallback> {
+    // not implemented
+  }
+
+  async searchGeofences(): Promise<RadarSearchGeofencesCallback> {
+    // not implemented
+  }
+
+  async searchPoints(): Promise<RadarSearchPointsCallback> {
+    // not implemented
+  }
+
+  async autocomplete(): Promise<RadarGeocodeCallback> {
+    // not implemented
+  }
+
+  async geocode(): Promise<RadarGeocodeCallback> {
+    // not implemented
+  }
+
+  async reverseGeocode(): Promise<RadarReverseGeocodeCallback> {
+    // not implemented
+  }
+
+  async ipGeocode(): Promise<RadarIPGeocodeCallback> {
+    // not implemented
+  }
+
+  async getDistance(): Promise<RadarDistanceCallback> {
     // not implemented
   }
 
