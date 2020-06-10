@@ -13,7 +13,6 @@ CAP_PLUGIN(RadarPlugin, "RadarPlugin",
     CAP_PLUGIN_METHOD(startTrackingEfficient, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingResponsive, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingContinuous, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(startTrackingCustom, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(stopTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(acceptEvent, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(rejectEvent, CAPPluginReturnPromise);

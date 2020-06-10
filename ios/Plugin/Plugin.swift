@@ -140,13 +140,6 @@ public class RadarPlugin: CAPPlugin {
             call.success()
         }
     }
-    
-    @objc func startTrackingCustom(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            Radar.startTracking(trackingOptions: RadarTrackingOptions.efficient)
-            call.success()
-        }
-    }
 
     @objc func stopTracking(_ call: CAPPluginCall) {
         DispatchQueue.main.async {

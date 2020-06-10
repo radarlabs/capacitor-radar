@@ -74,10 +74,6 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
-  startTrackingCustom(): void {
-    // not implemented
-  }
-
   stopTracking(): void {
     // not implemented
   }
