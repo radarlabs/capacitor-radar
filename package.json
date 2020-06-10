@@ -15,7 +15,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@capacitor/core": "latest",
-    "radar-sdk-js": "^1.1.0"
+    "radar-sdk-js": "^3.0.0-beta"
   },
   "devDependencies": {
     "typescript": "^3.2.4",
