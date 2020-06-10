@@ -478,13 +478,13 @@ public class RadarPlugin extends Plugin {
         }
         EnumSet<Radar.RadarRouteMode> modes = EnumSet.noneOf(Radar.RadarRouteMode.class);
         List<String> modesList = call.getArray("modes").toList();
-        if (modesList.contains("foot")) {
+        if (modesList.contains("FOOT") || modesList.contains("foot")) {
             modes.add(Radar.RadarRouteMode.FOOT);
         }
-        if (modesList.contains("bike")) {
+        if (modesList.contains("BIKE") || modesList.contains("bike")) {
             modes.add(Radar.RadarRouteMode.BIKE);
         }
-        if (modesList.contains("car")) {
+        if (modesList.contains("CAR") || modesList.contains("car")) {
             modes.add(Radar.RadarRouteMode.CAR);
         }
 
@@ -493,7 +493,8 @@ public class RadarPlugin extends Plugin {
 
             return;
         }
-        Radar.RadarRouteUnits units = call.getString("units").equals("METRIC") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
+        String unitsStr = call.getString("units");
+        Radar.RadarRouteUnits units = unitsStr.equals("METRIC") || unitsStr.equals("metric") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
 
         if (call.hasOption("origin")) {
             JSObject originObj = call.getObject("origin");

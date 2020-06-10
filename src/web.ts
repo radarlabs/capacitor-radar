@@ -1,5 +1,17 @@
 import { WebPlugin } from '@capacitor/core';
-import { RadarCallback, RadarLocationPermissionsCallback, RadarPlugin } from './definitions';
+import {
+  RadarLocationPermissionsCallback,
+  RadarLocationCallback,
+  RadarTrackCallback,
+  RadarContextCallback,
+  RadarSearchPlacesCallback,
+  RadarSearchGeofencesCallback,
+  RadarSearchPointsCallback,
+  RadarGeocodeCallback,
+  RadarIPGeocodeCallback,
+  RadarRouteCallback,
+  RadarPlugin
+} from './definitions';
 import Radar from 'radar-sdk-js';
 
 export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
@@ -24,16 +36,25 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     Radar.setDescription(options.description);
   }
 
-  setMetadata(): void {
-    // not implemented
+  setMetadata(options: { metadata: object }): void {
+    Radar.setMetadata(options.metadata);
   }
 
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback> {
     return new Promise(resolve => {
-      // not implemented
-      resolve({
-        status: 'UNKNOWN'
-      });
+      const navigator = window.navigator as any;
+
+      if (!navigator.permissions) {
+        resolve({
+          status: 'UNKNOWN'
+        });
+      } else {
+        navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+          resolve({
+            status: result.state === 'granted' ? 'GRANTED_FOREGROUND' : 'DENIED',
+          });
+        });
+      }
     });
   }
 
@@ -42,23 +63,41 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
   }
 
   async getLocation(): Promise<RadarLocationCallback> {
-
+    return new Promise((resolve, reject) => {
+      Radar.getLocation((err, { status, location, stopped }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            location,
+            stopped,
+          })
+        }
+      });
+    });
   }
 
-  async trackOnce(): Promise<RadarCallback> {
+  async trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number }): Promise<RadarTrackCallback> {
     return new Promise((resolve, reject) => {
-      Radar.trackOnce((status, location, user, events) => {
-        if (status === Radar.STATUS.SUCCESS) {
+      const callback = (err, { status, location, user, events }) => {
+        if (err) {
+          reject(err);
+        } else {
           resolve({
             status,
             location,
             user,
             events,
           });
-        } else {
-          reject(status);
         }
-      });
+      };
+
+      if (options) {
+        Radar.trackOnce(options, callback);
+      } else {
+        Radar.trackOnce(callback);
+      }
     });
   }
 
@@ -86,40 +125,155 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
-  async getContext(): Promise<RadarContextCallback> {
-    // not implemented
+  async getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback> {
+    return new Promise((resolve, reject) => {
+      const callback = (err, { status, location, context }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            location,
+            context,
+          });
+        }
+      };
+
+      if (options) {
+        Radar.getContext(options, callback);
+      } else {
+        Radar.getContext(callback);
+      }
+    });
   }
 
-  async searchPlaces(): Promise<RadarSearchPlacesCallback> {
-    // not implemented
+  async searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback> {
+    return new Promise((resolve, reject) => {
+      Radar.searchPlaces(options, (err, { status, location, places }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            location,
+            places,
+          });
+        }
+      });
+    });
   }
 
-  async searchGeofences(): Promise<RadarSearchGeofencesCallback> {
-    // not implemented
+  async searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback> {
+    return new Promise((resolve, reject) => {
+      Radar.searchGeofences(options, (err, { status, location, geofences }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            location,
+            geofences,
+          });
+        }
+      });
+    });
   }
 
-  async searchPoints(): Promise<RadarSearchPointsCallback> {
-    // not implemented
+  async searchPoints(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchPointsCallback> {
+    return new Promise((resolve, reject) => {
+      Radar.searchPoints(options, (err, { status, location, points }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            location,
+            points,
+          });
+        }
+      });
+    });
   }
 
-  async autocomplete(): Promise<RadarGeocodeCallback> {
-    // not implemented
+  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, limit: number }): Promise<RadarGeocodeCallback> {
+    return new Promise((resolve, reject) => {
+      Radar.autocomplete(options, (err, { status, addresses }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            addresses,
+          });
+        }
+      });
+    });
   }
 
-  async geocode(): Promise<RadarGeocodeCallback> {
-    // not implemented
+  async geocode(options: { query: string }): Promise<RadarGeocodeCallback> {
+    return new Promise((resolve, reject) => {
+      Radar.geocode(options, (err, { status, addresses }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            addresses,
+          });
+        }
+      });
+    });
   }
 
-  async reverseGeocode(): Promise<RadarReverseGeocodeCallback> {
-    // not implemented
+  async reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback> {
+    return new Promise((resolve, reject) => {
+      const callback = (err, { status, addresses }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            addresses,
+          });
+        }
+      };
+
+      if (options) {
+        Radar.reverseGeocode(options, callback);
+      } else {
+        Radar.reverseGeocode(callback);
+      }
+    });
   }
 
   async ipGeocode(): Promise<RadarIPGeocodeCallback> {
-    // not implemented
+    return new Promise((resolve, reject) => {
+      Radar.ipGeocode((err, { status, address }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            address,
+          });
+        }
+      });
+    });
   }
 
-  async getDistance(): Promise<RadarDistanceCallback> {
-    // not implemented
+  async getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback> {
+    return new Promise((resolve, reject) => {
+      Radar.getDistance(options, (err, { status, routes }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            routes,
+          });
+        }
+      });
+    });
   }
 
 }
