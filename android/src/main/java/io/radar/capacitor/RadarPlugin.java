@@ -249,7 +249,6 @@ public class RadarPlugin extends Plugin {
             JSObject nearObj = call.getObject("near");
             double latitude = nearObj.getDouble("latitude");
             double longitude = nearObj.getDouble("longitude");
-
             Location near = new Location("RadarSDK");
             near.setLatitude(latitude);
             near.setLongitude(longitude);
@@ -286,7 +285,6 @@ public class RadarPlugin extends Plugin {
             JSObject nearObj = call.getObject("near");
             double latitude = nearObj.getDouble("latitude");
             double longitude = nearObj.getDouble("longitude");
-
             Location near = new Location("RadarSDK");
             near.setLatitude(latitude);
             near.setLongitude(longitude);
@@ -323,7 +321,6 @@ public class RadarPlugin extends Plugin {
             JSObject nearObj = call.getObject("near");
             double latitude = nearObj.getDouble("latitude");
             double longitude = nearObj.getDouble("longitude");
-
             Location near = new Location("RadarSDK");
             near.setLatitude(latitude);
             near.setLongitude(longitude);
