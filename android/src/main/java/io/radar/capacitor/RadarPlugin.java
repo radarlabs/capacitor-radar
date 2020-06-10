@@ -102,6 +102,24 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void getLocation(final PluginCall call) throws JSONException {
+        Radar.getLocation(new Radar.RadarLocationCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, boolean stopped) {
+                if (status == Radar.RadarStatus.SUCCESS && location != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("stopped", stopped);
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
+    }
+
+    @PluginMethod()
     public void trackOnce(final PluginCall call) {
         Radar.RadarTrackCallback callback = new Radar.RadarTrackCallback() {
             @Override
