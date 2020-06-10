@@ -344,7 +344,7 @@ public class RadarPlugin extends Plugin {
 
         Radar.autocomplete(query, near, limit, new Radar.RadarGeocodeCallback() {
             @Override
-            public void onComplete(@NotNull Radar.RadarStatus status,@Nullable RadarAddress[] addresses) {
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
                 if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
@@ -368,7 +368,7 @@ public class RadarPlugin extends Plugin {
 
         Radar.geocode(query, new Radar.RadarGeocodeCallback() {
             @Override
-            public void onComplete(@NotNull Radar.RadarStatus status,@Nullable RadarAddress[] addresses) {
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
                 if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
@@ -385,7 +385,7 @@ public class RadarPlugin extends Plugin {
     public void reverseGeocode(final PluginCall call) throws JSONException {
         Radar.RadarGeocodeCallback callback = new Radar.RadarGeocodeCallback() {
             @Override
-            public void onComplete(@NotNull Radar.RadarStatus status,@Nullable RadarAddress[] addresses) {
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
                 if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
@@ -415,7 +415,7 @@ public class RadarPlugin extends Plugin {
     public void ipGeocode(final PluginCall call) throws JSONException {
         Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
             @Override
-            public void onComplete(@NotNull Radar.RadarStatus status,@Nullable RadarAddress address) {
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address) {
                 if (status == Radar.RadarStatus.SUCCESS && address != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
