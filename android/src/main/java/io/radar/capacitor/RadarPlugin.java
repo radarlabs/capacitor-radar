@@ -506,7 +506,7 @@ public class RadarPlugin extends Plugin {
             Iterator<String> keys = jsonObj.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
-                if (jsonObj.get(key) != null) {
+                if (jsonObj.opt(key) != null) {
                     obj.put(key, jsonObj.get(key));
                 }
             }
