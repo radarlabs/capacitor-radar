@@ -22,6 +22,7 @@ import java.util.List;
 
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarTrackingOptions;
+import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
 import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
@@ -171,8 +172,88 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void startTrackingCustom(PluginCall call) {
+        JSObject trackingOptionsObj = call.getObject("options");
+        JSONObject trackingOptionsJson = RadarPlugin.jsonObjectForJSObject(trackingOptionsObj);
+        RadarTrackingOptions trackingOptions  = RadarTrackingOptions.fromJson(trackingOptionsObj);
+        Radar.startTracking(trackingOptions);
+        call.success();
+    }
+
+    @PluginMethod()
+    public void mockTracking(final PluginCall call) throws JSONException {
+        if (!call.hasOption("origin")) {
+            call.reject("origin is required");
+
+            return;
+        }
+        JSObject originObj = call.getObject("origin");
+        double originLatitude = originObj.getDouble("latitude");
+        double originLongitude = originObj.getDouble("longitude");
+        Location origin = new Location("RadarSDK");
+        origin.setLatitude(originLatitude);
+        origin.setLongitude(originLongitude);
+        origin.setAccuracy(5);
+
+        if (!call.hasOption("destination")) {
+            call.reject("destination is required");
+
+            return;
+        }
+        JSObject destinationObj = call.getObject("destination");
+        double destinationLatitude = destinationObj.getDouble("latitude");
+        double destinationLongitude = destinationObj.getDouble("longitude");
+        Location destination = new Location("RadarSDK");
+        destination.setLatitude(destinationLatitude);
+        destination.setLongitude(destinationLongitude);
+        destination.setAccuracy(5);
+
+        if (!call.hasOption("mode")) {
+            call.reject("mode is required");
+
+            return;
+        }
+        String modeStr = call.getString("mode");
+        Radar.RadarRouteMode mode = Radar.RadarRouteMode.CAR;
+        if (modeStr.equals("FOOT") || modeStr.equals("foot")) {
+            mode = Radar.RadarRouteMode.FOOT;
+        } else if (modeStr.equals("BIKE") || modeStr.equals("bike")) {
+            mode = Radar.RadarRouteMode.BIKE;
+        }
+        if (modesList.contains("CAR") || modesList.contains("car")) {
+            mode = Radar.RadarRouteMode.CAR;
+        }
+
+        int steps = call.getInt("steps", 10);
+        int interval = call.getInt("interval", 1);
+
+        Radar.mockTracking(origin, destination, mode, steps, interval, null);
+    }
+
+    @PluginMethod()
     public void stopTracking(PluginCall call) {
         Radar.stopTracking();
+        call.success();
+    }
+
+    @PluginMethod()
+    public void startTrip(PluginCall call) {
+        JSObject optionsObj = call.getObject("options");
+        JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);
+        RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
+        Radar.startTrip(options);
+        call.success();
+    }
+
+    @PluginMethod()
+    public void completeTrip(PluginCall call) {
+        Radar.completeTrip();
+        call.success();
+    }
+
+    @PluginMethod()
+    public void cancelTrip(PluginCall call) {
+        Radar.cancelTrip();
         call.success();
     }
 

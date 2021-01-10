@@ -5,7 +5,6 @@ declare module '@capacitor/core' {
 }
 
 export interface RadarPlugin {
-  STATUS: string[];
   initialize(options: { publishableKey: string }): void;
   setUserId(options: { userId: string }): void;
   setDescription(options: { description: string }): void;
@@ -17,7 +16,12 @@ export interface RadarPlugin {
   startTrackingEfficient(): void;
   startTrackingResponsive(): void;
   startTrackingContinuous(): void;
+  startTrackingCustom(options: object): void;
+  mockTracking(options: { origin: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, mode: string, steps: number, interval: number }): void;
   stopTracking(): void;
+  startTrip(options: object): void;
+  completeTrip(): void;
+  cancelTrip(): void;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
@@ -29,6 +33,16 @@ export interface RadarPlugin {
   reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
   getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
+}
+
+export enum RadarTripStatus {
+  unknown,
+  started,
+  approaching,
+  arrived,
+  expired,
+  completed,
+  canceled
 }
 
 export interface RadarLocationCallback {
@@ -151,7 +165,12 @@ export type RadarEventType =
   | 'user.started_traveling'
   | 'user.stopped_traveling'
   | 'user.started_commuting'
-  | 'user.stopped_commuting';
+  | 'user.stopped_commuting'
+  | 'user.started_trip'
+  | 'user.updated_trip'
+  | 'user.approaching_trip_destination'
+  | 'user.arrived_at_trip_destination'
+  | 'user.stopped_trip';
 
 export enum RadarEventVerification {
   accept = 1,
@@ -193,7 +212,6 @@ export interface RadarPoint {
   externalId?: string;
   metadata?: object;
 }
-
 
 export interface RadarInsights {
   homeLocation?: RadarInsightsLocation;

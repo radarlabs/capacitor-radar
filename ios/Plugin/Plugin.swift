@@ -142,10 +142,82 @@ public class RadarPlugin: CAPPlugin {
             call.success()
         }
     }
+    
+    @objc func startTrackingCustom(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let trackingOptionsDict = call.get("options", [String:AnyClass].self) ?? [:]
+            let trackingOptions = RadarTrackingOptions.optionsFromDictionary(optionsDict)
+            Radar.startTracking(trackingOptions: trackingOptions)
+            call.success()
+        }
+    }
+
+    @objc func mockTracking(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let originDict = call.get("origin", [String:Double].self) else {
+                call.reject("origin is required")
+
+                return
+            }
+            let originLatitude = originDict["latitude"] ?? 0.0
+            let originLongitude = originDict["longitude"] ?? 0.0
+            let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+            guard let destinationDict = call.get("destination", [String:Double].self) else {
+                call.reject("destination is required")
+
+                return
+            }
+            let destinationLatitude = destinationDict["latitude"] ?? 0.0
+            let destinationLongitude = destinationDict["longitude"] ?? 0.0
+            let destination = CLLocation(coordinate: CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+            guard let modeStr = call.getString("mode", String.self) else {
+                call.reject("mode is required")
+
+                return
+            }
+            var mode = .car
+            if modeStr == "FOOT" || modeStr == "foot" {
+                mode = .foot
+            } else if modeStr == "BIKE" || modeStr == "bike" {
+                mode = .bike
+            } else if modeStr == "CAR" || modeStr == "car" {
+                mode = .car
+            }
+
+            let steps = Int32(call.getInt("steps") ?? 10)
+            let interval = Int32(call.getInt("interval") ?? 1)
+
+            Radar.mockTracking(origin: origin, destination: destination, mode: mode, steps: steps, interval: interval, completionHandler: nil)
+        }
+    }
 
     @objc func stopTracking(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.stopTracking()
+            call.success()
+        }
+    }
+
+    @objc func startTrip(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let optionsDict = call.get("options", [String:AnyClass].self) ?? [:]
+            let options = RadarTripOptions.optionsFromDictionary(optionsDict)
+            Radar.startTrip(options: tripOptions)
+        }
+    }
+
+    @objc func completeTrip(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.completeTrip()
+            call.success()
+        }
+    }
+
+    @objc func cancelTrip(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.cancelTrip()
             call.success()
         }
     }

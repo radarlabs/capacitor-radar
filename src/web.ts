@@ -22,8 +22,6 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  STATUS = Radar.STATUS
-
   initialize(options: { publishableKey: string }): void {
     Radar.initialize(options.publishableKey);
   }
@@ -113,7 +111,27 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  startTrackingCustom(): void {
+    // not implemented
+  }
+
+  mockTracking(): void {
+    // not implemented
+  }
+
   stopTracking(): void {
+    // not implemented
+  }
+
+  startTrip(): void {
+    // not implemented
+  }
+
+  completeTrip(): void {
+    // not implemented
+  }
+
+  cancelTrip(): void {
     // not implemented
   }
 
