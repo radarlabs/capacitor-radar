@@ -35,16 +35,6 @@ export interface RadarPlugin {
   getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
 }
 
-export enum RadarTripStatus {
-  unknown,
-  started,
-  approaching,
-  arrived,
-  expired,
-  completed,
-  canceled
-}
-
 export interface RadarLocationCallback {
   status: string;
   location?: Location;

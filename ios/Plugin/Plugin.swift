@@ -146,7 +146,7 @@ public class RadarPlugin: CAPPlugin {
     
     @objc func startTrackingCustom(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            let trackingOptionsDict = call.get("options", [String:AnyClass].self) ?? [:]
+            let trackingOptionsDict = call.getObject("options") ?? [:]
             let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
             Radar.startTracking(trackingOptions: trackingOptions)
             call.success()
@@ -191,6 +191,7 @@ public class RadarPlugin: CAPPlugin {
             let interval = TimeInterval(call.getInt("interval") ?? 1)
 
             Radar.mockTracking(origin: origin, destination: destination, mode: mode, steps: steps, interval: interval, completionHandler: nil)
+            call.success()
         }
     }
 
@@ -203,7 +204,7 @@ public class RadarPlugin: CAPPlugin {
 
     @objc func startTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            let optionsDict = call.get("options", [String:AnyClass].self) ?? [:]
+            let optionsDict = call.getObject("options") ?? [:]
             let options = RadarTripOptions(from: optionsDict)
             Radar.startTrip(options: options)
         }
