@@ -1,6 +1,7 @@
 import Foundation
 import CoreLocation
 import Capacitor
+import RadarSDK
 
 @objc(RadarPlugin)
 public class RadarPlugin: CAPPlugin {
@@ -146,7 +147,7 @@ public class RadarPlugin: CAPPlugin {
     @objc func startTrackingCustom(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let trackingOptionsDict = call.get("options", [String:AnyClass].self) ?? [:]
-            let trackingOptions = RadarTrackingOptions.optionsFromDictionary(optionsDict)
+            let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
             Radar.startTracking(trackingOptions: trackingOptions)
             call.success()
         }
@@ -172,12 +173,12 @@ public class RadarPlugin: CAPPlugin {
             let destinationLongitude = destinationDict["longitude"] ?? 0.0
             let destination = CLLocation(coordinate: CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-            guard let modeStr = call.getString("mode", String.self) else {
+            guard let modeStr = call.getString("mode") else {
                 call.reject("mode is required")
 
                 return
             }
-            var mode = .car
+            var mode = RadarRouteMode.car
             if modeStr == "FOOT" || modeStr == "foot" {
                 mode = .foot
             } else if modeStr == "BIKE" || modeStr == "bike" {
@@ -187,7 +188,7 @@ public class RadarPlugin: CAPPlugin {
             }
 
             let steps = Int32(call.getInt("steps") ?? 10)
-            let interval = Int32(call.getInt("interval") ?? 1)
+            let interval = TimeInterval(call.getInt("interval") ?? 1)
 
             Radar.mockTracking(origin: origin, destination: destination, mode: mode, steps: steps, interval: interval, completionHandler: nil)
         }
@@ -203,8 +204,8 @@ public class RadarPlugin: CAPPlugin {
     @objc func startTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let optionsDict = call.get("options", [String:AnyClass].self) ?? [:]
-            let options = RadarTripOptions.optionsFromDictionary(optionsDict)
-            Radar.startTrip(options: tripOptions)
+            let options = RadarTripOptions(from: optionsDict)
+            Radar.startTrip(options: options)
         }
     }
 
@@ -331,9 +332,9 @@ public class RadarPlugin: CAPPlugin {
                 let longitude = nearDict["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-                Radar.searchGeofences(near: near, radius: radius, tags: tags, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
             } else {
-                Radar.searchGeofences(radius: radius, tags: tags, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
             }
         }
     }
@@ -450,7 +451,7 @@ public class RadarPlugin: CAPPlugin {
 
     @objc func ipGeocode(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.ipGeocode { (status: RadarStatus, address: RadarAddress?) in
+            Radar.ipGeocode { (status: RadarStatus, address: RadarAddress?, proxy: Bool) in
                 if status == .success && address != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
