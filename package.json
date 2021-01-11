@@ -1,6 +1,6 @@
 {
   "name": "capacitor-radar",
-  "version": "0.0.11",
+  "version": "3.0.0-beta.1",
   "description": "Capacitor plugin for Radar, location data infrastructure",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -15,12 +15,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@capacitor/core": "latest",
-    "radar-sdk-js": "^1.1.0"
+    "radar-sdk-js": "^3.0.0"
   },
   "devDependencies": {
-    "typescript": "^3.2.4",
-    "@capacitor/ios": "latest",
-    "@capacitor/android": "latest"
+    "@capacitor/android": "latest",
+    "@capacitor/ios": "^3.0.0-alpha.12",
+    "typescript": "^3.2.4"
   },
   "files": [
     "dist/",
@@ -46,6 +46,6 @@
     "url": "radarlabs/capacitor-radar"
   },
   "bugs": {
-    "url": "radarlabs/capacitor-radar/issues"
+    "url": "https://github.com/radarlabs/capacitor-radar/issues"
   }
 }

@@ -2,46 +2,42 @@ package io.radar.capacitor;
 
 import android.Manifest;
 import android.location.Location;
+import android.os.Build;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 
 import io.radar.sdk.Radar;
-import io.radar.sdk.Radar.RadarTrackingOffline;
-import io.radar.sdk.Radar.RadarTrackingPriority;
-import io.radar.sdk.Radar.RadarTrackingSync;
 import io.radar.sdk.RadarTrackingOptions;
+import io.radar.sdk.RadarTripOptions;
+import io.radar.sdk.model.RadarAddress;
+import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
 import io.radar.sdk.model.RadarPlace;
-import io.radar.sdk.model.RadarRegion;
+import io.radar.sdk.model.RadarPoint;
+import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarUser;
-import io.radar.sdk.model.RadarUserInsights;
-import io.radar.sdk.model.RadarUserInsightsLocation;
-import io.radar.sdk.model.RadarUserInsightsState;
 
-@NativePlugin(
-    permissions={
-        Manifest.permission.ACCESS_FINE_LOCATION
-    }
-)
 public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
-        Radar.initialize(publishableKey);
+        Radar.initialize(this.getContext(), publishableKey);
         call.success();
     }
 
@@ -62,44 +58,181 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void setMetadata(PluginCall call) {
         JSObject metadata = call.getObject("metadata");
-        Radar.setMetadata(RadarPlugin.objectForJSONObject(metadata));
-        call.success();
-    }
-
-    @PluginMethod()
-    public void setPlacesProvider(PluginCall call) {
-        String placesProviderStr = call.getString("placesProvider");
-        if (placesProviderStr == null) {
-            call.reject("placesProvider is required");
-            return;
-        }
-        Radar.setPlacesProvider(RadarPlugin.placesProviderForString(placesProviderStr));
+        Radar.setMetadata(RadarPlugin.jsonObjectForJSObject(metadata));
         call.success();
     }
 
     @PluginMethod()
     public void getLocationPermissionsStatus(PluginCall call) {
-        boolean hasRequiredPermissions = hasRequiredPermissions();
+        boolean foreground = hasDefinedPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+
+        String status;
+        if (Build.VERSION.SDK_INT >= 29) {
+            if (foreground) {
+                boolean background = hasDefinedPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                status = background ? "GRANTED_BACKGROUND" : "GRANTED_FOREGROUND";
+            } else {
+                status = "DENIED";
+            }
+        } else {
+            status = foreground ? "GRANTED_FOREGROUND" : "DENIED";
+        }
         JSObject ret = new JSObject();
-        ret.put("status", RadarPlugin.stringForPermissionsStatus(hasRequiredPermissions));
+        ret.put("status", status);
         call.success(ret);
     }
 
     @PluginMethod()
     public void requestLocationPermissions(PluginCall call) {
-        pluginRequestAllPermissions();
+        if (!call.hasOption("background")) {
+            call.reject("background is required");
+
+            return;
+        }
+        boolean background = call.getBoolean("background", false);
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            int requestCode = 0;
+            if (background && Build.VERSION.SDK_INT >= 29) {
+                pluginRequestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION }, requestCode);
+            } else {
+                pluginRequestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, requestCode);
+            }
+        }
         call.success();
     }
 
     @PluginMethod()
-    public void startTracking(PluginCall call) {
-        JSObject optionsObj = call.getObject("options");
-        RadarTrackingOptions options = RadarPlugin.optionsForObject(optionsObj);
-        if (options != null) {
-            Radar.startTracking(options);
+    public void getLocation(final PluginCall call) throws JSONException {
+        Radar.getLocation(new Radar.RadarLocationCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, boolean stopped) {
+                if (status == Radar.RadarStatus.SUCCESS && location != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("stopped", stopped);
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
+    }
+
+    @PluginMethod()
+    public void trackOnce(final PluginCall call) {
+        Radar.RadarTrackCallback callback = new Radar.RadarTrackCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
+                if (status == Radar.RadarStatus.SUCCESS && location != null && events != null && user != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
+                    ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        };
+
+        if (call.hasOption("latitude") && call.hasOption("longitude") && call.hasOption("accuracy")) {
+            double latitude = call.getDouble("latitude");
+            double longitude = call.getDouble("longitude");
+            float accuracy = call.getDouble("accuracy").floatValue();
+            Location location = new Location("RadarSDK");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            location.setAccuracy(accuracy);
+
+            Radar.trackOnce(location, callback);
         } else {
-            Radar.startTracking();
+            Radar.trackOnce(callback);
         }
+    }
+
+    @PluginMethod()
+    public void startTrackingEfficient(PluginCall call) {
+        Radar.startTracking(RadarTrackingOptions.EFFICIENT);
+        call.success();
+    }
+
+    @PluginMethod()
+    public void startTrackingResponsive(PluginCall call) {
+        Radar.startTracking(RadarTrackingOptions.RESPONSIVE);
+        call.success();
+    }
+
+    @PluginMethod()
+    public void startTrackingContinuous(PluginCall call) {
+        Radar.startTracking(RadarTrackingOptions.CONTINUOUS);
+        call.success();
+    }
+
+    @PluginMethod()
+    public void startTrackingCustom(PluginCall call) {
+        JSObject trackingOptionsObj = call.getObject("options");
+        JSONObject trackingOptionsJson = RadarPlugin.jsonObjectForJSObject(trackingOptionsObj);
+        RadarTrackingOptions trackingOptions  = RadarTrackingOptions.fromJson(trackingOptionsJson);
+        Radar.startTracking(trackingOptions);
+        call.success();
+    }
+
+    @PluginMethod()
+    public void mockTracking(final PluginCall call) throws JSONException {
+        if (!call.hasOption("origin")) {
+            call.reject("origin is required");
+
+            return;
+        }
+        JSObject originObj = call.getObject("origin");
+        double originLatitude = originObj.getDouble("latitude");
+        double originLongitude = originObj.getDouble("longitude");
+        Location origin = new Location("RadarSDK");
+        origin.setLatitude(originLatitude);
+        origin.setLongitude(originLongitude);
+        origin.setAccuracy(5);
+
+        if (!call.hasOption("destination")) {
+            call.reject("destination is required");
+
+            return;
+        }
+        JSObject destinationObj = call.getObject("destination");
+        double destinationLatitude = destinationObj.getDouble("latitude");
+        double destinationLongitude = destinationObj.getDouble("longitude");
+        Location destination = new Location("RadarSDK");
+        destination.setLatitude(destinationLatitude);
+        destination.setLongitude(destinationLongitude);
+        destination.setAccuracy(5);
+
+        if (!call.hasOption("mode")) {
+            call.reject("mode is required");
+
+            return;
+        }
+        String modeStr = call.getString("mode");
+        Radar.RadarRouteMode mode = Radar.RadarRouteMode.CAR;
+        if (modeStr.equals("FOOT") || modeStr.equals("foot")) {
+            mode = Radar.RadarRouteMode.FOOT;
+        } else if (modeStr.equals("BIKE") || modeStr.equals("bike")) {
+            mode = Radar.RadarRouteMode.BIKE;
+        } else if (modeStr.equals("CAR") || modeStr.equals("car")) {
+            mode = Radar.RadarRouteMode.CAR;
+        }
+
+        int steps = call.getInt("steps", 10);
+        int interval = call.getInt("interval", 1);
+
+        Radar.mockTracking(origin, destination, mode, steps, interval, new Radar.RadarTrackCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus radarStatus, @Nullable Location location, @Nullable RadarEvent[] radarEvents, @Nullable RadarUser radarUser) {
+
+            }
+        });
+
         call.success();
     }
 
@@ -110,82 +243,24 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void trackOnce(final PluginCall call) {
-        Radar.trackOnce(new Radar.RadarCallback() {
-            @Override
-            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
-                if (status == Radar.RadarStatus.SUCCESS) {
-                    JSObject ret = new JSObject();
-                    ret.put("status", RadarPlugin.stringForStatus(status));
-                    ret.put("location", RadarPlugin.objectForLocation(location));
-                    ret.put("events", RadarPlugin.arrayForEvents(events));
-                    ret.put("user", RadarPlugin.objectForUser(user));
-                    call.resolve(ret);
-                } else {
-                    call.reject(RadarPlugin.stringForStatus((status)));
-                }
-            }
-        });
+    public void startTrip(PluginCall call) {
+        JSObject optionsObj = call.getObject("options");
+        JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);
+        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
+        Radar.startTrip(options);
+        call.success();
     }
 
     @PluginMethod()
-    public void updateLocation(final PluginCall call) {
-        double latitude;
-        Double latitudeDouble = call.getDouble("latitude");
-        if (latitudeDouble == null) {
-            Integer latitudeInteger = call.getInt("latitude");
-            if (latitudeInteger == null) {
-                call.reject("latitude is required");
-                return;
-            }
-            latitude = latitudeInteger.doubleValue();
-        } else {
-            latitude = latitudeDouble;
-        }
-        double longitude;
-        Double longitudeDouble = call.getDouble("longitude");
-        if (longitudeDouble == null) {
-            Integer longitudeInteger = call.getInt("longitude");
-            if (longitudeInteger == null) {
-                call.reject("longitude is required");
-                return;
-            }
-            longitude = longitudeInteger.doubleValue();
-        }
-        else {
-            longitude = longitudeDouble;
-        }
-        float accuracy;
-        Float accuracyFloat = call.getFloat("accuracy");
-        if (accuracyFloat == null) {
-            Integer accuracyInteger = call.getInt("accuracy");
-            if (accuracyInteger == null) {
-                call.reject("accuracy is required");
-                return;
-            }
-            accuracy = accuracyInteger.floatValue();
-        } else {
-            accuracy = accuracyFloat;
-        }
-        Location location = new Location("RadarSDK");
-        location.setLatitude(latitude);
-        location.setLongitude(longitude);
-        location.setAccuracy(accuracy);
-        Radar.updateLocation(location, new Radar.RadarCallback() {
-            @Override
-            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
-                if (status == Radar.RadarStatus.SUCCESS) {
-                    JSObject ret = new JSObject();
-                    ret.put("status", RadarPlugin.stringForStatus(status));
-                    ret.put("location", RadarPlugin.objectForLocation(location));
-                    ret.put("events", RadarPlugin.arrayForEvents(events));
-                    ret.put("user", RadarPlugin.objectForUser(user));
-                    call.resolve(ret);
-                } else {
-                    call.reject(RadarPlugin.stringForStatus((status)));
-                }
-            }
-        });
+    public void completeTrip(PluginCall call) {
+        Radar.completeTrip();
+        call.success();
+    }
+
+    @PluginMethod()
+    public void cancelTrip(PluginCall call) {
+        Radar.cancelTrip();
+        call.success();
     }
 
     @PluginMethod()
@@ -203,307 +278,328 @@ public class RadarPlugin extends Plugin {
         call.success();
     }
 
-    private static String stringForPermissionsStatus(boolean hasGrantedPermissions) {
-        if (hasGrantedPermissions) {
-            return "GRANTED";
-        }
-        return "DENIED";
-    }
+    @PluginMethod()
+    public void getContext(final PluginCall call) {
+        Radar.RadarContextCallback callback = new Radar.RadarContextCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarContext context) {
+                if (status == Radar.RadarStatus.SUCCESS && location != null && context != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("context", RadarPlugin.jsObjectForJSONObject(context.toJson()));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        };
 
-    private static String stringForStatus(Radar.RadarStatus status) {
-        return status.toString();
-    }
+        if (call.hasOption("latitude") && call.hasOption("longitude")) {
+            double latitude = call.getDouble("latitude");
+            double longitude = call.getDouble("longitude");
+            Location location = new Location("RadarSDK");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            location.setAccuracy(5);
 
-    private static String stringForEventType(RadarEvent.RadarEventType type) {
-        switch (type) {
-            case USER_ENTERED_GEOFENCE:
-                return "user.entered_geofence";
-            case USER_EXITED_GEOFENCE:
-                return "user.exited_geofence";
-            case USER_ENTERED_HOME:
-                return "user.entered_home";
-            case USER_EXITED_HOME:
-                return "user.exited_home";
-            case USER_ENTERED_OFFICE:
-                return "user.entered_office";
-            case USER_EXITED_OFFICE:
-                return "user.exited_office";
-            case USER_STARTED_TRAVELING:
-                return "user.started_traveling";
-            case USER_STOPPED_TRAVELING:
-                return "user.stopped_traveling";
-            case USER_ENTERED_PLACE:
-                return "user.entered_place";
-            case USER_EXITED_PLACE:
-                return "user.exited_place";
-            case USER_NEARBY_PLACE_CHAIN:
-                return "user.nearby_place_chain";
-            case USER_ENTERED_REGION_STATE:
-                return "user.entered_region_state";
-            case USER_EXITED_REGION_STATE:
-                return "user.exited_region_state";
-            case USER_ENTERED_REGION_COUNTRY:
-                return "user.entered_region_country";
-            case USER_EXITED_REGION_COUNTRY:
-                return "user.exited_region_country";
-            case USER_ENTERED_REGION_DMA:
-                return "user.entered_region_dma";
-            case USER_EXITED_REGION_DMA:
-                return "user.exited_region_dma";
-            default:
-                return null;
+            Radar.getContext(location, callback);
+        } else {
+            Radar.getContext(callback);
         }
     }
 
-    private static int numberForEventConfidence(RadarEvent.RadarEventConfidence confidence) {
-        switch (confidence) {
-            case HIGH:
-                return 3;
-            case MEDIUM:
-                return 2;
-            case LOW:
-                return 1;
-            default:
-                return 0;
+    @PluginMethod()
+    public void searchPlaces(final PluginCall call) throws JSONException {
+        Radar.RadarSearchPlacesCallback callback = new Radar.RadarSearchPlacesCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarPlace[] places) {
+                if (status == Radar.RadarStatus.SUCCESS && location != null && places != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("places", RadarPlugin.jsArrayForJSONArray(RadarPlace.toJson(places)));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        };
+
+        int radius = call.getInt("radius", 1000);
+        String[] chains = RadarPlugin.stringArrayForJSArray(call.getArray("chains"));
+        String[] categories = RadarPlugin.stringArrayForJSArray(call.getArray("categories"));
+        String[] groups = RadarPlugin.stringArrayForJSArray(call.getArray("groups"));
+        int limit = call.getInt("limit", 10);
+
+        if (call.hasOption("near")) {
+            JSObject nearObj = call.getObject("near");
+            double latitude = nearObj.getDouble("latitude");
+            double longitude = nearObj.getDouble("longitude");
+            Location near = new Location("RadarSDK");
+            near.setLatitude(latitude);
+            near.setLongitude(longitude);
+            near.setAccuracy(5);
+
+            Radar.searchPlaces(near, radius, chains, categories, groups, limit, callback);
+        } else {
+            Radar.searchPlaces(radius, chains, categories, groups, limit, callback);
         }
     }
 
-    private static String stringForUserInsightsLocationType(RadarUserInsightsLocation.RadarUserInsightsLocationType type) {
-        switch (type) {
-            case HOME:
-                return "home";
-            case OFFICE:
-                return "office";
-            default:
-                return null;
+    @PluginMethod()
+    public void searchGeofences(final PluginCall call) throws JSONException {
+        Radar.RadarSearchGeofencesCallback callback = new Radar.RadarSearchGeofencesCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarGeofence[] geofences) {
+                if (status == Radar.RadarStatus.SUCCESS && location != null && geofences != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("geofences", RadarPlugin.jsArrayForJSONArray(RadarGeofence.toJson(geofences)));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        };
+
+        int radius = call.getInt("radius", 1000);
+        String[] tags = RadarPlugin.stringArrayForJSArray(call.getArray("tags"));
+        int limit = call.getInt("limit", 10);
+
+        if (call.hasOption("near")) {
+            JSObject nearObj = call.getObject("near");
+            double latitude = nearObj.getDouble("latitude");
+            double longitude = nearObj.getDouble("longitude");
+            Location near = new Location("RadarSDK");
+            near.setLatitude(latitude);
+            near.setLongitude(longitude);
+            near.setAccuracy(5);
+
+            Radar.searchGeofences(near, radius, tags, null, limit, callback);
+        } else {
+            Radar.searchGeofences(radius, tags, null, limit, callback);
         }
     }
 
-    private static int numberForUserInsightsLocationConfidence(RadarUserInsightsLocation.RadarUserInsightsLocationConfidence confidence) {
-        switch (confidence) {
-            case HIGH:
-                return 3;
-            case MEDIUM:
-                return 2;
-            case LOW:
-                return 1;
-            default:
-                return 0;
+    @PluginMethod()
+    public void searchPoints(final PluginCall call) throws JSONException {
+        Radar.RadarSearchPointsCallback callback = new Radar.RadarSearchPointsCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarPoint[] points) {
+                if (status == Radar.RadarStatus.SUCCESS && location != null && points != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("points", RadarPlugin.jsArrayForJSONArray(RadarPoint.toJson(points)));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        };
+
+        int radius = call.getInt("radius", 1000);
+        String[] tags = RadarPlugin.stringArrayForJSArray(call.getArray("tags"));
+        int limit = call.getInt("limit", 10);
+
+        if (call.hasOption("near")) {
+            JSObject nearObj = call.getObject("near");
+            double latitude = nearObj.getDouble("latitude");
+            double longitude = nearObj.getDouble("longitude");
+            Location near = new Location("RadarSDK");
+            near.setLatitude(latitude);
+            near.setLongitude(longitude);
+            near.setAccuracy(5);
+
+            Radar.searchPoints(near, radius, tags, limit, callback);
+        } else {
+            Radar.searchPoints(radius, tags, limit, callback);
         }
     }
 
-    private static Radar.RadarPlacesProvider placesProviderForString(String providerStr) {
-        if (providerStr.equals("facebook")) {
-            return Radar.RadarPlacesProvider.FACEBOOK;
+    @PluginMethod()
+    public void autocomplete(final PluginCall call) throws JSONException {
+        if (!call.hasOption("query")) {
+            call.reject("query is required");
+
+            return;
         }
-        return Radar.RadarPlacesProvider.NONE;
+        String query = call.getString("query");
+
+        if (!call.hasOption("near")) {
+            call.reject("near is required");
+
+            return;
+        }
+        JSObject nearObj = call.getObject("near");
+        double latitude = nearObj.getDouble("latitude");
+        double longitude = nearObj.getDouble("longitude");
+        Location near = new Location("RadarSDK");
+        near.setLatitude(latitude);
+        near.setLongitude(longitude);
+        near.setAccuracy(5);
+
+        int limit = call.getInt("limit", 10);
+
+        Radar.autocomplete(query, near, limit, new Radar.RadarGeocodeCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
+                if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("addresses", RadarPlugin.jsArrayForJSONArray(RadarAddress.toJson(addresses)));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
     }
 
-    private static JSObject objectForUser(RadarUser user) {
-        if (user == null) {
-            return null;
-        }
+    @PluginMethod()
+    public void geocode(final PluginCall call) throws JSONException {
+        if (!call.hasOption("query")) {
+            call.reject("query is required");
 
-        JSObject obj = new JSObject();
-        obj.put("_id", user.getId());
-        if (user.getUserId() != null) {
-            obj.put("userId", user.getUserId());
+            return;
         }
-        if (user.getDeviceId() != null) {
-            obj.put("deviceId", user.getDeviceId());
-        }
-        if (user.getDescription() != null) {
-            obj.put("description", user.getDescription());
-        }
-        if (user.getGeofences() != null) {
-            obj.put("geofences", RadarPlugin.arrayForGeofences(user.getGeofences()));
-        }
-        if (user.getInsights() != null) {
-            obj.put("insights", RadarPlugin.objectForUserInsights(user.getInsights()));
-        }
-        if (user.getPlace() != null) {
-            obj.put("place", RadarPlugin.objectForPlace(user.getPlace()));
-        }
-        if (user.getCountry() != null) {
-            obj.put("country", RadarPlugin.objectForRegion(user.getCountry()));
-        }
-        if (user.getState() != null) {
-            obj.put("state", RadarPlugin.objectForRegion(user.getState()));
-        }
-        if (user.getDma() != null) {
-            obj.put("dma", RadarPlugin.objectForRegion(user.getDma()));
-        }
-        if (user.getPostalCode() != null) {
-            obj.put("postalCode", RadarPlugin.objectForRegion(user.getPostalCode()));
-        }
-        return obj;
+        String query = call.getString("query");
+
+        Radar.geocode(query, new Radar.RadarGeocodeCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
+                if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("addresses", RadarPlugin.jsArrayForJSONArray(RadarAddress.toJson(addresses)));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
     }
 
-    private static JSObject objectForUserInsights(RadarUserInsights insights) {
-        if (insights == null) {
-            return null;
-        }
+    @PluginMethod()
+    public void reverseGeocode(final PluginCall call) throws JSONException {
+        Radar.RadarGeocodeCallback callback = new Radar.RadarGeocodeCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
+                if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("addresses", RadarPlugin.jsArrayForJSONArray(RadarAddress.toJson(addresses)));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        };
 
-        JSObject obj = new JSObject();
-        if (insights.getHomeLocation() != null){
-            obj.put("homeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getHomeLocation()));
+        if (call.hasOption("latitude") && call.hasOption("longitude")) {
+            double latitude = call.getDouble("latitude");
+            double longitude = call.getDouble("longitude");
+            Location location = new Location("RadarSDK");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            location.setAccuracy(5);
+
+            Radar.reverseGeocode(location, callback);
+        } else {
+            Radar.reverseGeocode(callback);
         }
-        if (insights.getOfficeLocation() != null) {
-            obj.put("officeLocation", RadarPlugin.objectForUserInsightsLocation(insights.getOfficeLocation()));
-        }
-        if (insights.getState() != null) {
-            obj.put("state", RadarPlugin.objectForUserInsightsState(insights.getState()));
-        }
-        return obj;
     }
 
-    private static JSObject objectForUserInsightsLocation(RadarUserInsightsLocation location) {
-        if (location == null) {
-            return null;
-        }
-
-        JSObject obj = new JSObject();
-        obj.put("type", RadarPlugin.stringForUserInsightsLocationType(location.getType()));
-        obj.put("location", RadarPlugin.objectForLocation(location.getLocation()));
-        obj.put("confidence", RadarPlugin.numberForUserInsightsLocationConfidence(location.getConfidence()));
-        return obj;
+    @PluginMethod()
+    public void ipGeocode(final PluginCall call) throws JSONException {
+        Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy) {
+                if (status == Radar.RadarStatus.SUCCESS && address != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("address", RadarPlugin.jsObjectForJSONObject(address.toJson()));
+                    ret.put("proxy", proxy);
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
     }
 
-    private static JSObject objectForUserInsightsState(RadarUserInsightsState state) {
-        if (state == null) {
-            return null;
+    @PluginMethod()
+    public void getDistance(final PluginCall call) throws JSONException {
+        Radar.RadarRouteCallback callback = new Radar.RadarRouteCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarRoutes routes) {
+                if (status == Radar.RadarStatus.SUCCESS && routes != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("points", RadarPlugin.jsObjectForJSONObject(routes.toJson()));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        };
+
+        if (!call.hasOption("destination")) {
+            call.reject("destination is required");
+
+            return;
+        }
+        JSObject destinationObj = call.getObject("destination");
+        double destinationLatitude = destinationObj.getDouble("latitude");
+        double destinationLongitude = destinationObj.getDouble("longitude");
+        Location destination = new Location("RadarSDK");
+        destination.setLatitude(destinationLatitude);
+        destination.setLongitude(destinationLongitude);
+        destination.setAccuracy(5);
+
+        if (!call.hasOption("modes")) {
+            call.reject("modes is required");
+
+            return;
+        }
+        EnumSet<Radar.RadarRouteMode> modes = EnumSet.noneOf(Radar.RadarRouteMode.class);
+        List<String> modesList = call.getArray("modes").toList();
+        if (modesList.contains("FOOT") || modesList.contains("foot")) {
+            modes.add(Radar.RadarRouteMode.FOOT);
+        }
+        if (modesList.contains("BIKE") || modesList.contains("bike")) {
+            modes.add(Radar.RadarRouteMode.BIKE);
+        }
+        if (modesList.contains("CAR") || modesList.contains("car")) {
+            modes.add(Radar.RadarRouteMode.CAR);
         }
 
-        JSObject obj = new JSObject();
-        obj.put("home", state.getHome());
-        obj.put("office", state.getOffice());
-        obj.put("traveling", state.getTraveling());
-        return obj;
+        if (!call.hasOption("units")) {
+            call.reject("units is required");
+
+            return;
+        }
+        String unitsStr = call.getString("units");
+        Radar.RadarRouteUnits units = unitsStr.equals("METRIC") || unitsStr.equals("metric") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
+
+        if (call.hasOption("origin")) {
+            JSObject originObj = call.getObject("origin");
+            double originLatitude = originObj.getDouble("latitude");
+            double originLongitude = originObj.getDouble("longitude");
+
+            Location origin = new Location("RadarSDK");
+            origin.setLatitude(originLatitude);
+            origin.setLongitude(originLongitude);
+
+            Radar.getDistance(origin, destination, modes, units, callback);
+        } else {
+            Radar.getDistance(destination, modes, units, callback);
+        }
     }
 
-    private static JSArray arrayForGeofences(RadarGeofence[] geofences) {
-        if (geofences == null) {
-            return null;
-        }
-
-        JSArray arr = new JSArray();
-        for (RadarGeofence geofence : geofences) {
-            arr.put(RadarPlugin.objectForGeofence(geofence));
-        }
-        return arr;
-    }
-
-    private static JSObject objectForGeofence(RadarGeofence geofence) {
-        if (geofence == null) {
-            return null;
-        }
-
-        JSObject obj = new JSObject();
-        obj.put("_id", geofence.getId());
-        obj.put("description", geofence.getDescription());
-        if (geofence.getTag() != null) {
-            obj.put("tag", geofence.getTag());
-        }
-        if (geofence.getExternalId() != null) {
-            obj.put("externalId", geofence.getExternalId());
-        }
-        return obj;
-    }
-
-    private static JSArray arrayForPlaces(RadarPlace[] places) {
-        if (places == null) {
-            return null;
-        }
-
-        JSArray arr = new JSArray();
-        for (RadarPlace place : places) {
-            arr.put(RadarPlugin.objectForPlace(place));
-        }
-        return arr;
-    }
-
-    private static JSObject objectForPlace(RadarPlace place) {
-        if (place == null) {
-            return null;
-        }
-
-        JSObject obj = new JSObject();
-        obj.put("_id", place.getId());
-        obj.put("name", place.getName());
-        obj.put("categories", place.getCategories());
-        if (place.getChain() != null) {
-            JSObject chainObj = new JSObject();
-            chainObj.put("slug", place.getChain().getSlug());
-            chainObj.put("name", place.getChain().getName());
-        }
-        return obj;
-    }
-
-    private static JSObject objectForRegion(RadarRegion region) {
-        if (region == null) {
-            return null;
-        }
-
-        JSObject obj = new JSObject();
-        obj.put("_id", region.getId());
-        obj.put("type", region.getType());
-        obj.put("code", region.getCode());
-        obj.put("name", region.getName());
-        return obj;
-    }
-
-    private static JSArray arrayForEvents(RadarEvent[] events) {
-        if (events == null) {
-            return null;
-        }
-
-        JSArray arr = new JSArray();
-        for (RadarEvent event : events) {
-            arr.put(RadarPlugin.objectForEvent(event));
-        }
-        return arr;
-    }
-
-    private static JSObject objectForEvent(RadarEvent event) {
-        if (event == null) {
-            return null;
-        }
-
-        JSObject obj = new JSObject();
-        obj.put("_id", event.getId());
-        obj.put("live", event.getLive());
-        obj.put("type", RadarPlugin.stringForEventType(event.getType()));
-        if (event.getGeofence() != null) {
-            obj.put("geofence", RadarPlugin.objectForGeofence(event.getGeofence()));
-        }
-        if (event.getPlace() != null) {
-            obj.put("place", RadarPlugin.objectForPlace(event.getPlace()));
-        }
-        if (event.getAlternatePlaces() != null) {
-            obj.put("alternatePlaces", RadarPlugin.arrayForPlaces(event.getAlternatePlaces()));
-        }
-        if (event.getRegion() != null) {
-            obj.put("region", RadarPlugin.objectForRegion(event.getRegion()));
-        }
-        obj.put("confidence", RadarPlugin.numberForEventConfidence(event.getConfidence()));
-        return obj;
-    }
-
-    private static JSObject objectForLocation(Location location) {
-        if (location == null) {
-            return null;
-        }
-
-        JSObject obj = new JSObject();
-        obj.put("latitude", location.getLatitude());
-        obj.put("longitude", location.getLongitude());
-        if (location.getAccuracy() != 0) {
-            obj.put("accuracy", location.getAccuracy());
-        }
-        return obj;
-    }
-
-    private static JSObject objectForJSONObject(JSONObject jsonObj) {
+    private static JSObject jsObjectForJSONObject(JSONObject jsonObj) {
         try {
             if (jsonObj == null) {
                 return null;
@@ -513,7 +609,7 @@ public class RadarPlugin extends Plugin {
             Iterator<String> keys = jsonObj.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
-                if (jsonObj.get(key) != null) {
+                if (jsonObj.opt(key) != null) {
                     obj.put(key, jsonObj.get(key));
                 }
             }
@@ -523,42 +619,53 @@ public class RadarPlugin extends Plugin {
         }
     }
 
-    private static RadarTrackingOptions optionsForObject(JSObject optionsObj) {
+    private static JSONObject jsonObjectForJSObject(JSObject jsObj) {
         try {
-            RadarTrackingOptions.Builder options = new RadarTrackingOptions.Builder();
-            if (optionsObj != null) {
-                if (optionsObj.get("sync") != null) {
-                    switch (optionsObj.getString("sync")) {
-                        case "possibleStateChanges":
-                            options.sync(RadarTrackingSync.POSSIBLE_STATE_CHANGES);
-                            break;
-                        case "all":
-                            options.sync(RadarTrackingSync.ALL);
-                            break;
-                    }
-                }
-                if (optionsObj.get("offline") != null) {
-                    switch (optionsObj.getString("offline")) {
-                        case "replayStopped":
-                            options.offline(RadarTrackingOffline.REPLAY_STOPPED);
-                            break;
-                        case "replayOff":
-                            options.offline(RadarTrackingOffline.REPLAY_OFF);
-                            break;
-                    }
-                }
-                if (optionsObj.get("priority") != null) {
-                    switch (optionsObj.getString("priority")) {
-                        case "efficiency":
-                            options.priority(RadarTrackingPriority.EFFICIENCY);
-                            break;
-                        case "responsiveness":
-                            options.priority(RadarTrackingPriority.RESPONSIVENESS);
-                            break;
-                    }
+            if (jsObj == null) {
+                return null;
+            }
+
+            JSONObject obj = new JSONObject();
+            Iterator<String> keys = jsObj.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (jsObj.get(key) != null) {
+                    obj.put(key, jsObj.get(key));
                 }
             }
-            return options.build();
+            return obj;
+        } catch (JSONException j) {
+            return null;
+        }
+    }
+
+    private static JSArray jsArrayForJSONArray(JSONArray jsonArr) {
+        try {
+            if (jsonArr == null) {
+                return null;
+            }
+
+            JSArray arr = new JSArray();
+            for (int i = 0; i < jsonArr.length(); i++) {
+                arr.put(RadarPlugin.jsObjectForJSONObject(jsonArr.getJSONObject(i)));
+            }
+            return arr;
+        } catch (JSONException j) {
+            return null;
+        }
+    }
+
+    private static String[] stringArrayForJSArray(JSArray jsArr) {
+        try {
+            if (jsArr == null) {
+                return null;
+            }
+
+            String[] arr = new String[jsArr.length()];
+            for (int i = 0; i < jsArr.length(); i++) {
+                arr[i] = jsArr.getString(i);
+            }
+            return arr;
         } catch (JSONException j) {
             return null;
         }

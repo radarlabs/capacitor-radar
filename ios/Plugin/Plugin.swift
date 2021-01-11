@@ -1,6 +1,7 @@
 import Foundation
 import CoreLocation
 import Capacitor
+import RadarSDK
 
 @objc(RadarPlugin)
 public class RadarPlugin: CAPPlugin {
@@ -11,6 +12,7 @@ public class RadarPlugin: CAPPlugin {
         DispatchQueue.main.async {
             guard let publishableKey = call.getString("publishableKey") else {
                 call.reject("publishableKey is required")
+
                 return
             }
             Radar.initialize(publishableKey: publishableKey)
@@ -42,19 +44,18 @@ public class RadarPlugin: CAPPlugin {
         }
     }
 
-    @objc func setPlacesProvider(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            let placesProviderStr = call.getString("placesProvider")
-            let placesProvider = RadarPlugin.placesProviderForString(placesProviderStr)
-            Radar.setPlacesProvider(placesProvider)
-            call.success()
-        }
-    }
-
     @objc func getLocationPermissionsStatus(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let authorizationStatus = CLLocationManager.authorizationStatus()
-            let authorizationStatusStr = RadarPlugin.stringForAuthorizationStatus(authorizationStatus)
+            var authorizationStatusStr = "DENIED"
+            switch authorizationStatus {
+            case .authorizedAlways:
+                authorizationStatusStr = "GRANTED_BACKGROUND"
+            case .authorizedWhenInUse:
+                authorizationStatusStr = "GRANTED_FOREGROUND"
+            default:
+                authorizationStatusStr = "DENIED"
+            }
             call.success([
                 "status": authorizationStatusStr
             ])
@@ -65,6 +66,7 @@ public class RadarPlugin: CAPPlugin {
         DispatchQueue.main.async {
             guard let background = call.getBool("background") else {
                 call.reject("background is required")
+
                 return
             }
             if background {
@@ -76,11 +78,120 @@ public class RadarPlugin: CAPPlugin {
         }
     }
 
-    @objc func startTracking(_ call: CAPPluginCall) {
+    @objc func getLocation(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            let optionsDict = call.getObject("options") ?? [:]
-            let options = RadarPlugin.optionsForDictionary(optionsDict)
-            Radar.startTracking(trackingOptions: options)
+            Radar.getLocation { (status: RadarStatus, location: CLLocation?, stopped: Bool) in
+                if status == .success && location != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "stopped": stopped
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+        }
+    }
+
+    @objc func trackOnce(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarTrackCompletionHandler = { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
+                if status == .success && location != nil && events != nil && user != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "events": RadarEvent.array(for: events!) ?? [],
+                        "user": user!.dictionaryValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+
+            if call.hasOption("latitude") && call.hasOption("longitude") && call.hasOption("accuracy") {
+                let latitude = call.getDouble("latitude") ?? 0.0
+                let longitude = call.getDouble("latitude") ?? 0.0
+                let accuracy = call.getDouble("accuracy") ?? 0.0
+                let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
+                let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
+
+                Radar.trackOnce(location: location, completionHandler: completionHandler)
+            } else {
+                Radar.trackOnce(completionHandler: completionHandler)
+            }
+        }
+    }
+
+    @objc func startTrackingEfficient(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.startTracking(trackingOptions: RadarTrackingOptions.efficient)
+            call.success()
+        }
+    }
+
+    @objc func startTrackingResponsive(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.startTracking(trackingOptions: RadarTrackingOptions.responsive)
+            call.success()
+        }
+    }
+
+    @objc func startTrackingContinuous(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.startTracking(trackingOptions: RadarTrackingOptions.continuous)
+            call.success()
+        }
+    }
+    
+    @objc func startTrackingCustom(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let trackingOptionsDict = call.getObject("options") ?? [:]
+            let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
+            Radar.startTracking(trackingOptions: trackingOptions)
+            call.success()
+        }
+    }
+
+    @objc func mockTracking(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let originDict = call.get("origin", [String:Double].self) else {
+                call.reject("origin is required")
+
+                return
+            }
+            let originLatitude = originDict["latitude"] ?? 0.0
+            let originLongitude = originDict["longitude"] ?? 0.0
+            let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+            guard let destinationDict = call.get("destination", [String:Double].self) else {
+                call.reject("destination is required")
+
+                return
+            }
+            let destinationLatitude = destinationDict["latitude"] ?? 0.0
+            let destinationLongitude = destinationDict["longitude"] ?? 0.0
+            let destination = CLLocation(coordinate: CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+            guard let modeStr = call.getString("mode") else {
+                call.reject("mode is required")
+
+                return
+            }
+            var mode = RadarRouteMode.car
+            if modeStr == "FOOT" || modeStr == "foot" {
+                mode = .foot
+            } else if modeStr == "BIKE" || modeStr == "bike" {
+                mode = .bike
+            } else if modeStr == "CAR" || modeStr == "car" {
+                mode = .car
+            }
+
+            let steps = Int32(call.getInt("steps") ?? 10)
+            let interval = TimeInterval(call.getInt("interval") ?? 1)
+
+            Radar.mockTracking(origin: origin, destination: destination, mode: mode, steps: steps, interval: interval, completionHandler: nil)
+            
             call.success()
         }
     }
@@ -92,51 +203,25 @@ public class RadarPlugin: CAPPlugin {
         }
     }
 
-    @objc func trackOnce(_ call: CAPPluginCall) {
+    @objc func startTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.trackOnce(completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
-                if status == .success {
-                    call.resolve([
-                        "status": RadarPlugin.stringForStatus(status),
-                        "location": RadarPlugin.dictionaryForLocation(location),
-                        "events": RadarPlugin.arrayForEvents(events),
-                        "user": RadarPlugin.dictionaryForUser(user)
-                    ])
-                } else {
-                    call.reject(RadarPlugin.stringForStatus(status))
-                }
-            })
+            let optionsDict = call.getObject("options") ?? [:]
+            let options = RadarTripOptions(from: optionsDict)
+            Radar.startTrip(options: options)
         }
     }
 
-    @objc func updateLocation(_ call: CAPPluginCall) {
+    @objc func completeTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let latitude = call.getDouble("latitude") else {
-                call.reject("latitude is required")
-                return
-            }
-            guard let longitude = call.getDouble("longitude") else {
-                call.reject("longitude is required")
-                return
-            }
-            guard let accuracy = call.getDouble("accuracy") else {
-                call.reject("accuracy is required")
-                return
-            }
-            let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
-            let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
-            Radar.updateLocation(location, completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
-                if status == .success {
-                    call.resolve([
-                        "status": RadarPlugin.stringForStatus(status),
-                        "location": RadarPlugin.dictionaryForLocation(location),
-                        "events": RadarPlugin.arrayForEvents(events),
-                        "user": RadarPlugin.dictionaryForUser(user)
-                    ])
-                } else {
-                    call.reject(RadarPlugin.stringForStatus(status))
-                }
-            })
+            Radar.completeTrip()
+            call.success()
+        }
+    }
+
+    @objc func cancelTrip(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.cancelTrip()
+            call.success()
         }
     }
 
@@ -144,6 +229,7 @@ public class RadarPlugin: CAPPlugin {
         DispatchQueue.main.async {
             guard let eventId = call.getString("eventId") else {
                 call.reject("eventId is required")
+
                 return
             }
             let verifiedPlaceId = call.getString("verifiedPlaceId") ?? nil
@@ -156,6 +242,7 @@ public class RadarPlugin: CAPPlugin {
         DispatchQueue.main.async {
             guard let eventId = call.getString("eventId") else {
                 call.reject("eventId is required")
+
                 return
             }
             Radar.rejectEventId(eventId)
@@ -163,338 +250,278 @@ public class RadarPlugin: CAPPlugin {
         }
     }
 
-    static func stringForAuthorizationStatus(_ status: CLAuthorizationStatus?) -> String {
-        guard let status = status else {
-            return "UNKNOWN"
-        }
-        switch status {
-        case .denied:
-            return "DENIED"
-        case .restricted:
-            return "DENIED"
-        case .authorizedAlways:
-            return "GRANTED"
-        case .authorizedWhenInUse:
-            return "GRANTED"
-        default:
-            return "UNKNOWN"
-        }
-    }
+    @objc func getContext(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarContextCompletionHandler = { (status: RadarStatus, location: CLLocation?, context: RadarContext?) in
+                if status == .success && location != nil && context != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "context": context!.dictionaryValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
 
-    static func stringForStatus(_ status: RadarStatus?) -> String {
-        guard let status = status else {
-            return "ERROR_UNKNOWN"
-        }
-        switch status {
-        case .success:
-            return "SUCCESS"
-        case .errorPublishableKey:
-            return "ERROR_PUBLISHABLE_KEY"
-        case .errorPermissions:
-            return "ERROR_PERMISSIONS"
-        case .errorLocation:
-            return "ERROR_LOCATION"
-        case .errorNetwork:
-            return "ERROR_NETWORK"
-        case .errorUnauthorized:
-            return "ERROR_UNAUTHORIZED"
-        case .errorRateLimit:
-            return "ERROR_RATE_LIMIT"
-        case .errorServer:
-            return "ERROR_SERVER"
-        default:
-            return "ERROR_UNKNOWN"
-        }
-    }
+            if call.hasOption("latitude") && call.hasOption("longitude") {
+                let latitude = call.getDouble("latitude") ?? 0.0
+                let longitude = call.getDouble("latitude") ?? 0.0
+                let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
+                let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-    static func stringForEventType(_ type: RadarEventType?) -> String? {
-        guard let type = type else {
-            return nil
-        }
-        switch type {
-        case .userEnteredGeofence:
-            return "user.entered_geofence"
-        case .userExitedGeofence:
-            return "user.exited_geofence"
-        case .userEnteredHome:
-            return "user.entered_home"
-        case .userExitedHome:
-            return "user.exited_home"
-        case .userEnteredOffice:
-            return "user.entered_office"
-        case .userExitedOffice:
-            return "user.exited_office"
-        case .userStartedTraveling:
-            return "user.started_traveling"
-        case .userStoppedTraveling:
-            return "user.stopped_traveling"
-        case .userEnteredPlace:
-            return "user.entered_place"
-        case .userExitedPlace:
-            return "user.exited_place"
-        case .userNearbyPlaceChain:
-            return "user.nearby_place_chain"
-        case .userEnteredRegionCountry:
-            return "user.entered_region_country"
-        case .userExitedRegionCountry:
-            return "user.exited_region_country"
-        case .userEnteredRegionState:
-            return "user.entered_region_state"
-        case .userExitedRegionState:
-            return "user.exited_region_state"
-        case .userEnteredRegionDMA:
-            return "user.entered_region_dma"
-        case .userExitedRegionDMA:
-            return "user.exited_region_dma"
-        default:
-            return nil
-        }
-    }
-
-    static func numberForEventConfidence(_ confidence: RadarEventConfidence?) -> Int {
-        guard let confidence = confidence else {
-            return 0
-        }
-        switch confidence {
-        case .high:
-            return 3
-        case .medium:
-            return 2
-        case .low:
-            return 1
-        default:
-            return 0
-        }
-    }
-
-    static func stringForUserInsightsLocationType(_ type: RadarUserInsightsLocationType?) -> String? {
-        guard let type = type else {
-            return nil
-        }
-        switch type {
-        case .home:
-            return "home"
-        case .office:
-            return "office"
-        default:
-            return nil
-        }
-    }
-
-    static func numberForUserInsightsLocationConfidence(_ confidence: RadarUserInsightsLocationConfidence?) -> Int {
-        guard let confidence = confidence else {
-            return 0
-        }
-        switch confidence {
-        case .high:
-            return 3
-        case .medium:
-            return 2
-        case .low:
-            return 1
-        default:
-            return 0
-        }
-    }
-
-    static func placesProviderForString(_ str: String?) -> RadarPlacesProvider {
-        guard let str = str else {
-            return .none
-        }
-        switch str {
-        case "facebook":
-            return .facebook
-        default:
-            return .none
-        }
-    }
-
-    static func dictionaryForUser(_ user: RadarUser?) -> [String: Any?] {
-        var dict = [String: Any?]()
-        dict["_id"] = user?._id
-        if let userId = user?.userId {
-            dict["userId"] = userId
-        }
-        if let deviceId = user?.deviceId {
-            dict["deviceId"] = deviceId
-        }
-        if let description = user?._description {
-            dict["description"] = description
-        }
-        if let geofences = user?.geofences {
-            dict["geofences"] = RadarPlugin.arrayForGeofences(geofences)
-        }
-        if let insights = user?.insights {
-            dict["insights"] = RadarPlugin.dictionaryForUserInsights(insights)
-        }
-        if let place = user?.place {
-            dict["place"] = RadarPlugin.dictionaryForPlace(place)
-        }
-        if let country = user?.country {
-            dict["country"] = RadarPlugin.dictionaryForRegion(country)
-        }
-        if let state = user?.state {
-            dict["state"] = RadarPlugin.dictionaryForRegion(state)
-        }
-        if let dma = user?.dma {
-            dict["dma"] = RadarPlugin.dictionaryForRegion(dma)
-        }
-        if let postalCode = user?.postalCode {
-            dict["postalCode"] = RadarPlugin.dictionaryForRegion(postalCode)
-        }
-        return dict
-    }
-
-    static func dictionaryForUserInsights(_ insights: RadarUserInsights?) -> [String: Any?] {
-        var dict = [String: Any?]()
-        if let homeLocation = insights?.homeLocation {
-            dict["homeLocation"] = RadarPlugin.dictionaryForUserInsightsLocation(homeLocation)
-        }
-        if let officeLocation = insights?.officeLocation {
-            dict["officeLocation"] = RadarPlugin.dictionaryForUserInsightsLocation(officeLocation)
-        }
-        if let state = insights?.state {
-            dict["state"] = RadarPlugin.dictionaryForUserInsightsState(state)
-        }
-        return dict
-    }
-
-    static func dictionaryForUserInsightsLocation(_ location: RadarUserInsightsLocation?) -> [String: Any?] {
-        return [
-            "type": RadarPlugin.stringForUserInsightsLocationType(location?.type),
-            "location": RadarPlugin.dictionaryForLocation(location?.location),
-            "confidence": RadarPlugin.numberForUserInsightsLocationConfidence(location?.confidence)
-        ]
-    }
-
-    static func dictionaryForUserInsightsState(_ state: RadarUserInsightsState?) -> [String: Any?] {
-        return [
-            "home": state?.home,
-            "office": state?.office,
-            "traveling": state?.traveling
-        ]
-    }
-
-    static func arrayForGeofences(_ geofences: [RadarGeofence]?) -> [[String: Any?]] {
-        var arr: [[String: Any?]] = []
-        guard let geofences = geofences else {
-            return arr
-        }
-        for geofence in geofences {
-            let dict = RadarPlugin.dictionaryForGeofence(geofence)
-            arr.append(dict)
-        }
-        return arr
-    }
-
-    static func dictionaryForGeofence(_ geofence: RadarGeofence?) -> [String: Any?] {
-        var dict = [String: Any?]()
-        dict["_id"] = geofence?._id
-        dict["description"] = geofence?._description
-        if let tag = geofence?.tag {
-            dict["tag"] = tag
-        }
-        if let externalId = geofence?.externalId {
-            dict["externalId"] = externalId
-        }
-        return dict
-    }
-
-    static func arrayForPlaces(_ places: [RadarPlace]?) -> [[String: Any?]] {
-        var arr: [[String: Any?]] = []
-        guard let places = places else {
-            return arr
-        }
-        for place in places {
-            let dict = RadarPlugin.dictionaryForPlace(place)
-            arr.append(dict)
-        }
-        return arr
-    }
-
-    static func dictionaryForPlace(_ place: RadarPlace?) -> [String: Any?] {
-        var dict = [String: Any?]()
-        dict["_id"] = place?._id
-        dict["name"] = place?.name
-        dict["categories"] = place?.categories
-        if let chain = place?.chain {
-          dict["chain"] = [
-              "slug": chain.slug,
-              "name": chain.name
-          ]
-        }
-        return dict
-    }
-
-    static func dictionaryForRegion(_ region: RadarRegion?) -> [String: Any?] {
-        return [
-            "_id": region?._id,
-            "type": region?.type,
-            "code": region?.code,
-            "name": region?.name
-        ]
-    }
-
-    static func arrayForEvents(_ events: [RadarEvent]?) -> [[String: Any?]] {
-        var arr: [[String: Any?]] = []
-        guard let events = events else {
-            return arr
-        }
-        for event in events {
-            let dict = RadarPlugin.dictionaryForEvent(event)
-            arr.append(dict)
-        }
-        return arr
-    }
-
-    static func dictionaryForEvent(_ event: RadarEvent?) -> [String: Any?] {
-        var dict = [String: Any?]()
-        dict["_id"] = event?._id
-        dict["live"] = event?.live
-        dict["type"] = RadarPlugin.stringForEventType(event?.type)
-        if let geofence = event?.geofence {
-            dict["geofence"] = RadarPlugin.dictionaryForGeofence(geofence)
-        }
-        if let place = event?.place {
-            dict["place"] = RadarPlugin.dictionaryForPlace(place)
-        }
-        if let alternatePlaces = event?.alternatePlaces {
-            dict["alternatePlaces"] = RadarPlugin.arrayForPlaces(alternatePlaces)
-        }
-        if let region = event?.region {
-            dict["region"] = RadarPlugin.dictionaryForRegion(region)
-        }
-        dict["confidence"] = RadarPlugin.numberForEventConfidence(event?.confidence)
-        return dict
-    }
-
-    static func dictionaryForLocation(_ location: CLLocation?) -> [String: Any?] {
-        return [
-            "latitude": location?.coordinate.latitude,
-            "longitude": location?.coordinate.longitude,
-            "accuracy": location?.horizontalAccuracy
-        ]
-    }
-
-    static func optionsForDictionary(_ dict: [String: Any]?) -> RadarTrackingOptions {
-        let options = RadarTrackingOptions()
-        guard let dict = dict else {
-            return options
-        }
-        if let sync = dict["sync"] as? String {
-            if sync == "possibleStateChanges" {
-                options.sync = .possibleStateChanges
-            } else if sync == "all" {
-                options.sync = .all
+                Radar.getContext(location: location, completionHandler: completionHandler)
+            } else {
+                Radar.getContext(completionHandler: completionHandler)
             }
         }
-        if let offline = dict["offline"] as? String {
-            if offline == "replayStopped" {
-                options.offline = .replayStopped
-            } else if offline == "replayOff" {
-                options.offline = .replayOff
+    }
+
+    @objc func searchPlaces(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarSearchPlacesCompletionHandler = { (status: RadarStatus, location: CLLocation?, places: [RadarPlace]?) in
+                if status == .success && location != nil && places != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "places": RadarPlace.array(for: places!) ?? []
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+
+            let radius = Int32(call.getInt("radius") ?? 1000)
+            let chains = call.getArray("chains", String.self)
+            let categories = call.getArray("categories", String.self)
+            let groups = call.getArray("groups", String.self)
+            let limit = Int32(call.getInt("limit") ?? 10)
+
+            if call.hasOption("near") {
+                let nearDict = call.get("near", [String:Double].self) ?? [:]
+                let latitude = nearDict["latitude"] ?? 0.0
+                let longitude = nearDict["longitude"] ?? 0.0
+                let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+                Radar.searchPlaces(near: near, radius: radius, chains: chains, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
+            } else {
+                Radar.searchPlaces(radius: radius, chains: chains, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
             }
         }
-        return options
     }
+
+    @objc func searchGeofences(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarSearchGeofencesCompletionHandler = { (status: RadarStatus, location: CLLocation?, geofences: [RadarGeofence]?) in
+                if status == .success && location != nil && geofences != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "geofences": RadarGeofence.array(for: geofences!) ?? []
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+
+            let radius = Int32(call.getInt("radius") ?? 1000)
+            let tags = call.getArray("tags", String.self)
+            let limit = Int32(call.getInt("limit") ?? 10)
+
+            if call.hasOption("near") {
+                let nearDict = call.get("near", [String:Double].self) ?? [:]
+                let latitude = nearDict["latitude"] ?? 0.0
+                let longitude = nearDict["longitude"] ?? 0.0
+                let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
+            } else {
+                Radar.searchGeofences(radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
+            }
+        }
+    }
+
+    @objc func searchPoints(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarSearchPointsCompletionHandler = { (status: RadarStatus, location: CLLocation?, points: [RadarPoint]?) in
+                if status == .success && location != nil && points != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "points": RadarPoint.array(for: points!) ?? []
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+
+            let radius = Int32(call.getInt("radius") ?? 1000)
+            let tags = call.getArray("tags", String.self)
+            let limit = Int32(call.getInt("limit") ?? 10)
+
+            if call.hasOption("near") {
+                let nearDict = call.get("near", [String:Double].self) ?? [:]
+                let latitude = nearDict["latitude"] ?? 0.0
+                let longitude = nearDict["longitude"] ?? 0.0
+                let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+                Radar.searchPoints(near: near, radius: radius, tags: tags, limit: limit, completionHandler: completionHandler)
+            } else {
+                Radar.searchPoints(radius: radius, tags: tags, limit: limit, completionHandler: completionHandler)
+            }
+        }
+    }
+
+    @objc func autocomplete(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let query = call.getString("query") else {
+                call.reject("query is required")
+
+                return
+            }
+
+            guard let nearDict = call.get("near", [String:Double].self) else {
+                call.reject("near is required")
+
+                return
+            }
+            let latitude = nearDict["latitude"] ?? 0.0
+            let longitude = nearDict["longitude"] ?? 0.0
+            let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+            let limit = Int32(call.getInt("limit") ?? 10)
+
+            Radar.autocomplete(query: query, near: near, limit: limit) { (status: RadarStatus, addresses: [RadarAddress]?) in
+                if status == .success && addresses != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "addresses": RadarAddress.array(forAddresses: addresses!) ?? []
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+        }
+    }
+
+    @objc func geocode(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let query = call.getString("query") else {
+                call.reject("query is required")
+
+                return
+            }
+
+            Radar.geocode(address: query) { (status: RadarStatus, addresses: [RadarAddress]?) in
+                if status == .success && addresses != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "addresses": RadarAddress.array(forAddresses: addresses!) ?? []
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+        }
+    }
+
+    @objc func reverseGeocode(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarGeocodeCompletionHandler = { (status: RadarStatus, addresses: [RadarAddress]?) in
+                if status == .success && addresses != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "addresses": RadarAddress.array(forAddresses: addresses!) ?? []
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+
+            if call.hasOption("latitude") && call.hasOption("longitude") {
+                let latitude = call.getDouble("latitude") ?? 0.0
+                let longitude = call.getDouble("latitude") ?? 0.0
+                let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
+                let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+                Radar.reverseGeocode(location: location, completionHandler: completionHandler)
+            } else {
+                Radar.reverseGeocode(completionHandler: completionHandler)
+            }
+        }
+    }
+
+    @objc func ipGeocode(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.ipGeocode { (status: RadarStatus, address: RadarAddress?, proxy: Bool) in
+                if status == .success && address != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "address": address!.dictionaryValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+        }
+    }
+
+    @objc func getDistance(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarRouteCompletionHandler = { (status: RadarStatus, routes: RadarRoutes?) in
+                if status == .success && routes != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "routes": routes!.dictionaryValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+
+            guard let destinationDict = call.get("destination", [String:Double].self) else {
+                call.reject("destination is required")
+
+                return
+            }
+            let destinationLatitude = destinationDict["latitude"] ?? 0.0
+            let destinationLongitude = destinationDict["longitude"] ?? 0.0
+            let destination = CLLocation(coordinate: CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+            guard let modesArr = call.getArray("modes", String.self) else {
+                call.reject("modes is required")
+
+                return
+            }
+            var modes: RadarRouteMode = []
+            if modesArr.contains("FOOT") || modesArr.contains("foot") {
+                modes.insert(.foot)
+            }
+            if modesArr.contains("BIKE") || modesArr.contains("bike") {
+                modes.insert(.bike)
+            }
+            if modesArr.contains("CAR") || modesArr.contains("car") {
+                modes.insert(.car)
+            }
+
+            guard let unitsStr = call.getString("units") else {
+                call.reject("units is required")
+
+                return
+            }
+            let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
+
+            if call.hasOption("origin") {
+                let originDict = call.get("origin", [String:Double].self) ?? [:]
+                let originLatitude = originDict["latitude"] ?? 0.0
+                let originLongitude = originDict["longitude"] ?? 0.0
+                let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+                Radar.getDistance(origin: origin, destination: destination, modes: modes, units: units, completionHandler: completionHandler)
+            } else {
+                Radar.getDistance(destination: destination, modes: modes, units: units, completionHandler: completionHandler)
+            }
+        }
+    }
+
 }

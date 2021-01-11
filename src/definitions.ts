@@ -4,22 +4,117 @@ declare module '@capacitor/core' {
   }
 }
 
+export interface RadarPlugin {
+  initialize(options: { publishableKey: string }): void;
+  setUserId(options: { userId: string }): void;
+  setDescription(options: { description: string }): void;
+  setMetadata(options: { metadata: object }): void;
+  getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
+  requestLocationPermissions(options: { background: boolean }): void;
+  getLocation(): Promise<RadarLocationCallback>;
+  trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number }): Promise<RadarTrackCallback>;
+  startTrackingEfficient(): void;
+  startTrackingResponsive(): void;
+  startTrackingContinuous(): void;
+  startTrackingCustom(options: object): void;
+  mockTracking(options: { origin: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, mode: string, steps: number, interval: number }): void;
+  stopTracking(): void;
+  startTrip(options: object): void;
+  completeTrip(): void;
+  cancelTrip(): void;
+  acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
+  rejectEvent(options: { eventId: string }): void;
+  getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
+  searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
+  searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
+  searchPoints(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchPointsCallback>;
+  autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, limit: number }): Promise<RadarGeocodeCallback>;
+  geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
+  reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
+  ipGeocode(): Promise<RadarIPGeocodeCallback>;
+  getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
+}
+
+export interface RadarLocationCallback {
+  status: string;
+  location?: Location;
+  stopped?: boolean;
+}
+
+export interface RadarTrackCallback {
+  status: string;
+  location?: Location;
+  user?: RadarUser;
+  events?: RadarEvent[];
+}
+
+export interface RadarContextCallback {
+  status: string;
+  location?: Location;
+  context?: RadarContext;
+}
+
+export interface RadarSearchPlacesCallback {
+  status: string;
+  location?: Location;
+  places?: RadarPlace[];
+}
+
+export interface RadarSearchGeofencesCallback {
+  status: string;
+  location?: Location;
+  geofences?: RadarGeofence[];
+}
+
+export interface RadarSearchPointsCallback {
+  status: string;
+  location?: Location;
+  points?: RadarPoint[];
+}
+
+export interface RadarGeocodeCallback {
+  status: string;
+  addresses?: RadarAddress[];
+}
+
+export interface RadarIPGeocodeCallback {
+  status: string;
+  address?: RadarAddress;
+}
+
+export interface RadarRouteCallback {
+  status: string;
+  routes?: RadarRoutes;
+}
+
 export interface Location {
   latitude: number;
   longitude: number;
-  accuracy: number;
+  accuracy?: number;
 }
 
-export interface RadarCallback {
-  status: string;
-  location: Location;
-  user: RadarUser;
-  events: RadarEvent[];
+export interface RadarUser {
+  _id: string;
+  userId?: string;
+  deviceId?: string;
+  description?: string;
+  metadata?: object;
+  geofences?: RadarGeofence[];
+  insights?: RadarInsights;
+  place?: RadarPlace;
+  country?: RadarRegion;
+  state?: RadarRegion;
+  dma?: RadarRegion;
+  postalCode?: RadarRegion;
 }
 
-export interface RadarChain {
-  name: string;
-  slug: string;
+export interface RadarContext {
+  geofences?: RadarGeofence[];
+  place?: RadarPlace;
+  country?: RadarRegion;
+  state?: RadarRegion;
+  dma?: RadarRegion;
+  postalCode?: RadarRegion;
 }
 
 export interface RadarEvent {
@@ -58,7 +153,14 @@ export type RadarEventType =
   | 'user.exited_region_state'
   | 'user.nearby_place_chain'
   | 'user.started_traveling'
-  | 'user.stopped_traveling';
+  | 'user.stopped_traveling'
+  | 'user.started_commuting'
+  | 'user.stopped_commuting'
+  | 'user.started_trip'
+  | 'user.updated_trip'
+  | 'user.approaching_trip_destination'
+  | 'user.arrived_at_trip_destination'
+  | 'user.stopped_trip';
 
 export enum RadarEventVerification {
   accept = 1,
@@ -71,6 +173,34 @@ export interface RadarGeofence {
   description: string;
   tag?: string;
   externalId?: string;
+  metadata?: object;
+}
+
+export interface RadarPlace {
+  _id: string;
+  name: string;
+  categories: string[];
+  chain?: RadarChain;
+}
+
+export interface RadarChain {
+  name: string;
+  slug: string;
+}
+
+export interface RadarRegion {
+  _id: string;
+  type: string;
+  code: string;
+  name: string;
+}
+
+export interface RadarPoint {
+  _id: string;
+  description: string;
+  tag?: string;
+  externalId?: string;
+  metadata?: object;
 }
 
 export interface RadarInsights {
@@ -100,48 +230,45 @@ export interface RadarLocationPermissionsCallback {
   status: string;
 }
 
-export interface RadarPlace {
-  _id: string;
-  name: string;
-  categories: string[];
-  chain?: RadarChain;
+export interface RadarAddress {
+  latitude: number;
+  longitude: number;
+  placeLabel?: string;
+  addressLabel?: string;
+  formattedAddress?: string;
+  country?: string;
+  countryCode?: string;
+  countryFlag?: string;
+  state?: string;
+  stateCode?: string;
+  postalCode?: string;
+  city?: string;
+  borough?: string;
+  county?: string;
+  neighborhood?: string;
+  number?: string;
+  distance?: number;
+  confidence?: string;
 }
 
-export interface RadarPlugin {
-  STATUS: any;
-  PLACES_PROVIDER: any;
-  initialize(options: { publishableKey: string }): void;
-  setPlacesProvider(options: { placesProvider: string }): void;
-  setUserId(options: { userId: string }): void;
-  setDescription(options: { description: string }): void;
-  setMetadata(options: { metadata: object }): void;
-  getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
-  requestLocationPermissions(options: { background: boolean }): void;
-  startTracking(): void;
-  stopTracking(): void;
-  trackOnce(): Promise<RadarCallback>;
-  updateLocation(options: { latitude: number, longitude: number, accuracy: number }): Promise<RadarCallback>;
-  acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
-  rejectEvent(options: { eventId: string }): void;
+export interface RadarRoutes {
+  geodesic: RadarRoute;
+  foot?: RadarRoute;
+  bike?: RadarRoute;
+  car?: RadarRoute;
 }
 
-export interface RadarRegion {
-  _id: string;
-  type: string;
-  code: string;
-  name: string;
+export interface RadarRoute {
+  distance?: RadarRouteDistance;
+  duration?: RadarRouteDuration;
 }
 
-export interface RadarUser {
-  _id: string;
-  userId?: string;
-  deviceId?: string;
-  description?: string;
-  geofences?: RadarGeofence[];
-  insights?: RadarInsights;
-  place?: RadarPlace;
-  country?: RadarRegion;
-  state?: RadarRegion;
-  dma?: RadarRegion;
-  postalCode?: RadarRegion;
+export interface RadarRouteDistance {
+  value: number;
+  text: string;
+}
+
+export interface RadarRouteDuration {
+  value: number;
+  text: string;
 }
