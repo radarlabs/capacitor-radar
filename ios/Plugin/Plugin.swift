@@ -191,6 +191,7 @@ public class RadarPlugin: CAPPlugin {
             let interval = TimeInterval(call.getInt("interval") ?? 1)
 
             Radar.mockTracking(origin: origin, destination: destination, mode: mode, steps: steps, interval: interval, completionHandler: nil)
+            
             call.success()
         }
     }

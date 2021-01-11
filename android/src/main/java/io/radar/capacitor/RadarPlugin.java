@@ -175,7 +175,7 @@ public class RadarPlugin extends Plugin {
     public void startTrackingCustom(PluginCall call) {
         JSObject trackingOptionsObj = call.getObject("options");
         JSONObject trackingOptionsJson = RadarPlugin.jsonObjectForJSObject(trackingOptionsObj);
-        RadarTrackingOptions trackingOptions  = RadarTrackingOptions.fromJson(trackingOptionsObj);
+        RadarTrackingOptions trackingOptions  = RadarTrackingOptions.fromJson(trackingOptionsJson);
         Radar.startTracking(trackingOptions);
         call.success();
     }
@@ -219,15 +219,21 @@ public class RadarPlugin extends Plugin {
             mode = Radar.RadarRouteMode.FOOT;
         } else if (modeStr.equals("BIKE") || modeStr.equals("bike")) {
             mode = Radar.RadarRouteMode.BIKE;
-        }
-        if (modesList.contains("CAR") || modesList.contains("car")) {
+        } else if (modeStr.equals("CAR") || modeStr.equals("car")) {
             mode = Radar.RadarRouteMode.CAR;
         }
 
         int steps = call.getInt("steps", 10);
         int interval = call.getInt("interval", 1);
 
-        Radar.mockTracking(origin, destination, mode, steps, interval, null);
+        Radar.mockTracking(origin, destination, mode, steps, interval, new Radar.RadarTrackCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus radarStatus, @Nullable Location location, @Nullable RadarEvent[] radarEvents, @Nullable RadarUser radarUser) {
+
+            }
+        });
+
+        call.success();
     }
 
     @PluginMethod()
@@ -240,7 +246,7 @@ public class RadarPlugin extends Plugin {
     public void startTrip(PluginCall call) {
         JSObject optionsObj = call.getObject("options");
         JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);
-        RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
+        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
         Radar.startTrip(options);
         call.success();
     }
@@ -371,9 +377,9 @@ public class RadarPlugin extends Plugin {
             near.setLongitude(longitude);
             near.setAccuracy(5);
 
-            Radar.searchGeofences(near, radius, tags, limit, callback);
+            Radar.searchGeofences(near, radius, tags, null, limit, callback);
         } else {
-            Radar.searchGeofences(radius, tags, limit, callback);
+            Radar.searchGeofences(radius, tags, null, limit, callback);
         }
     }
 
@@ -510,11 +516,12 @@ public class RadarPlugin extends Plugin {
     public void ipGeocode(final PluginCall call) throws JSONException {
         Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
             @Override
-            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address) {
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy) {
                 if (status == Radar.RadarStatus.SUCCESS && address != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
                     ret.put("address", RadarPlugin.jsObjectForJSONObject(address.toJson()));
+                    ret.put("proxy", proxy);
                     call.resolve(ret);
                 } else {
                     call.reject(status.toString());
