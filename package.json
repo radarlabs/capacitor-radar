@@ -22,12 +22,6 @@
     "@capacitor/ios": "^3.0.0-alpha.12",
     "typescript": "^3.2.4"
   },
-  "files": [
-    "dist/",
-    "ios/",
-    "android/",
-    "CapacitorRadar.podspec"
-  ],
   "keywords": [
     "capacitor",
     "plugin",
