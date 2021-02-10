@@ -32,6 +32,7 @@ import io.radar.sdk.model.RadarPoint;
 import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarUser;
 
+@NativePlugin()
 public class RadarPlugin extends Plugin {
 
     @PluginMethod()
