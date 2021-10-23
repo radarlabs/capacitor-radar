@@ -64,12 +64,12 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void getLocationPermissionsStatus(PluginCall call) {
-        boolean foreground = hasDefinedPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        boolean foreground = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
 
         String status;
         if (Build.VERSION.SDK_INT >= 29) {
             if (foreground) {
-                boolean background = hasDefinedPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                boolean background = hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
                 status = background ? "GRANTED_BACKGROUND" : "GRANTED_FOREGROUND";
             } else {
                 status = "DENIED";

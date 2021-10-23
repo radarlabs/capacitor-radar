@@ -155,7 +155,7 @@ public class RadarPlugin: CAPPlugin {
 
     @objc func mockTracking(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let originDict = call.get("origin", [String:Double].self) else {
+            guard let originDict = call.options["origin"] as? [String:Double] else {
                 call.reject("origin is required")
 
                 return
@@ -164,7 +164,7 @@ public class RadarPlugin: CAPPlugin {
             let originLongitude = originDict["longitude"] ?? 0.0
             let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-            guard let destinationDict = call.get("destination", [String:Double].self) else {
+            guard let destinationDict = call.options["destination"] as? [String:Double] else {
                 call.reject("destination is required")
 
                 return
@@ -298,7 +298,7 @@ public class RadarPlugin: CAPPlugin {
             let limit = Int32(call.getInt("limit") ?? 10)
 
             if call.hasOption("near") {
-                let nearDict = call.get("near", [String:Double].self) ?? [:]
+                let nearDict = call.options["near"] as! [String:Double]
                 let latitude = nearDict["latitude"] ?? 0.0
                 let longitude = nearDict["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
@@ -329,7 +329,7 @@ public class RadarPlugin: CAPPlugin {
             let limit = Int32(call.getInt("limit") ?? 10)
 
             if call.hasOption("near") {
-                let nearDict = call.get("near", [String:Double].self) ?? [:]
+                let nearDict = call.options["near"] as! [String:Double]
                 let latitude = nearDict["latitude"] ?? 0.0
                 let longitude = nearDict["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
@@ -360,7 +360,7 @@ public class RadarPlugin: CAPPlugin {
             let limit = Int32(call.getInt("limit") ?? 10)
 
             if call.hasOption("near") {
-                let nearDict = call.get("near", [String:Double].self) ?? [:]
+                let nearDict = call.options["near"] as! [String:Double]
                 let latitude = nearDict["latitude"] ?? 0.0
                 let longitude = nearDict["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
@@ -380,7 +380,7 @@ public class RadarPlugin: CAPPlugin {
                 return
             }
 
-            guard let nearDict = call.get("near", [String:Double].self) else {
+            guard let nearDict = call.options["near"] as? [String:Double] else {
                 call.reject("near is required")
 
                 return
@@ -479,7 +479,7 @@ public class RadarPlugin: CAPPlugin {
                 }
             }
 
-            guard let destinationDict = call.get("destination", [String:Double].self) else {
+            guard let destinationDict = call.options["destination"] as? [String:Double] else {
                 call.reject("destination is required")
 
                 return
@@ -512,7 +512,7 @@ public class RadarPlugin: CAPPlugin {
             let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
 
             if call.hasOption("origin") {
-                let originDict = call.get("origin", [String:Double].self) ?? [:]
+                let originDict = call.options["origin"] as! [String:Double]
                 let originLatitude = originDict["latitude"] ?? 0.0
                 let originLongitude = originDict["longitude"] ?? 0.0
                 let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
