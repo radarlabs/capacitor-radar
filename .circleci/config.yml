@@ -19,7 +19,7 @@ jobs:
       - checkout:
           path: ~/capacitor-radar
       - run: npm install
-      - run: sudo chown -R $USER /usr/local/lib/node_modules
+      - run: chown -R $USER:$USER android
       - run: npm install -g @ionic/cli
       - run: ionic build
       - run: npx cap sync
