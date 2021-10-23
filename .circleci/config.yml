@@ -19,10 +19,12 @@ jobs:
       - checkout:
           path: ~/capacitor-radar
       - run: npm install
+      - run: sudo chown -R $USER /usr/local/lib/node_modules
       - run: npm install -g @ionic/cli
       - run: ionic build
       - run: npx cap sync
       - run: chown -R $USER:$USER android
+      - run: ionic capacitor run android --list
       - run: ionic capacitor run android
   ios:
     macos:
@@ -35,6 +37,7 @@ jobs:
       - run: npm install -g @ionic/cli
       - run: ionic build
       - run: npx cap sync
+      - run: ionic capacitor run ios --list
       - run: ionic capacitor run ios
 workflows:
   version: 2
