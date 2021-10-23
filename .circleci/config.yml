@@ -20,6 +20,7 @@ jobs:
           path: ~/capacitor-radar
       - run: npm install
       - run: npm install -g @ionic/cli
+      - run: ionic build
       - run: npx cap sync
       - run: chown -R $USER:$USER android
       - run: ionic capacitor run android
@@ -32,6 +33,7 @@ jobs:
           path: ~/capacitor-radar
       - run: npm install
       - run: npm install -g @ionic/cli
+      - run: ionic build
       - run: npx cap sync
       - run: ionic capacitor run ios
 workflows:
