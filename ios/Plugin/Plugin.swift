@@ -16,7 +16,7 @@ public class RadarPlugin: CAPPlugin {
                 return
             }
             Radar.initialize(publishableKey: publishableKey)
-            call.success()
+            call.resolve()
         }
     }
 
@@ -24,7 +24,7 @@ public class RadarPlugin: CAPPlugin {
         DispatchQueue.main.async {
             let userId = call.getString("userId")
             Radar.setUserId(userId)
-            call.success()
+            call.resolve()
         }
     }
 
@@ -32,7 +32,7 @@ public class RadarPlugin: CAPPlugin {
         DispatchQueue.main.async {
             let description = call.getString("description")
             Radar.setDescription(description)
-            call.success()
+            call.resolve()
         }
     }
 
@@ -40,7 +40,7 @@ public class RadarPlugin: CAPPlugin {
         DispatchQueue.main.async {
             let metadata = call.getObject("metadata")
             Radar.setMetadata(metadata)
-            call.success()
+            call.resolve()
         }
     }
 
@@ -56,7 +56,7 @@ public class RadarPlugin: CAPPlugin {
             default:
                 authorizationStatusStr = "DENIED"
             }
-            call.success([
+            call.resolve([
                 "status": authorizationStatusStr
             ])
         }
@@ -74,7 +74,7 @@ public class RadarPlugin: CAPPlugin {
             } else {
                 self.locationManager.requestWhenInUseAuthorization()
             }
-            call.success()
+            call.resolve()
         }
     }
 
@@ -109,13 +109,13 @@ public class RadarPlugin: CAPPlugin {
                 }
             }
 
-            if call.hasOption("latitude") && call.hasOption("longitude") && call.hasOption("accuracy") {
-                let latitude = call.getDouble("latitude") ?? 0.0
-                let longitude = call.getDouble("latitude") ?? 0.0
-                let accuracy = call.getDouble("accuracy") ?? 0.0
-                let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
-                let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
+            let latitude = call.getDouble("latitude") ?? 0.0
+            let longitude = call.getDouble("latitude") ?? 0.0
+            let accuracy = call.getDouble("accuracy") ?? 0.0
+            let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
+            let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
 
+            if latitude != 0.0 && longitude != 0.0 && accuracy != 0.0 {
                 Radar.trackOnce(location: location, completionHandler: completionHandler)
             } else {
                 Radar.trackOnce(completionHandler: completionHandler)
@@ -126,21 +126,21 @@ public class RadarPlugin: CAPPlugin {
     @objc func startTrackingEfficient(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.startTracking(trackingOptions: RadarTrackingOptions.efficient)
-            call.success()
+            call.resolve()
         }
     }
 
     @objc func startTrackingResponsive(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.startTracking(trackingOptions: RadarTrackingOptions.responsive)
-            call.success()
+            call.resolve()
         }
     }
 
     @objc func startTrackingContinuous(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.startTracking(trackingOptions: RadarTrackingOptions.continuous)
-            call.success()
+            call.resolve()
         }
     }
     
@@ -149,7 +149,7 @@ public class RadarPlugin: CAPPlugin {
             let trackingOptionsDict = call.getObject("options") ?? [:]
             let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
             Radar.startTracking(trackingOptions: trackingOptions)
-            call.success()
+            call.resolve()
         }
     }
 
@@ -192,14 +192,14 @@ public class RadarPlugin: CAPPlugin {
 
             Radar.mockTracking(origin: origin, destination: destination, mode: mode, steps: steps, interval: interval, completionHandler: nil)
             
-            call.success()
+            call.resolve()
         }
     }
 
     @objc func stopTracking(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.stopTracking()
-            call.success()
+            call.resolve()
         }
     }
 
@@ -214,14 +214,14 @@ public class RadarPlugin: CAPPlugin {
     @objc func completeTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.completeTrip()
-            call.success()
+            call.resolve()
         }
     }
 
     @objc func cancelTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.cancelTrip()
-            call.success()
+            call.resolve()
         }
     }
 
@@ -234,7 +234,7 @@ public class RadarPlugin: CAPPlugin {
             }
             let verifiedPlaceId = call.getString("verifiedPlaceId") ?? nil
             Radar.acceptEventId(eventId, verifiedPlaceId: verifiedPlaceId)
-            call.success()
+            call.resolve()
         }
     }
 
@@ -246,7 +246,7 @@ public class RadarPlugin: CAPPlugin {
                 return
             }
             Radar.rejectEventId(eventId)
-            call.success()
+            call.resolve()
         }
     }
 
@@ -264,12 +264,13 @@ public class RadarPlugin: CAPPlugin {
                 }
             }
 
-            if call.hasOption("latitude") && call.hasOption("longitude") {
-                let latitude = call.getDouble("latitude") ?? 0.0
-                let longitude = call.getDouble("latitude") ?? 0.0
+            let latitude = call.getDouble("latitude") ?? 0.0
+            let longitude = call.getDouble("latitude") ?? 0.0
+            
+            if latitude != 0.0 && longitude != 0.0 {
                 let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
                 let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
-
+                
                 Radar.getContext(location: location, completionHandler: completionHandler)
             } else {
                 Radar.getContext(completionHandler: completionHandler)
@@ -297,12 +298,13 @@ public class RadarPlugin: CAPPlugin {
             let groups = call.getArray("groups", String.self)
             let limit = Int32(call.getInt("limit") ?? 10)
 
-            if call.hasOption("near") {
-                let nearDict = call.options["near"] as! [String:Double]
-                let latitude = nearDict["latitude"] ?? 0.0
-                let longitude = nearDict["longitude"] ?? 0.0
+            let nearDict = call.options["near"] as? [String:Double] ?? nil
+            
+            if nearDict != nil {
+                let latitude = nearDict?["latitude"] ?? 0.0
+                let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
-
+                
                 Radar.searchPlaces(near: near, radius: radius, chains: chains, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
             } else {
                 Radar.searchPlaces(radius: radius, chains: chains, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
@@ -328,10 +330,10 @@ public class RadarPlugin: CAPPlugin {
             let tags = call.getArray("tags", String.self)
             let limit = Int32(call.getInt("limit") ?? 10)
 
-            if call.hasOption("near") {
-                let nearDict = call.options["near"] as! [String:Double]
-                let latitude = nearDict["latitude"] ?? 0.0
-                let longitude = nearDict["longitude"] ?? 0.0
+            let nearDict = call.options["near"] as? [String:Double] ?? nil
+            if nearDict != nil {
+                let latitude = nearDict?["latitude"] ?? 0.0
+                let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
                 Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
@@ -359,12 +361,12 @@ public class RadarPlugin: CAPPlugin {
             let tags = call.getArray("tags", String.self)
             let limit = Int32(call.getInt("limit") ?? 10)
 
-            if call.hasOption("near") {
-                let nearDict = call.options["near"] as! [String:Double]
-                let latitude = nearDict["latitude"] ?? 0.0
-                let longitude = nearDict["longitude"] ?? 0.0
+            let nearDict = call.options["near"] as? [String:Double] ?? nil
+            if nearDict != nil {
+                let latitude = nearDict?["latitude"] ?? 0.0
+                let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
-
+                
                 Radar.searchPoints(near: near, radius: radius, tags: tags, limit: limit, completionHandler: completionHandler)
             } else {
                 Radar.searchPoints(radius: radius, tags: tags, limit: limit, completionHandler: completionHandler)
@@ -438,9 +440,10 @@ public class RadarPlugin: CAPPlugin {
                 }
             }
 
-            if call.hasOption("latitude") && call.hasOption("longitude") {
-                let latitude = call.getDouble("latitude") ?? 0.0
-                let longitude = call.getDouble("latitude") ?? 0.0
+            let latitude = call.getDouble("latitude") ?? 0.0
+            let longitude = call.getDouble("latitude") ?? 0.0
+            
+            if latitude != 0.0 && longitude != 0.0 {
                 let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
                 let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
