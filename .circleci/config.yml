@@ -37,8 +37,7 @@ jobs:
       - run: npm install -g @ionic/cli
       - run: ionic build
       - run: npx cap sync
-      - run: ionic capacitor run ios --list
-      - run: ionic capacitor run ios
+      - run: ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
 workflows:
   version: 2
   node-android-ios:
