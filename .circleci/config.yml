@@ -19,11 +19,9 @@ jobs:
       - checkout:
           path: ~/capacitor-radar
       - run: npm install
-      - run: chown -R $USER:$USER android
-      - run: npm install -g @ionic/cli
+      - run: npm install @ionic/cli
       - run: ionic build
       - run: npx cap sync
-      - run: chown -R $USER:$USER android
       - run: ionic capacitor run android --list
       - run: ionic capacitor run android
   ios:
@@ -34,7 +32,7 @@ jobs:
       - checkout:
           path: ~/capacitor-radar
       - run: npm install
-      - run: npm install -g @ionic/cli
+      - run: npm install @ionic/cli
       - run: ionic build
       - run: npx cap sync
       - run: ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
