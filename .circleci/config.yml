@@ -20,7 +20,7 @@ jobs:
           path: ~/capacitor-radar
       - run: npm install
       - run: sudo npm install -g @ionic/cli
-      - run: ionic build
+      - run: npm install capacitor-radar && ionic build
       - run: npx cap sync
       - run: chown -R $USER:$USER android
       - run: cd android && ./gradlew assembleDebug
@@ -33,7 +33,7 @@ jobs:
           path: ~/capacitor-radar
       - run: npm install
       - run: sudo npm install -g @ionic/cli
-      - run: ionic build
+      - run: npm install capacitor-radar && ionic build
       - run: npx cap sync
       - run: ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
 workflows:
