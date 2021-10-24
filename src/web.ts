@@ -1,7 +1,8 @@
 // @ts-nocheck
 
 import { WebPlugin } from '@capacitor/core';
-import {
+
+import type {
   RadarLocationPermissionsCallback,
   RadarLocationCallback,
   RadarTrackCallback,
@@ -13,6 +14,7 @@ import {
   RadarRouteCallback,
   RadarPlugin
 } from './definitions';
+
 import Radar from 'radar-sdk-js';
 
 export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
