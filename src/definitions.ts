@@ -1,9 +1,3 @@
-declare module '@capacitor/core' {
-  interface PluginRegistry {
-    RadarPlugin: RadarPlugin;
-  }
-}
-
 export interface RadarPlugin {
   initialize(options: { publishableKey: string }): void;
   setUserId(options: { userId: string }): void;
