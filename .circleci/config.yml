@@ -18,16 +18,12 @@ jobs:
     steps:
       - checkout:
           path: ~/capacitor-radar
-      - android/create-avd:
-          avd-name: myavd
-          system-image: system-images;android-29;default;x86
-          install: true
       - run: npm install
       - run: sudo npm install -g @ionic/cli
       - run: ionic build
       - run: npx cap sync
-      - run: ionic capacitor run android --list
-      - run: ionic capacitor run android
+      - run: chown -R $USER:$USER android
+      - run: cd android && ./gradlew assembleDebug
   ios:
     macos:
       xcode: "12.5.1"
