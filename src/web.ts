@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { WebPlugin } from '@capacitor/core';
 import {
   RadarLocationPermissionsCallback,
@@ -14,13 +16,6 @@ import {
 import Radar from 'radar-sdk-js';
 
 export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
-  constructor() {
-    super({
-      name: 'RadarPlugin',
-      platforms: ['web']
-    });
-  }
-
   initialize(options: { publishableKey: string }): void {
     Radar.initialize(options.publishableKey);
   }
