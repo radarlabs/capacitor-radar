@@ -26,7 +26,7 @@ jobs:
       - run: cd android && ./gradlew assembleDebug
   ios:
     macos:
-      xcode: "12.5.1"
+      xcode: "12.3.0"
     working_directory: ~/capacitor-radar/example
     steps:
       - checkout:
