@@ -9,6 +9,7 @@ import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.annotation.CapacitorPlugin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,10 +29,10 @@ import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
 import io.radar.sdk.model.RadarPlace;
-import io.radar.sdk.model.RadarPoint;
 import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarUser;
 
+@CapacitorPlugin(name = "Radar")
 public class RadarPlugin extends Plugin {
 
     @PluginMethod()
@@ -380,42 +381,6 @@ public class RadarPlugin extends Plugin {
             Radar.searchGeofences(near, radius, tags, null, limit, callback);
         } else {
             Radar.searchGeofences(radius, tags, null, limit, callback);
-        }
-    }
-
-    @PluginMethod()
-    public void searchPoints(final PluginCall call) throws JSONException {
-        Radar.RadarSearchPointsCallback callback = new Radar.RadarSearchPointsCallback() {
-            @Override
-            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarPoint[] points) {
-                if (status == Radar.RadarStatus.SUCCESS && location != null && points != null) {
-                    JSObject ret = new JSObject();
-                    ret.put("status", status.toString());
-                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
-                    ret.put("points", RadarPlugin.jsArrayForJSONArray(RadarPoint.toJson(points)));
-                    call.resolve(ret);
-                } else {
-                    call.reject(status.toString());
-                }
-            }
-        };
-
-        int radius = call.getInt("radius", 1000);
-        String[] tags = RadarPlugin.stringArrayForJSArray(call.getArray("tags"));
-        int limit = call.getInt("limit", 10);
-
-        if (call.hasOption("near")) {
-            JSObject nearObj = call.getObject("near");
-            double latitude = nearObj.getDouble("latitude");
-            double longitude = nearObj.getDouble("longitude");
-            Location near = new Location("RadarSDK");
-            near.setLatitude(latitude);
-            near.setLongitude(longitude);
-            near.setAccuracy(5);
-
-            Radar.searchPoints(near, radius, tags, limit, callback);
-        } else {
-            Radar.searchPoints(radius, tags, limit, callback);
         }
     }
 

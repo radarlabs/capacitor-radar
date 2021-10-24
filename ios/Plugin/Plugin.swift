@@ -343,37 +343,6 @@ public class RadarPlugin: CAPPlugin {
         }
     }
 
-    @objc func searchPoints(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            let completionHandler: RadarSearchPointsCompletionHandler = { (status: RadarStatus, location: CLLocation?, points: [RadarPoint]?) in
-                if status == .success && location != nil && points != nil {
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "location": Radar.dictionaryForLocation(location!),
-                        "points": RadarPoint.array(for: points!) ?? []
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
-                }
-            }
-
-            let radius = Int32(call.getInt("radius") ?? 1000)
-            let tags = call.getArray("tags", String.self)
-            let limit = Int32(call.getInt("limit") ?? 10)
-
-            let nearDict = call.options["near"] as? [String:Double] ?? nil
-            if nearDict != nil {
-                let latitude = nearDict?["latitude"] ?? 0.0
-                let longitude = nearDict?["longitude"] ?? 0.0
-                let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
-                
-                Radar.searchPoints(near: near, radius: radius, tags: tags, limit: limit, completionHandler: completionHandler)
-            } else {
-                Radar.searchPoints(radius: radius, tags: tags, limit: limit, completionHandler: completionHandler)
-            }
-        }
-    }
-
     @objc func autocomplete(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             guard let query = call.getString("query") else {
