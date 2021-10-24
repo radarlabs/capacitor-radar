@@ -18,6 +18,10 @@ jobs:
     steps:
       - checkout:
           path: ~/capacitor-radar
+      - android/create-avd:
+          avd-name: myavd
+          system-image: system-images;android-29;default;x86
+          install: true
       - run: npm install
       - run: sudo npm install -g @ionic/cli
       - run: ionic build
