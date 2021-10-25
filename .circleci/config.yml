@@ -25,7 +25,7 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: sudo npm install -g @ionic/cli
-      - run: cd example && && npm install
+      - run: cd example && npm install
       - run: cd example && ionic build
       - run: cd example && npx cap sync
       - run: cd example && ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
