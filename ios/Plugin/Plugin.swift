@@ -4,9 +4,37 @@ import Capacitor
 import RadarSDK
 
 @objc(RadarPlugin)
-public class RadarPlugin: CAPPlugin {
+public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     let locationManager = CLLocationManager()
+
+    func didReceiveEvents(_ events: [RadarEvent], user: RadarUser?) {
+        self.notifyListeners("events", data: [
+            "events": RadarEvent.array(for: events!) ?? [],
+            "user": user?.dictionaryValue()
+        ])
+    }
+
+    func didUpdateLocation(_ location: CLLocation, user: RadarUser) {
+        self.notifyListeners("location", data: [
+            "location": Radar.dictionaryForLocation(location!),
+            "user": user!.dictionaryValue()
+        ])
+    }
+
+    func didUpdateClientLocation(_ location: CLLocation, stopped: Bool, source: RadarLocationSource) {
+        self.notifyListeners("clientLocation", data: [
+            "location": Radar.dictionaryForLocation(location!),
+            "stopped": stopped,
+            "source": Radar.stringForSource(source)
+        ])
+    }
+
+    func didFail(status: RadarStatus) {
+        self.notifyListeners("error", data: [
+            "status": Radar.stringForStatus(status)
+        ])
+    }
 
     @objc func initialize(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
@@ -16,6 +44,7 @@ public class RadarPlugin: CAPPlugin {
                 return
             }
             Radar.initialize(publishableKey: publishableKey)
+            Radar.setDelegate(self)
             call.resolve()
         }
     }
