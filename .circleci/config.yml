@@ -9,13 +9,12 @@ jobs:
           path: ~/capacitor-radar
       - run: npm install
       - run: npm run build
-      - run: cd example
-      - run: npm install
       - run: sudo npm install -g @ionic/cli
-      - run: ionic build
-      - run: npx cap sync
-      - run: chown -R $USER:$USER android
-      - run: cd android && ./gradlew assembleDebug
+      - run: cd example && npm install
+      - run: cd example && ionic build
+      - run: cd example && npx cap sync
+      - run: chown -R $USER:$USER example/android
+      - run: cd example/android && ./gradlew assembleDebug
   ios:
     macos:
       xcode: "12.3.0"
@@ -25,12 +24,11 @@ jobs:
           path: ~/capacitor-radar
       - run: npm install
       - run: npm run build
-      - run: cd example
-      - run: npm install
       - run: sudo npm install -g @ionic/cli
-      - run: ionic build
-      - run: npx cap sync
-      - run: ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
+      - run: cd example && npm install
+      - run: cd example && ionic build
+      - run: cd example && npx cap sync
+      - run: cd example && ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
 workflows:
   version: 2
   node-android-ios:
