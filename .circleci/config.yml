@@ -11,11 +11,7 @@ jobs:
       - persist_to_workspace:
           root: ~/capacitor-radar
           paths:
-            - android
-            - dist
-            - ios
-            - node_modules
-            - CapacitorRadar.podspec
+            - .
   android:
     working_directory: ~/capacitor-radar/example
     docker:
@@ -25,7 +21,6 @@ jobs:
           path: ~/capacitor-radar
       - run: npm install
       - run: sudo npm install -g @ionic/cli
-      - run: npm install ../
       - run: ionic build
       - run: npx cap sync
       - run: chown -R $USER:$USER android
@@ -39,7 +34,6 @@ jobs:
           path: ~/capacitor-radar
       - run: npm install
       - run: sudo npm install -g @ionic/cli
-      - run: npm install ../
       - run: ionic build
       - run: npx cap sync
       - run: ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
