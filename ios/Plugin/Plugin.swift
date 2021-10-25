@@ -5,34 +5,40 @@ import RadarSDK
 
 @objc(RadarPlugin)
 public class RadarPlugin: CAPPlugin, RadarDelegate {
-
+    
     let locationManager = CLLocationManager()
 
-    func didReceiveEvents(_ events: [RadarEvent], user: RadarUser?) {
+    public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser) {
         self.notifyListeners("events", data: [
-            "events": RadarEvent.array(for: events!) ?? [],
-            "user": user?.dictionaryValue()
+            "events": RadarEvent.array(for: events),
+            "user": user.dictionaryValue()
         ])
     }
 
-    func didUpdateLocation(_ location: CLLocation, user: RadarUser) {
+    public func didUpdateLocation(_ location: CLLocation, user: RadarUser) {
         self.notifyListeners("location", data: [
-            "location": Radar.dictionaryForLocation(location!),
-            "user": user!.dictionaryValue()
+            "location": Radar.dictionaryForLocation(location),
+            "user": user.dictionaryValue()
         ])
     }
 
-    func didUpdateClientLocation(_ location: CLLocation, stopped: Bool, source: RadarLocationSource) {
+    public func didUpdateClientLocation(_ location: CLLocation, stopped: Bool, source: RadarLocationSource) {
         self.notifyListeners("clientLocation", data: [
-            "location": Radar.dictionaryForLocation(location!),
+            "location": Radar.dictionaryForLocation(location),
             "stopped": stopped,
             "source": Radar.stringForSource(source)
         ])
     }
 
-    func didFail(status: RadarStatus) {
+    public func didFail(status: RadarStatus) {
         self.notifyListeners("error", data: [
             "status": Radar.stringForStatus(status)
+        ])
+    }
+    
+    public func didLog(message: String) {
+        self.notifyListeners("log", data: [
+            "message": message
         ])
     }
 
