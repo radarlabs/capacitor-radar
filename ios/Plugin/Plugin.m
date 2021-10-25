@@ -24,7 +24,6 @@ CAP_PLUGIN(RadarPlugin, "RadarPlugin",
     CAP_PLUGIN_METHOD(getContext, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(searchPlaces, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(searchGeofences, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(searchPoints, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(autocomplete, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(geocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(reverseGeocode, CAPPluginReturnPromise);

@@ -1,9 +1,3 @@
-declare module '@capacitor/core' {
-  interface PluginRegistry {
-    RadarPlugin: RadarPlugin;
-  }
-}
-
 export interface RadarPlugin {
   initialize(options: { publishableKey: string }): void;
   setUserId(options: { userId: string }): void;
@@ -27,7 +21,6 @@ export interface RadarPlugin {
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
   searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
-  searchPoints(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchPointsCallback>;
   autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, limit: number }): Promise<RadarGeocodeCallback>;
   geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
   reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
@@ -64,12 +57,6 @@ export interface RadarSearchGeofencesCallback {
   status: string;
   location?: Location;
   geofences?: RadarGeofence[];
-}
-
-export interface RadarSearchPointsCallback {
-  status: string;
-  location?: Location;
-  points?: RadarPoint[];
 }
 
 export interface RadarGeocodeCallback {
@@ -193,14 +180,6 @@ export interface RadarRegion {
   type: string;
   code: string;
   name: string;
-}
-
-export interface RadarPoint {
-  _id: string;
-  description: string;
-  tag?: string;
-  externalId?: string;
-  metadata?: object;
 }
 
 export interface RadarInsights {

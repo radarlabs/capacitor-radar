@@ -1,27 +1,23 @@
+// @ts-nocheck
+
 import { WebPlugin } from '@capacitor/core';
-import {
+
+import type {
   RadarLocationPermissionsCallback,
   RadarLocationCallback,
   RadarTrackCallback,
   RadarContextCallback,
   RadarSearchPlacesCallback,
   RadarSearchGeofencesCallback,
-  RadarSearchPointsCallback,
   RadarGeocodeCallback,
   RadarIPGeocodeCallback,
   RadarRouteCallback,
   RadarPlugin
 } from './definitions';
+
 import Radar from 'radar-sdk-js';
 
 export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
-  constructor() {
-    super({
-      name: 'RadarPlugin',
-      platforms: ['web']
-    });
-  }
-
   initialize(options: { publishableKey: string }): void {
     Radar.initialize(options.publishableKey);
   }
@@ -197,22 +193,6 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async searchPoints(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchPointsCallback> {
-    return new Promise((resolve, reject) => {
-      Radar.searchPoints(options, (err, { status, location, points }) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({
-            status,
-            location,
-            points,
-          });
-        }
-      });
-    });
-  }
-
   async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, limit: number }): Promise<RadarGeocodeCallback> {
     return new Promise((resolve, reject) => {
       Radar.autocomplete(options, (err, { status, addresses }) => {
@@ -299,6 +279,3 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
 const radarPluginWeb = new RadarPluginWeb();
 
 export { radarPluginWeb };
-
-import { registerWebPlugin } from '@capacitor/core';
-registerWebPlugin(radarPluginWeb);

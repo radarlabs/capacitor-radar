@@ -1,14 +1,19 @@
 package io.radar.capacitor;
 
 import android.Manifest;
+import android.content.Context;
 import android.location.Location;
 import android.os.Build;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.annotation.CapacitorPlugin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import io.radar.sdk.Radar;
+import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
@@ -28,48 +34,113 @@ import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
 import io.radar.sdk.model.RadarPlace;
-import io.radar.sdk.model.RadarPoint;
 import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarUser;
 
+@CapacitorPlugin(name = "Radar")
 public class RadarPlugin extends Plugin {
+
+    public class RadarPluginReceiver extends RadarReceiver {
+
+        private static final String TAG = "RadarPluginReceiver";
+
+        @Override
+        public void onEventsReceived(@NonNull Context context, @NonNull RadarEvent[] events, @NonNull RadarUser user) {
+            try {
+                JSObject ret = new JSObject();
+                ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
+                ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                notifyListeners("events", ret);
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
+            }
+        }
+
+        @Override
+        public void onLocationUpdated(@NonNull Context context, @NonNull Location location, @NonNull RadarUser user) {
+            try {
+                JSObject ret = new JSObject();
+                ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                notifyListeners("location", ret);
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
+            }
+        }
+
+        @Override
+        public void onClientLocationUpdated(@NonNull Context context, @NonNull Location location, boolean stopped, @NonNull Radar.RadarLocationSource source) {
+            try {
+                JSObject ret = new JSObject();
+                ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                ret.put("stopped", stopped);
+                ret.put("source", Radar.stringForSource(source));
+                notifyListeners("clientLocation", ret);
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
+            }
+        }
+
+        @Override
+        public void onError(@NonNull Context context, @NonNull Radar.RadarStatus status) {
+            try {
+                JSObject ret = new JSObject();
+                ret.put("status", status.toString());
+                notifyListeners("error", ret);
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
+            }
+        }
+
+        @Override
+        public void onLog(@NonNull Context context, @NonNull String message) {
+            try {
+                JSObject ret = new JSObject();
+                ret.put("message", message);
+                notifyListeners("log", ret);
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
+            }
+        }
+
+    }
 
     @PluginMethod()
     public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
         Radar.initialize(this.getContext(), publishableKey);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
     public void setUserId(PluginCall call) {
         String userId = call.getString("userId");
         Radar.setUserId(userId);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
     public void setDescription(PluginCall call) {
         String description = call.getString("description");
         Radar.setDescription(description);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
     public void setMetadata(PluginCall call) {
         JSObject metadata = call.getObject("metadata");
         Radar.setMetadata(RadarPlugin.jsonObjectForJSObject(metadata));
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
     public void getLocationPermissionsStatus(PluginCall call) {
-        boolean foreground = hasDefinedPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        boolean foreground = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
 
         String status;
         if (Build.VERSION.SDK_INT >= 29) {
             if (foreground) {
-                boolean background = hasDefinedPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                boolean background = hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
                 status = background ? "GRANTED_BACKGROUND" : "GRANTED_FOREGROUND";
             } else {
                 status = "DENIED";
@@ -79,7 +150,7 @@ public class RadarPlugin extends Plugin {
         }
         JSObject ret = new JSObject();
         ret.put("status", status);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -99,7 +170,7 @@ public class RadarPlugin extends Plugin {
                 pluginRequestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, requestCode);
             }
         }
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
@@ -156,19 +227,19 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void startTrackingEfficient(PluginCall call) {
         Radar.startTracking(RadarTrackingOptions.EFFICIENT);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
     public void startTrackingResponsive(PluginCall call) {
         Radar.startTracking(RadarTrackingOptions.RESPONSIVE);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
     public void startTrackingContinuous(PluginCall call) {
         Radar.startTracking(RadarTrackingOptions.CONTINUOUS);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
@@ -177,7 +248,7 @@ public class RadarPlugin extends Plugin {
         JSONObject trackingOptionsJson = RadarPlugin.jsonObjectForJSObject(trackingOptionsObj);
         RadarTrackingOptions trackingOptions  = RadarTrackingOptions.fromJson(trackingOptionsJson);
         Radar.startTracking(trackingOptions);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
@@ -233,13 +304,13 @@ public class RadarPlugin extends Plugin {
             }
         });
 
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
     public void stopTracking(PluginCall call) {
         Radar.stopTracking();
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
@@ -247,20 +318,40 @@ public class RadarPlugin extends Plugin {
         JSObject optionsObj = call.getObject("options");
         JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);
         RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
-        Radar.startTrip(options);
-        call.success();
+        Radar.startTrip(options, new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status) {
+                JSObject ret = new JSObject();
+                ret.put("status", status.toString());
+                call.resolve(ret);
+            }
+        });
     }
 
     @PluginMethod()
     public void completeTrip(PluginCall call) {
-        Radar.completeTrip();
-        call.success();
+        Radar.completeTrip(new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status) {
+                JSObject ret = new JSObject();
+                ret.put("status", status.toString());
+                call.resolve(ret);
+            }
+        });
+        call.resolve();
     }
 
     @PluginMethod()
     public void cancelTrip(PluginCall call) {
-        Radar.cancelTrip();
-        call.success();
+        Radar.cancelTrip(new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status) {
+                JSObject ret = new JSObject();
+                ret.put("status", status.toString());
+                call.resolve(ret);
+            }
+        });
+        call.resolve();
     }
 
     @PluginMethod()
@@ -268,14 +359,14 @@ public class RadarPlugin extends Plugin {
         String eventId = call.getString("eventId");
         String verifiedPlaceId = call.getString("verifiedPlaceId");
         Radar.acceptEvent(eventId, verifiedPlaceId);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
     public void rejectEvent(PluginCall call) {
         String eventId = call.getString("eventId");
         Radar.rejectEvent(eventId);
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
@@ -380,42 +471,6 @@ public class RadarPlugin extends Plugin {
             Radar.searchGeofences(near, radius, tags, null, limit, callback);
         } else {
             Radar.searchGeofences(radius, tags, null, limit, callback);
-        }
-    }
-
-    @PluginMethod()
-    public void searchPoints(final PluginCall call) throws JSONException {
-        Radar.RadarSearchPointsCallback callback = new Radar.RadarSearchPointsCallback() {
-            @Override
-            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarPoint[] points) {
-                if (status == Radar.RadarStatus.SUCCESS && location != null && points != null) {
-                    JSObject ret = new JSObject();
-                    ret.put("status", status.toString());
-                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
-                    ret.put("points", RadarPlugin.jsArrayForJSONArray(RadarPoint.toJson(points)));
-                    call.resolve(ret);
-                } else {
-                    call.reject(status.toString());
-                }
-            }
-        };
-
-        int radius = call.getInt("radius", 1000);
-        String[] tags = RadarPlugin.stringArrayForJSArray(call.getArray("tags"));
-        int limit = call.getInt("limit", 10);
-
-        if (call.hasOption("near")) {
-            JSObject nearObj = call.getObject("near");
-            double latitude = nearObj.getDouble("latitude");
-            double longitude = nearObj.getDouble("longitude");
-            Location near = new Location("RadarSDK");
-            near.setLatitude(latitude);
-            near.setLongitude(longitude);
-            near.setAccuracy(5);
-
-            Radar.searchPoints(near, radius, tags, limit, callback);
-        } else {
-            Radar.searchPoints(radius, tags, limit, callback);
         }
     }
 
