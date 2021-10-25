@@ -11,7 +11,11 @@ jobs:
       - persist_to_workspace:
           root: ~/capacitor-radar
           paths:
+            - android
+            - dist
+            - ios
             - node_modules
+            - CapacitorRadar.podspec
   android:
     working_directory: ~/capacitor-radar/example
     docker:
