@@ -1,24 +1,15 @@
 version: 2
 jobs:
-  node:
-    working_directory: ~/capacitor-radar
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
-      - run: npm install
-      - run: npm run build
-      - persist_to_workspace:
-          root: ~/capacitor-radar
-          paths:
-            - dist
   android:
-    working_directory: ~/capacitor-radar/example
+    working_directory: ~/capacitor-radar
     docker:
       - image: circleci/android:api-28-node
     steps:
       - checkout:
           path: ~/capacitor-radar
+      - run: npm install
+      - run: npm run build
+      - run: cd example
       - run: npm install
       - run: sudo npm install -g @ionic/cli
       - run: ionic build
@@ -28,10 +19,13 @@ jobs:
   ios:
     macos:
       xcode: "12.3.0"
-    working_directory: ~/capacitor-radar/example
+    working_directory: ~/capacitor-radar
     steps:
       - checkout:
           path: ~/capacitor-radar
+      - run: npm install
+      - run: npm run build
+      - run: cd example
       - run: npm install
       - run: sudo npm install -g @ionic/cli
       - run: ionic build
@@ -41,10 +35,5 @@ workflows:
   version: 2
   node-android-ios:
     jobs:
-      - node
-      - android:
-          requires:
-            - node
-      - ios:
-          requires:
-            - node
+      - android
+      - ios
