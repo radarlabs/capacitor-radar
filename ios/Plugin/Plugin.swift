@@ -9,37 +9,47 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     let locationManager = CLLocationManager()
 
     public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser) {
-        self.notifyListeners("events", data: [
-            "events": RadarEvent.array(for: events),
-            "user": user.dictionaryValue()
-        ])
+        DispatchQueue.main.async {
+            self.notifyListeners("events", data: [
+                "events": RadarEvent.array(for: events) ?? [],
+                "user": user.dictionaryValue()
+            ])
+        }
     }
 
     public func didUpdateLocation(_ location: CLLocation, user: RadarUser) {
-        self.notifyListeners("location", data: [
-            "location": Radar.dictionaryForLocation(location),
-            "user": user.dictionaryValue()
-        ])
+        DispatchQueue.main.async {
+            self.notifyListeners("location", data: [
+                "location": Radar.dictionaryForLocation(location),
+                "user": user.dictionaryValue()
+            ])
+        }
     }
 
     public func didUpdateClientLocation(_ location: CLLocation, stopped: Bool, source: RadarLocationSource) {
-        self.notifyListeners("clientLocation", data: [
-            "location": Radar.dictionaryForLocation(location),
-            "stopped": stopped,
-            "source": Radar.stringForSource(source)
-        ])
+        DispatchQueue.main.async {
+            self.notifyListeners("clientLocation", data: [
+                "location": Radar.dictionaryForLocation(location),
+                "stopped": stopped,
+                "source": Radar.stringForSource(source)
+            ])
+        }
     }
 
     public func didFail(status: RadarStatus) {
-        self.notifyListeners("error", data: [
-            "status": Radar.stringForStatus(status)
-        ])
+        DispatchQueue.main.async {
+            self.notifyListeners("error", data: [
+                "status": Radar.stringForStatus(status)
+            ])
+        }
     }
     
     public func didLog(message: String) {
-        self.notifyListeners("log", data: [
-            "message": message
-        ])
+        DispatchQueue.main.async {
+            self.notifyListeners("log", data: [
+                "message": message
+            ])
+        }
     }
 
     @objc func initialize(_ call: CAPPluginCall) {
@@ -242,21 +252,31 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             let optionsDict = call.getObject("options") ?? [:]
             let options = RadarTripOptions(from: optionsDict)
-            Radar.startTrip(options: options)
+            Radar.startTrip(options: options) { (status: RadarStatus) in
+                call.resolve([
+                    "status": Radar.stringForStatus(status)
+                ])
+            }
         }
     }
 
     @objc func completeTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.completeTrip()
-            call.resolve()
+            Radar.completeTrip() { (status: RadarStatus) in
+                call.resolve([
+                    "status": Radar.stringForStatus(status)
+                ])
+            }
         }
     }
 
     @objc func cancelTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.cancelTrip()
-            call.resolve()
+            Radar.cancelTrip() { (status: RadarStatus) in
+                call.resolve([
+                    "status": Radar.stringForStatus(status)
+                ])
+            }
         }
     }
 
