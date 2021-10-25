@@ -23,7 +23,6 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-/*
 Radar.setUserId({ userId: 'capacitor' });
 
 Radar.setMetadata({ metadata: {
@@ -67,7 +66,6 @@ Radar.mockTracking({
 setTimeout(() => {
   Radar.cancelTrip();
 }, 30000);
-*/
 
 const App: React.FC = () => (
   <IonApp>
