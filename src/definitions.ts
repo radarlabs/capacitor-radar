@@ -1,4 +1,11 @@
+import type { PluginListenerHandle } from '@capacitor/core';
+
 export interface RadarPlugin {
+  addListener(eventName: 'clientLocation'): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'location'): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'events'): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'error'): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'log'): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string }): void;
   setUserId(options: { userId: string }): void;
   setDescription(options: { description: string }): void;
