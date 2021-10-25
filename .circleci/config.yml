@@ -31,7 +31,7 @@ jobs:
       - run: cd example && ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
 workflows:
   version: 2
-  node-android-ios:
+  android-ios:
     jobs:
       - android
       - ios
