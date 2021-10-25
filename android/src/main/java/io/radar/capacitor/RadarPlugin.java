@@ -109,7 +109,7 @@ public class RadarPlugin extends Plugin {
             }
         };
 
-        registerReceiver(receiver, filter);
+        getContext().getApplicationContext().registerReceiver(receiver, filter);
     }
 
     @PluginMethod()
