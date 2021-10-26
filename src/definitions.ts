@@ -1,11 +1,11 @@
 import type { PluginListenerHandle } from '@capacitor/core';
 
 export interface RadarPlugin {
-  addListener(eventName: 'clientLocation', listenerFunc: RadarClientLocationListener): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'location', listenerFunc: RadarLocationListener): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'events', listenerFunc: RadarEventsListener): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'error', listenerFunc: RadarErrorListener): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'log', listenerFunc: RadarLogListener): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'clientLocation', listenerFunc: (location: Location, stopped: boolean, source: string) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'location', listenerFunc: (location: Location, user: RadarUser) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'events', listenerFunc: (events: RadarEvent[], user: RadarUser) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'error', listenerFunc: (status: string) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'log', listenerFunc: (message: string) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string }): void;
   setUserId(options: { userId: string }): void;
   setDescription(options: { description: string }): void;
@@ -33,30 +33,6 @@ export interface RadarPlugin {
   reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
   getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
-}
-
-export interface RadarClientLocationListener {
-  location: Location;
-  stopped: boolean;
-  source: string;
-}
-
-export interface RadarLocationListener {
-  location: Location;
-  user: RadarUser;
-}
-
-export interface RadarEventsListener {
-  events: RadarEvent[];
-  user: RadarUser;
-}
-
-export interface RadarErrorListener {
-  status: string;
-}
-
-export interface RadarLogListener {
-  message: string;
 }
 
 export interface RadarLocationCallback {

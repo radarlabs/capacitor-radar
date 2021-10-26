@@ -24,19 +24,19 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-Radar.addListener('clientLocation').then((res) => {
+Radar.addListener('clientLocation', (location, stopped, source) => {
   // do something with location, stopped, source
 });
 
-Radar.addListener('location').then((res) => {
+Radar.addListener('location', (location, user) => {
   // do something with location, user
 });
 
-Radar.addListener('events').then((res) => {
+Radar.addListener('events', (events, user) => {
   // do something with events, user
 });
 
-Radar.addListener('error').then((res) => {
+Radar.addListener('error', (err) => {
   // do something with err
 });
 
