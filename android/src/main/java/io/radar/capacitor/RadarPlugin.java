@@ -2,6 +2,7 @@ package io.radar.capacitor;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Build;
 import android.util.Log;
@@ -40,69 +41,75 @@ import io.radar.sdk.model.RadarUser;
 @CapacitorPlugin(name = "Radar")
 public class RadarPlugin extends Plugin {
 
-    public class RadarPluginReceiver extends RadarReceiver {
+    private static final String TAG = "RadarPlugin";
 
-        private static final String TAG = "RadarPluginReceiver";
+    @Override
+    public void load() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("io.radar.sdk.RECEIVED");
 
-        @Override
-        public void onEventsReceived(@NonNull Context context, @NonNull RadarEvent[] events, @NonNull RadarUser user) {
-            try {
-                JSObject ret = new JSObject();
-                ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
-                ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
-                notifyListeners("events", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
+        RadarReceiver receiver = new RadarReceiver() {
+            @Override
+            public void onEventsReceived(@NonNull Context context, @NonNull RadarEvent[] events, @NonNull RadarUser user) {
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
+                    ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                    notifyListeners("events", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
             }
-        }
 
-        @Override
-        public void onLocationUpdated(@NonNull Context context, @NonNull Location location, @NonNull RadarUser user) {
-            try {
-                JSObject ret = new JSObject();
-                ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
-                ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
-                notifyListeners("location", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
+            @Override
+            public void onLocationUpdated(@NonNull Context context, @NonNull Location location, @NonNull RadarUser user) {
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                    notifyListeners("location", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
             }
-        }
 
-        @Override
-        public void onClientLocationUpdated(@NonNull Context context, @NonNull Location location, boolean stopped, @NonNull Radar.RadarLocationSource source) {
-            try {
-                JSObject ret = new JSObject();
-                ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
-                ret.put("stopped", stopped);
-                ret.put("source", Radar.stringForSource(source));
-                notifyListeners("clientLocation", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
+            @Override
+            public void onClientLocationUpdated(@NonNull Context context, @NonNull Location location, boolean stopped, @NonNull Radar.RadarLocationSource source) {
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("stopped", stopped);
+                    ret.put("source", Radar.stringForSource(source));
+                    notifyListeners("clientLocation", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
             }
-        }
 
-        @Override
-        public void onError(@NonNull Context context, @NonNull Radar.RadarStatus status) {
-            try {
-                JSObject ret = new JSObject();
-                ret.put("status", status.toString());
-                notifyListeners("error", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
+            @Override
+            public void onError(@NonNull Context context, @NonNull Radar.RadarStatus status) {
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    notifyListeners("error", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
             }
-        }
 
-        @Override
-        public void onLog(@NonNull Context context, @NonNull String message) {
-            try {
-                JSObject ret = new JSObject();
-                ret.put("message", message);
-                notifyListeners("log", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
+            @Override
+            public void onLog(@NonNull Context context, @NonNull String message) {
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("message", message);
+                    notifyListeners("log", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
             }
-        }
+        };
 
+        getContext().getApplicationContext().registerReceiver(receiver, filter);
     }
 
     @PluginMethod()

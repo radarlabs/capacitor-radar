@@ -8,6 +8,10 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     
     let locationManager = CLLocationManager()
 
+    override public func load() {
+        Radar.setDelegate(self)
+    }
+
     public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser) {
         DispatchQueue.main.async {
             self.notifyListeners("events", data: [
@@ -60,7 +64,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 return
             }
             Radar.initialize(publishableKey: publishableKey)
-            Radar.setDelegate(self)
             call.resolve()
         }
     }

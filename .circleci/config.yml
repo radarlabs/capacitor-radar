@@ -25,6 +25,7 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: sudo npm install -g @ionic/cli
+      - run: sudo chown -R 501:20 "/Users/distiller/.npm"
       - run: cd example && npm install
       - run: cd example && ionic build
       - run: cd example && npx cap sync

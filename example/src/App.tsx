@@ -1,3 +1,4 @@
+import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
@@ -23,63 +24,85 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-Radar.setUserId({ userId: 'capacitor' });
-
-Radar.setMetadata({ metadata: {
-  foo: 'bar',
-}});
-
-Radar.getLocationPermissionsStatus().then(result => {
-  console.log('getLocationPermissionsStatus');
-  console.log(result.status);
+Radar.addListener('clientLocation', (location, stopped, source) => {
+  // do something with location, stopped, source
 });
 
-Radar.requestLocationPermissions({ background: true });
+Radar.addListener('location', (location, user) => {
+  // do something with location, user
+});
 
-Radar.startTrip({
-  options: {
-    externalId: 'capacitor-chicken2',
-    destinationGeofenceTag: 'tiny',
-    destinationGeofenceExternalId: 'chicken2',
-    metadata: {
+Radar.addListener('events', (events, user) => {
+  // do something with events, user
+});
+
+Radar.addListener('error', (err) => {
+  // do something with err
+});
+
+class App extends React.Component {
+  componentDidMount() {
+    Radar.setUserId({ userId: 'capacitor' });
+
+    Radar.setMetadata({ metadata: {
       foo: 'bar',
-      baz: true
-    },
-    mode: 'car'
+    }});
+
+    Radar.getLocationPermissionsStatus().then(res => {
+      console.log('getLocationPermissionsStatus');
+      console.log(res.status);
+    });
+
+    Radar.requestLocationPermissions({ background: true });
+
+    Radar.startTrip({
+      options: {
+        externalId: 'capacitor-chicken2',
+        destinationGeofenceTag: 'tiny',
+        destinationGeofenceExternalId: 'chicken2',
+        metadata: {
+          foo: 'bar',
+          baz: true
+        },
+        mode: 'car'
+      }
+    });
+
+    Radar.mockTracking({
+      origin: {
+        latitude: 40.717122,
+        longitude: -74.035504
+      },
+      destination: {
+        latitude: 40.7120678,
+        longitude: -74.0396181
+      },
+      mode: 'car',
+      steps: 20,
+      interval: 1
+    });
+
+    setTimeout(() => {
+      Radar.cancelTrip();
+    }, 30000);
   }
-});
 
-Radar.mockTracking({
-  origin: {
-    latitude: 40.717122,
-    longitude: -74.035504
-  },
-  destination: {
-    latitude: 40.7120678,
-    longitude: -74.0396181
-  },
-  mode: 'car',
-  steps: 20,
-  interval: 1
-});
-
-setTimeout(() => {
-  Radar.cancelTrip();
-}, 30000);
-
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/home">
-          <Home />
-        </Route>
-        <Route exact path="/">
-          <Redirect to="/home" />
-        </Route>
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
-);
+  render() {
+    return (
+      <IonApp>
+        <IonReactRouter>
+          <IonRouterOutlet>
+            <Route exact path="/home">
+              <Home />
+            </Route>
+            <Route exact path="/">
+              <Redirect to="/home" />
+            </Route>
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </IonApp>
+    );
+  }
+}
 
 export default App;
