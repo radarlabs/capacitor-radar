@@ -42,6 +42,8 @@ Radar.addListener('error', (err) => {
 
 class App extends React.Component {
   componentDidMount() {
+    alert('hello');
+
     Radar.setUserId({ userId: 'capacitor' });
 
     Radar.setMetadata({ metadata: {
