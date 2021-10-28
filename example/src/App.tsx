@@ -24,20 +24,20 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-Radar.addListener('clientLocation', (location, stopped, source) => {
-  // do something with location, stopped, source
+Radar.addListener('clientLocation', (result) => {
+  alert(`location: ${JSON.stringify(result)}`);
 });
 
-Radar.addListener('location', (location, user) => {
-  // do something with location, user
+Radar.addListener('location', (result) => {
+  alert(`location: ${JSON.stringify(result)}`);
 });
 
-Radar.addListener('events', (events, user) => {
-  // do something with events, user
+Radar.addListener('events', (result) => {
+  alert(`events: ${JSON.stringify(result)}`);
 });
 
-Radar.addListener('error', (err) => {
-  // do something with err
+Radar.addListener('error', (result) => {
+  alert(`error: ${JSON.stringify(result)}`);
 });
 
 class App extends React.Component {
@@ -48,18 +48,25 @@ class App extends React.Component {
       foo: 'bar',
     }});
 
-    Radar.getLocationPermissionsStatus().then(res => {
-      console.log('getLocationPermissionsStatus');
-      console.log(res.status);
+    Radar.getLocationPermissionsStatus().then((result) => {
+      alert(JSON.stringify(result));
     });
 
     Radar.requestLocationPermissions({ background: true });
 
+    /*
+    Radar.startTrackingContinuous();
+
+    Radar.trackOnce().then((result) => {
+      alert(JSON.stringify(result));
+    });
+    */
+
     Radar.startTrip({
       options: {
-        externalId: 'capacitor-chicken2',
-        destinationGeofenceTag: 'tiny',
-        destinationGeofenceExternalId: 'chicken2',
+        externalId: '299',
+        destinationGeofenceTag: 'store',
+        destinationGeofenceExternalId: '123',
         metadata: {
           foo: 'bar',
           baz: true
@@ -78,13 +85,21 @@ class App extends React.Component {
         longitude: -74.0396181
       },
       mode: 'car',
-      steps: 20,
+      steps: 5,
       interval: 1
     });
-
+    
     setTimeout(() => {
-      Radar.cancelTrip();
+      Radar.cancelTrip().then((result) => {
+        alert(JSON.stringify(result));
+      });
     }, 30000);
+
+    /*
+    setTimeout(() => {
+      Radar.stopTracking();
+    }, 30000);
+    */
   }
 
   render() {
