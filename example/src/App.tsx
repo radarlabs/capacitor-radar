@@ -49,7 +49,7 @@ class App extends React.Component {
     }});
 
     Radar.getLocationPermissionsStatus().then(res => {
-      alert(res.status);
+      alert(JSON.stringify(res));
     });
 
     Radar.requestLocationPermissions({ background: true });
@@ -63,9 +63,9 @@ class App extends React.Component {
 
     Radar.startTrip({
       options: {
-        externalId: 'capacitor-chicken2',
-        destinationGeofenceTag: 'tiny',
-        destinationGeofenceExternalId: 'chicken2',
+        externalId: '123',
+        destinationGeofenceTag: 'store',
+        destinationGeofenceExternalId: '1',
         metadata: {
           foo: 'bar',
           baz: true
