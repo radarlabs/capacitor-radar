@@ -54,12 +54,13 @@ class App extends React.Component {
 
     Radar.requestLocationPermissions({ background: true });
 
+    /*
     Radar.startTrackingContinuous();
 
-    /*
     Radar.trackOnce().then(res => {
       alert(JSON.stringify(res));
     });
+    */
 
     Radar.startTrip({
       options: {
@@ -87,19 +88,18 @@ class App extends React.Component {
       steps: 5,
       interval: 1
     });
-    */
-
-    /*
+    
     setTimeout(() => {
-      Radar.cancelTrip().then({res} => {
+      Radar.cancelTrip().then(res => {
         alert(JSON.stringify(res));
       });
     }, 30000);
-    */
 
+    /*
     setTimeout(() => {
       Radar.stopTracking();
     }, 30000);
+    */
   }
 
   render() {
