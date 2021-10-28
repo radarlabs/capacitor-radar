@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <Capacitor/Capacitor.h>
 
-CAP_PLUGIN(RadarPlugin, "RadarPlugin",
+CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(initialize, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setUserId, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setDescription, CAPPluginReturnPromise);
