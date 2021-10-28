@@ -1,11 +1,11 @@
 import type { PluginListenerHandle } from '@capacitor/core';
 
 export interface RadarPlugin {
-  addListener(eventName: 'clientLocation', listenerFunc: (res: { location: Location, stopped: boolean, source: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'location', listenerFunc: (res: { location: Location, user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'events', listenerFunc: (res: { events: RadarEvent[], user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'error', listenerFunc: (res: { status: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'log', listenerFunc: (res: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'clientLocation', listenerFunc: (result: { location: Location, stopped: boolean, source: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'location', listenerFunc: (result: { location: Location, user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'events', listenerFunc: (result: { events: RadarEvent[], user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string }): void;
   setUserId(options: { userId: string }): void;
   setDescription(options: { description: string }): void;

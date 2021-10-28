@@ -24,20 +24,20 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-Radar.addListener('clientLocation', res => {
-  alert(`location: ${JSON.stringify(res)}`);
+Radar.addListener('clientLocation', (result) => {
+  alert(`location: ${JSON.stringify(result)}`);
 });
 
-Radar.addListener('location', res => {
-  alert(`location: ${JSON.stringify(res)}`);
+Radar.addListener('location', (result) => {
+  alert(`location: ${JSON.stringify(result)}`);
 });
 
-Radar.addListener('events', res => {
-  alert(`events: ${JSON.stringify(res)}`);
+Radar.addListener('events', (result) => {
+  alert(`events: ${JSON.stringify(result)}`);
 });
 
-Radar.addListener('error', res => {
-  alert(`error: ${JSON.stringify(res)}`);
+Radar.addListener('error', (result) => {
+  alert(`error: ${JSON.stringify(result)}`);
 });
 
 class App extends React.Component {
@@ -48,8 +48,8 @@ class App extends React.Component {
       foo: 'bar',
     }});
 
-    Radar.getLocationPermissionsStatus().then(res => {
-      alert(JSON.stringify(res));
+    Radar.getLocationPermissionsStatus().then((result) => {
+      alert(JSON.stringify(result));
     });
 
     Radar.requestLocationPermissions({ background: true });
@@ -57,16 +57,16 @@ class App extends React.Component {
     /*
     Radar.startTrackingContinuous();
 
-    Radar.trackOnce().then(res => {
-      alert(JSON.stringify(res));
+    Radar.trackOnce().then((result) => {
+      alert(JSON.stringify(result));
     });
     */
 
     Radar.startTrip({
       options: {
-        externalId: '123',
+        externalId: '299',
         destinationGeofenceTag: 'store',
-        destinationGeofenceExternalId: '1',
+        destinationGeofenceExternalId: '123',
         metadata: {
           foo: 'bar',
           baz: true
@@ -90,8 +90,8 @@ class App extends React.Component {
     });
     
     setTimeout(() => {
-      Radar.cancelTrip().then(res => {
-        alert(JSON.stringify(res));
+      Radar.cancelTrip().then((result) => {
+        alert(JSON.stringify(result));
       });
     }, 30000);
 
