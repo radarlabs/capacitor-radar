@@ -24,20 +24,20 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-Radar.addListener('clientLocation', (location, stopped, source) => {
-  // do something with location, stopped, source
+Radar.addListener('clientLocation', res => {
+  alert(`location: ${JSON.stringify(res)}`);
 });
 
-Radar.addListener('location', (location, user) => {
-  // do something with location, user
+Radar.addListener('location', res => {
+  alert(`location: ${JSON.stringify(res)}`);
 });
 
-Radar.addListener('events', (events, user) => {
-  // do something with events, user
+Radar.addListener('events', res => {
+  alert(`events: ${JSON.stringify(res)}`);
 });
 
-Radar.addListener('error', (err) => {
-  // do something with err
+Radar.addListener('error', res => {
+  alert(`error: ${JSON.stringify(res)}`);
 });
 
 class App extends React.Component {
@@ -49,11 +49,17 @@ class App extends React.Component {
     }});
 
     Radar.getLocationPermissionsStatus().then(res => {
-      console.log('getLocationPermissionsStatus');
-      console.log(res.status);
+      alert(res.status);
     });
 
     Radar.requestLocationPermissions({ background: true });
+
+    Radar.startTrackingContinuous();
+
+    /*
+    Radar.trackOnce().then(res => {
+      alert(JSON.stringify(res));
+    });
 
     Radar.startTrip({
       options: {
@@ -78,12 +84,21 @@ class App extends React.Component {
         longitude: -74.0396181
       },
       mode: 'car',
-      steps: 20,
+      steps: 5,
       interval: 1
     });
+    */
+
+    /*
+    setTimeout(() => {
+      Radar.cancelTrip().then({res} => {
+        alert(JSON.stringify(res));
+      });
+    }, 30000);
+    */
 
     setTimeout(() => {
-      Radar.cancelTrip();
+      Radar.stopTracking();
     }, 30000);
   }
 

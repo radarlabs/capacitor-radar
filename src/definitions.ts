@@ -1,11 +1,11 @@
 import type { PluginListenerHandle } from '@capacitor/core';
 
 export interface RadarPlugin {
-  addListener(eventName: 'clientLocation', listenerFunc: (location: Location, stopped: boolean, source: string) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'location', listenerFunc: (location: Location, user: RadarUser) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'events', listenerFunc: (events: RadarEvent[], user: RadarUser) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'error', listenerFunc: (status: string) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'log', listenerFunc: (message: string) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'clientLocation', listenerFunc: (res: { location: Location, stopped: boolean, source: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'location', listenerFunc: (res: { location: Location, user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'events', listenerFunc: (res: { events: RadarEvent[], user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'error', listenerFunc: (res: { status: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'log', listenerFunc: (res: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string }): void;
   setUserId(options: { userId: string }): void;
   setDescription(options: { description: string }): void;
@@ -20,9 +20,9 @@ export interface RadarPlugin {
   startTrackingCustom(options: object): void;
   mockTracking(options: { origin: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, mode: string, steps: number, interval: number }): void;
   stopTracking(): void;
-  startTrip(options: object): void;
-  completeTrip(): void;
-  cancelTrip(): void;
+  startTrip(options: object): Promise<RadarTripCallback>;
+  completeTrip(): Promise<RadarTripCallback>;
+  cancelTrip(): Promise<RadarTripCallback>;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
@@ -46,6 +46,10 @@ export interface RadarTrackCallback {
   location?: Location;
   user?: RadarUser;
   events?: RadarEvent[];
+}
+
+export interface RadarTripCallback {
+  status: string;
 }
 
 export interface RadarContextCallback {
