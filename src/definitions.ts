@@ -114,8 +114,7 @@ export interface RadarTrip {
   destinationGeofenceTag?: string;
   destinationGeofenceExternalId?: string;
   mode?: string;
-  etaDistance?: number;
-  etaDuration?: number;
+  eta?: RadarEta;
   status: string;
 }
 
@@ -274,4 +273,9 @@ export interface RadarRouteDistance {
 export interface RadarRouteDuration {
   value: number;
   text: string;
+}
+
+export interface RadarEta {
+  distance?: number;
+  duration?: number;
 }
