@@ -560,17 +560,17 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 call.reject("level is required")
                 return
             }
-            var level = RadarLogLevel.info
-            if (levelStr.caseInsensitiveCompare("none") == ComparisonResult.orderedSame) {
-                level = RadarLogLevel.none
-            } else if (levelStr.caseInsensitiveCompare("error") == ComparisonResult.orderedSame) {
-                level = RadarLogLevel.error
-            } else if (levelStr.caseInsensitiveCompare("warning") == ComparisonResult.orderedSame) {
-                level = RadarLogLevel.warning
-            } else if (levelStr.caseInsensitiveCompare("info") == ComparisonResult.orderedSame) {
-                level = RadarLogLevel.info
-            } else if (levelStr.caseInsensitiveCompare("debug") == ComparisonResult.orderedSame){
-                level = RadarLogLevel.debug
+            var level: RadarLogLevel = .info
+            if levelStr.caseInsensitiveCompare("none") == .orderedSame {
+                level = .none
+            } else if levelStr.caseInsensitiveCompare("error") == .orderedSame {
+                level = .error
+            } else if levelStr.caseInsensitiveCompare("warning") == .orderedSame {
+                level = .warning
+            } else if levelStr.caseInsensitiveCompare("info") == .orderedSame {
+                level = .info
+            } else if levelStr.caseInsensitiveCompare("debug") == .orderedSame {
+                level = .debug
             }
             Radar.setLogLevel(level)
             call.resolve()
