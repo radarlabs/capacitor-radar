@@ -554,4 +554,27 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func setLogLevel(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let levelStr = call.getString("level") else {
+                call.reject("level is required")
+                return
+            }
+            var level = RadarLogLevel.RadarLogLevelInfo
+            if levelStr == "NONE" || modeStr == "none" {
+                level = RadarLogLevel.RadarLogLevelNone
+            } else if levelStr == "ERROR" || modeStr == "error" {
+                level = RadarLogLevel.RadarLogLevelError
+            } else if levelStr == "WARNING" || modeStr == "warning" {
+                level = RadarLogLevel.RadarLogLevelWarning
+            } else if levelStr == "INFO" || modeStr == "info" {
+                level = RadarLogLevel.RadarLogLevelInfo
+            } else if levelStr == "DEBUG" || modeStr == "debug" {
+                level = RadarLogLevel.RadarLogLevelDebug
+            }
+            Radar.setLogLevel(level: level)
+            call.resolve()
+        }
+    }
+
 }

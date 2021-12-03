@@ -29,4 +29,5 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(reverseGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(ipGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getDistance, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setLogLevel, CAPPluginReturnPromise);
 )

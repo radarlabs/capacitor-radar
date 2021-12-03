@@ -33,6 +33,7 @@ export interface RadarPlugin {
   reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
   getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
+  setLogLevel(options: {level: string}): void;
 }
 
 export interface RadarLocationCallback {

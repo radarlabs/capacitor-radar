@@ -790,6 +790,45 @@ public class RadarPlugin extends Plugin {
         }
     }
 
+    @PluginMethod
+    public void setLogLevel(final PluginCall call) {
+        if (!call.hasOption("level")) {
+            call.reject("level is required");
+            return;
+        }
+        String levelStr = call.getString("level");
+        Radar.RadarLogLevel level = Radar.RadarLogLevel.INFO;
+        if (levelStr != null) {
+            switch (levelStr) {
+                case "NONE":
+                case "none":
+                    level = Radar.RadarLogLevel.NONE;
+                    break;
+                case "ERROR":
+                case "error":
+                    level = Radar.RadarLogLevel.ERROR;
+                    break;
+                case "WARNING":
+                case "warning":
+                    level = Radar.RadarLogLevel.WARNING;
+                    break;
+                case "INFO":
+                case "info":
+                    level = Radar.RadarLogLevel.INFO;
+                    break;
+                case "DEBUG":
+                case "debug":
+                    level = Radar.RadarLogLevel.DEBUG;
+                    break;
+                default:
+                    Log.e(TAG, "No level for string " + levelStr);
+                    break;
+            }
+        }
+        Radar.setLogLevel(level);
+        call.resolve();
+    }
+
     private static JSObject jsObjectForJSONObject(JSONObject jsonObj) {
         try {
             if (jsonObj == null) {

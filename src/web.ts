@@ -274,6 +274,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
+  setLogLevel(options: { level: string }): void {
+    // not implemented
+  }
+
 }
 
 const radarPluginWeb = new RadarPluginWeb();
