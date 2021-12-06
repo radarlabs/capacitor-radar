@@ -97,6 +97,7 @@ export interface RadarUser {
   deviceId?: string;
   description?: string;
   metadata?: object;
+  trip?: RadarTrip;
   geofences?: RadarGeofence[];
   insights?: RadarInsights;
   place?: RadarPlace;
@@ -104,6 +105,17 @@ export interface RadarUser {
   state?: RadarRegion;
   dma?: RadarRegion;
   postalCode?: RadarRegion;
+}
+
+export interface RadarTrip {
+  _id: string;
+  externalId: string;
+  metadata?: object;
+  destinationGeofenceTag?: string;
+  destinationGeofenceExternalId?: string;
+  mode?: string;
+  eta?: RadarTripEta;
+  status: string;
 }
 
 export interface RadarContext {
@@ -261,4 +273,9 @@ export interface RadarRouteDistance {
 export interface RadarRouteDuration {
   value: number;
   text: string;
+}
+
+export interface RadarTripEta {
+  distance?: number;
+  duration?: number;
 }
