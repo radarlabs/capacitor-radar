@@ -755,12 +755,12 @@ public class RadarPlugin extends Plugin {
         List<String> modesList = new ArrayList<>(call.getArray("modes").toList());
         for (Radar.RadarRouteMode mode : Radar.RadarRouteMode.values()) {
             int index = modesList.indexOf(mode.name());
-            if (index > 0) {
+            if (index >= 0) {
                 modes.add(mode);
                 modesList.remove(index);
             } else {
                 index = modesList.indexOf(mode.name().toLowerCase(Locale.ROOT));
-                if (index > 0) {
+                if (index >= 0) {
                     modes.add(mode);
                     modesList.remove(index);
                 }
