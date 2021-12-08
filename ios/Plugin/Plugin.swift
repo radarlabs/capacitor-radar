@@ -554,4 +554,27 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func setLogLevel(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let levelStr = call.getString("level") else {
+                call.reject("level is required")
+                return
+            }
+            var level: RadarLogLevel = .info
+            if levelStr.caseInsensitiveCompare("none") == .orderedSame {
+                level = .none
+            } else if levelStr.caseInsensitiveCompare("error") == .orderedSame {
+                level = .error
+            } else if levelStr.caseInsensitiveCompare("warning") == .orderedSame {
+                level = .warning
+            } else if levelStr.caseInsensitiveCompare("info") == .orderedSame {
+                level = .info
+            } else if levelStr.caseInsensitiveCompare("debug") == .orderedSame {
+                level = .debug
+            }
+            Radar.setLogLevel(level)
+            call.resolve()
+        }
+    }
+
 }
