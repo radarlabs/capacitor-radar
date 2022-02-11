@@ -456,6 +456,54 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void updateTrip(PluginCall call) {
+        JSObject optionsObj = call.getObject("options");
+        JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);
+        if (optionsJson == null) {
+            call.reject("options is required");
+            return;
+        }
+        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
+        RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
+        if (call.hasOption("status")) {
+            String statusStr = call.getString("status");
+            if (statusStr != null) {
+                if (statusStr.equalsIgnoreCase("started")) {
+                    status = RadarTrip.RadarTripStatus.STARTED;
+                } else if (statusStr.equalsIgnoreCase("approaching")) {
+                    status = RadarTrip.RadarTripStatus.APPROACHING;
+                } else if (statusStr.equalsIgnoreCase("arrived")) {
+                    status = RadarTrip.RadarTripStatus.ARRIVED;
+                } else if (statusStr.equalsIgnoreCase("completed")) {
+                    status = RadarTrip.RadarTripStatus.COMPLETED;
+                } else if (statusStr.equalsIgnoreCase("canceled")) {
+                    status = RadarTrip.RadarTripStatus.CANCELED;
+                } else if (statusStr.equalsIgnoreCase("unknown")) {
+                    status = RadarTrip.RadarTripStatus.UNKNOWN;
+                } else {
+                    call.reject(Radar.RadarStatus.ERROR_BAD_REQUEST.toString());
+                }
+            }
+        }
+        Radar.updateTrip(options,status,new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus radarStatus,
+                                   @Nullable RadarTrip radarTrip,
+                                   @Nullable RadarEvent[] radarEvents) {
+                JSObject ret = new JSObject();
+                ret.put("status", radarStatus.toString());
+                if (radarTrip != null) {
+                    ret.put("trip", RadarPlugin.jsObjectForJSONObject(radarTrip.toJson()));
+                }
+                if (radarEvents != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(radarEvents));
+                }
+                call.resolve(ret);
+            }
+        });
+    }
+
+    @PluginMethod
     public void acceptEvent(PluginCall call) {
         String eventId = call.getString("eventId");
         String verifiedPlaceId = call.getString("verifiedPlaceId");

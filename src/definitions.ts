@@ -23,6 +23,7 @@ export interface RadarPlugin {
   startTrip(options: object): Promise<RadarTripCallback>;
   completeTrip(): Promise<RadarTripCallback>;
   cancelTrip(): Promise<RadarTripCallback>;
+  updateTrip(options: {options: object, status?: string}): Promise<RadarTripCallback>;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
