@@ -40,7 +40,7 @@ repositories {
 
 
 dependencies {
-    implementation 'io.radar:sdk:3.2.2'
+    implementation 'io.radar:sdk:3.3.3'
     implementation project(':capacitor-android')
     //Version is defined in capacitor-android's build.gradle
     implementation 'org.apache.cordova:framework:'

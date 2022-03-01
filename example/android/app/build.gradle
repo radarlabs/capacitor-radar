@@ -35,7 +35,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation project(':capacitor-android')
     implementation project(':capacitor-cordova-android-plugins')
-    implementation 'io.radar:sdk:3.2.2'
+    implementation 'io.radar:sdk:3.3.3'
 }
 
 apply from: 'capacitor.build.gradle'
