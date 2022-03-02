@@ -43,14 +43,16 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
       if (typeof navigator === 'undefined' || !navigator.permissions) {
         throw this.unavailable('Permissions API not available in this browser.');
       } else {
-        const locationPermission = await navigator.permissions.query({ name: 'geolocation' })
-        const bluetoothPermission = await navigator.permissions.query({ name: 'bluetooth' })
-        resolve({
-          location: locationPermission,
-          backgroundLocation: locationPermission,
-          beacons: bluetoothPermission,
-          beaconsAndroid12: bluetoothPermission
-        })
+        navigator.permissions.query({ name: 'geolocation' }).then((locationPermission) => {
+          navigator.permissions.query({ name: 'geolocation' }).then((bluetoothPermission) => {
+            resolve({
+              location: locationPermission,
+              backgroundLocation: locationPermission,
+              beacons: bluetoothPermission,
+              beaconsAndroid12: bluetoothPermission
+            })
+          });
+        });
       }
     });
   }
