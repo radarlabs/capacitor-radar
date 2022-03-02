@@ -44,7 +44,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
         throw this.unavailable('Permissions API not available in this browser.');
       } else {
         navigator.permissions.query({ name: 'geolocation' }).then((locationPermission) => {
-          navigator.permissions.query({ name: 'geolocation' }).then((bluetoothPermission) => {
+          navigator.permissions.query({ name: 'bluetooth' }).then((bluetoothPermission) => {
             resolve({
               location: locationPermission,
               backgroundLocation: locationPermission,
