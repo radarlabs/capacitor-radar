@@ -126,6 +126,52 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func getBeaconsPermissionStatus(_ call: CAPPluginCall) {
+        getLocationPermissionsStatus(call)
+    }
+
+    @objc func requestBeaconPermissions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            self.locationManager.requestWhenInUseAuthorization()
+            call.resolve()
+        }
+    }
+
+    @objc override public func checkPermissions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let authorizationStatus = CLLocationManager.authorizationStatus()
+            var location = "prompt"
+            var background = "prompt"
+            switch authorizationStatus {
+            case .notDetermined:
+                location = "prompt"
+                background = "prompt"
+            case .restricted, .denied:
+                location = "denied"
+                background = "denied"
+            case .authorizedAlways:
+                location = "granted"
+                background = "granted"
+            case .authorizedWhenInUse:
+                location = "granted"
+                background = "denied"
+            default:
+                location = "prompt"
+                background = "prompt"
+            }
+            call.resolve([
+                "location": location,
+                "backgroundLocation": background,
+                "beacons": location,
+                "beaconsAndroid12": location
+            ])
+        }
+    }
+
+    @objc override public func requestPermissions(_ call: CAPPluginCall) {
+        requestLocationPermissions(call)
+    }
+
     @objc func getLocation(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.getLocation { (status: RadarStatus, location: CLLocation?, stopped: Bool) in

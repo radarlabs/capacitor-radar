@@ -2,12 +2,15 @@ package io.radar.capacitor;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -16,6 +19,8 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.annotation.PermissionCallback;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +48,36 @@ import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarTrip;
 import io.radar.sdk.model.RadarUser;
 
-@CapacitorPlugin(name = "Radar")
+@CapacitorPlugin(
+        name = "Radar",
+        permissions = {
+                @Permission(
+                        alias = "location",
+                        strings = {
+                                Manifest.permission_group.LOCATION
+                        }
+                ),
+                @Permission(
+                        alias = "backgroundLocation",
+                        strings = {
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        }
+                ),
+                @Permission(
+                        alias = "beacons",
+                        strings = {
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                        }
+                ),
+                @Permission(
+                        alias = "beaconsAndroid12",
+                        strings = {
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.BLUETOOTH_SCAN
+                        }
+                )
+        }
+)
 public class RadarPlugin extends Plugin {
 
     private static final String TAG = "RadarPlugin";
@@ -183,21 +217,21 @@ public class RadarPlugin extends Plugin {
     public void getLocationPermissionsStatus(PluginCall call) {
         boolean foreground = false;
         String locationAuthorization = "NOT_DETERMINED";
-        PermissionState gpsPermissionState = getPermissionState(Manifest.permission.ACCESS_FINE_LOCATION);
-        PermissionState wifiPermissionState = getPermissionState(Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (PermissionState.GRANTED == gpsPermissionState || PermissionState.GRANTED == wifiPermissionState) {
+        PermissionState locationPermission = getPermissionState("location");
+        if (PermissionState.GRANTED == locationPermission
+                || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        ) {
             locationAuthorization = "GRANTED_FOREGROUND";
             foreground = true;
-        } else if (PermissionState.DENIED == gpsPermissionState
-                || PermissionState.DENIED == wifiPermissionState
-                || PermissionState.PROMPT_WITH_RATIONALE == gpsPermissionState
-                || PermissionState.PROMPT_WITH_RATIONALE == wifiPermissionState) {
+        } else if (PermissionState.DENIED == locationPermission
+                || PermissionState.PROMPT_WITH_RATIONALE == locationPermission) {
             locationAuthorization = "DENIED";
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (foreground) {
-                PermissionState backgroundState = getPermissionState(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                PermissionState backgroundState = getPermissionState("backgroundLocation");
                 if (PermissionState.GRANTED == backgroundState) {
                     locationAuthorization = "GRANTED_BACKGROUND";
                 }
@@ -209,28 +243,120 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void getBeaconsPermissionStatus(PluginCall call) {
+        String beaconsAuthorization = "NOT_DETERMINED";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PermissionState beaconPermissions;
+            String alias = "beacons";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                alias = "beaconsAndroid12";
+            }
+            beaconPermissions = getPermissionState(alias);
+            if (PermissionState.GRANTED == beaconPermissions) {
+                beaconsAuthorization = "DENIED";
+            } else {
+                beaconsAuthorization = "GRANTED";
+            }
+        }
+        JSObject ret = new JSObject();
+        ret.put("status", beaconsAuthorization);
+        call.resolve(ret);
+    }
+
+    @PluginMethod
     public void requestLocationPermissions(PluginCall call) {
         if (!call.hasOption("background")) {
             call.reject("background is required");
             return;
         }
-        //noinspection ConstantConditions
-        boolean background = call.getBoolean("background", false);
+        Boolean background = call.getBoolean("background", false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int requestCode = 0;
-            if (background && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                pluginRequestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                }, requestCode);
-            } else {
-                pluginRequestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
+            PermissionState backgroundState = PermissionState.GRANTED;
+            PermissionState locationPermission = getPermissionState("location");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (Boolean.TRUE == background) {
+                    backgroundState = getPermissionState("backgroundLocation");
+                }
             }
+            if (PermissionState.GRANTED != backgroundState) {
+                requestPermissionForAlias("backgroundLocation", call, "backgroundLocationPermsCallback");
+            } else if (PermissionState.GRANTED != locationPermission) {
+                requestPermissionForAlias("location", call, "locationPermsCallback");
+            } else {
+                call.resolve();
+            }
+        } else {
+            call.resolve();
         }
-        call.resolve();
     }
 
+    @PluginMethod
+    public void requestBeaconPermissions(PluginCall call) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PermissionState beaconPermissions;
+            String alias = "beacons";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                alias = "beaconsAndroid12";
+            }
+            beaconPermissions = getPermissionState(alias);
+            if (PermissionState.GRANTED != beaconPermissions) {
+                requestPermissionForAlias(alias, call, "beaconsPermsCallback");
+            } else {
+                call.resolve();
+            }
+        } else {
+            call.resolve();
+        }
+    }
+
+    /**
+     * Handles background location permission requests
+     */
+    @RequiresApi(Build.VERSION_CODES.Q)
+    @PermissionCallback
+    @SuppressWarnings("unused")
+    private void backgroundLocationPermsCallback(PluginCall call) {
+        PermissionState backgroundState = getPermissionState("backgroundLocation");
+        if (PermissionState.GRANTED == backgroundState) {
+            PermissionState locationPermission = getPermissionState("location");
+            if (PermissionState.GRANTED != locationPermission) {
+                requestPermissionForAlias("location", call, "locationPermsCallback");
+            } else {
+                call.resolve();
+            }
+        } else {
+            call.reject("Background location permission not granted: " + backgroundState);
+        }
+    }
+
+    /**
+     * Handles location permission requests
+     */
+    @SuppressWarnings("unused")
+    @PermissionCallback
+    private void locationPermsCallback(PluginCall call) {
+        PermissionState locationPermission = getPermissionState("location");
+        if (PermissionState.GRANTED == locationPermission) {
+            call.resolve();
+        } else {
+            call.reject("Location permissions not granted: " + locationPermission);
+        }
+    }
+
+    @PermissionCallback
+    private void beaconsPermsCallback(PluginCall call) {
+        String alias = "beacons";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            alias = "beaconsAndroid12";
+        }
+        PermissionState beaconPermissions = getPermissionState(alias);
+        if (PermissionState.GRANTED == beaconPermissions) {
+            call.resolve();
+        } else {
+            call.reject("Beacon permissions not granted: " + beaconPermissions);
+        }
+    }
 
     @PluginMethod
     public void getLocation(final PluginCall call) throws JSONException {
