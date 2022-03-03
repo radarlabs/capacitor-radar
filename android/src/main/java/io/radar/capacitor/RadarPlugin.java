@@ -464,28 +464,24 @@ public class RadarPlugin extends Plugin {
             return;
         }
         RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
-        RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
+        RadarTrip.RadarTripStatus status = null;
         if (call.hasOption("status")) {
             String statusStr = call.getString("status");
             if (statusStr != null) {
-                if (statusStr.equalsIgnoreCase("started")) {
-                    status = RadarTrip.RadarTripStatus.STARTED;
-                } else if (statusStr.equalsIgnoreCase("approaching")) {
-                    status = RadarTrip.RadarTripStatus.APPROACHING;
-                } else if (statusStr.equalsIgnoreCase("arrived")) {
-                    status = RadarTrip.RadarTripStatus.ARRIVED;
-                } else if (statusStr.equalsIgnoreCase("completed")) {
-                    status = RadarTrip.RadarTripStatus.COMPLETED;
-                } else if (statusStr.equalsIgnoreCase("canceled")) {
-                    status = RadarTrip.RadarTripStatus.CANCELED;
-                } else if (statusStr.equalsIgnoreCase("unknown")) {
-                    status = RadarTrip.RadarTripStatus.UNKNOWN;
-                } else {
+                for (RadarTrip.RadarTripStatus tripStatus : RadarTrip.RadarTripStatus.values()) {
+                    if (tripStatus.name().equalsIgnoreCase(statusStr)) {
+                        status = tripStatus;
+                        break;
+                    }
+                }
+                if (status == null) {
                     call.reject(Radar.RadarStatus.ERROR_BAD_REQUEST.toString());
+                    return;
                 }
             }
         }
-        Radar.updateTrip(options,status,new Radar.RadarTripCallback() {
+        status = status == null ? RadarTrip.RadarTripStatus.UNKNOWN : status;
+        Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
             @Override
             public void onComplete(@NonNull Radar.RadarStatus radarStatus,
                                    @Nullable RadarTrip radarTrip,
