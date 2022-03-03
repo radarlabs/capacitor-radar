@@ -17,6 +17,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(mockTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(stopTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrip, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(updateTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(completeTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(cancelTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(acceptEvent, CAPPluginReturnPromise);

@@ -131,6 +131,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  updateTrip(): void {
+    // not implemented
+  }
+
   acceptEvent(): void {
     // not implemented
   }
