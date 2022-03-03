@@ -11,7 +11,7 @@ fi
 
 # Update and build the root-level components..
 npm install
-npm build
+npm run build
 npm install -g @ionic/cli
 
 pushd example
