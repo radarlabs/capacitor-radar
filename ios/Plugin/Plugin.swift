@@ -16,7 +16,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             self.notifyListeners("events", data: [
                 "events": RadarEvent.array(for: events) ?? [],
-                "user": user?.dictionaryValue() ?? []
+                "user": user?.dictionaryValue() ?? {}
             ])
         }
     }
@@ -258,7 +258,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.startTrip(options: options) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? [],
+                    "trip": trip?.dictionaryValue() ?? {},
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -288,7 +288,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.updateTrip(options: options, status: status) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? [],
+                    "trip": trip?.dictionaryValue() ?? {},
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -300,7 +300,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.completeTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? [],
+                    "trip": trip?.dictionaryValue() ?? {},
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -312,7 +312,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.cancelTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? [],
+                    "trip": trip?.dictionaryValue() ?? {},
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
