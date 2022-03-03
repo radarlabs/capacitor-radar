@@ -487,7 +487,7 @@ public class RadarPlugin extends Plugin {
                                    @Nullable RadarTrip radarTrip,
                                    @Nullable RadarEvent[] radarEvents) {
                 JSObject ret = new JSObject();
-                ret.put("status", radarStatus.toString());
+                ret.put("status", radarStatus.name());
                 if (radarTrip != null) {
                     ret.put("trip", RadarPlugin.jsObjectForJSONObject(radarTrip.toJson()));
                 }
