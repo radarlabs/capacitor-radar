@@ -67,7 +67,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
 
       if (typeof navigator === 'undefined' || !navigator.permissions) {
         resolve({
-          status: 'UNKNOWN'
+          status: 'NOT_DETERMINED'
         });
       } else {
         navigator.permissions.query({ name: 'geolocation' }).then((result) => {
@@ -89,7 +89,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
 
       if (typeof navigator === 'undefined' || !navigator.permissions) {
         resolve({
-          status: 'UNKNOWN'
+          status: 'NOT_DETERMINED'
         });
       } else {
         navigator.permissions.query({ name: 'bluetooth' }).then((result) => {
