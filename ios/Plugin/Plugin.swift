@@ -577,8 +577,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
             let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
 
-            if call.hasOption("origin") {
-                let originDict = call.options["origin"] as! [String:Double]
+            if let originDict = call.options["origin"] as? [String:Double] {
                 let originLatitude = originDict["latitude"] ?? 0.0
                 let originLongitude = originDict["longitude"] ?? 0.0
                 let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
