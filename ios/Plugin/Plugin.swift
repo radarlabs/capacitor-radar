@@ -8,9 +8,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     
     let locationManager = CLLocationManager()
 
-    override public func load() {
-        Radar.setDelegate(self)
-    }
+    // MARK: - RadarDelegate
 
     public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser?) {
         DispatchQueue.main.async {
@@ -24,7 +22,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     public func didUpdateLocation(_ location: CLLocation, user: RadarUser) {
         DispatchQueue.main.async {
             self.notifyListeners("location", data: [
-                "location": Radar.dictionaryForLocation(location),
+                "location": location.dictionaryValue,
                 "user": user.dictionaryValue()
             ])
         }
@@ -33,7 +31,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     public func didUpdateClientLocation(_ location: CLLocation, stopped: Bool, source: RadarLocationSource) {
         DispatchQueue.main.async {
             self.notifyListeners("clientLocation", data: [
-                "location": Radar.dictionaryForLocation(location),
+                "location": location.dictionaryValue,
                 "stopped": stopped,
                 "source": Radar.stringForLocationSource(source)
             ])
@@ -43,11 +41,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     public func didFail(status: RadarStatus) {
         DispatchQueue.main.async {
             self.notifyListeners("error", data: [
-                "status": Radar.stringForStatus(status)
+                "status": status.stringValue
             ])
         }
     }
-    
+
     public func didLog(message: String) {
         DispatchQueue.main.async {
             self.notifyListeners("log", data: [
@@ -55,6 +53,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             ])
         }
     }
+
+    // MARK: - CAPPlugin
 
     @objc func initialize(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
@@ -66,6 +66,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.initialize(publishableKey: publishableKey)
             call.resolve()
         }
+    }
+
+    override public func load() {
+
+        Radar.setDelegate(self)
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
@@ -129,15 +134,17 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func getLocation(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.getLocation { (status: RadarStatus, location: CLLocation?, stopped: Bool) in
-                if status == .success && location != nil {
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "location": Radar.dictionaryForLocation(location!),
-                        "stopped": stopped
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
+                guard status == .success, let location = location else {
+                    call.reject(status.stringValue)
+
+                    return
                 }
+
+                call.resolve([
+                    "status": status.stringValue,
+                    "location": location.dictionaryValue,
+                    "stopped": stopped
+                ])
             }
         }
     }
@@ -145,16 +152,18 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func trackOnce(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarTrackCompletionHandler = { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
-                if status == .success && location != nil && events != nil && user != nil {
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "location": Radar.dictionaryForLocation(location!),
-                        "events": RadarEvent.array(for: events!) ?? [],
-                        "user": user!.dictionaryValue()
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
+                guard status == .success, let location = location, let events = events, let user = user else {
+                    call.reject(status.stringValue)
+
+                    return
                 }
+
+                call.resolve([
+                    "status": status.stringValue,
+                    "location": location.dictionaryValue,
+                    "events": RadarEvent.array(for: events) ?? [],
+                    "user": user.dictionaryValue
+                ])
             }
 
             let latitude = call.getDouble("latitude") ?? 0.0
@@ -172,31 +181,27 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     }
 
     @objc func startTrackingEfficient(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            Radar.startTracking(trackingOptions: RadarTrackingOptions.presetEfficient)
-            call.resolve()
-        }
+        startTracking(call, options: .presetEfficient)
     }
 
     @objc func startTrackingResponsive(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            Radar.startTracking(trackingOptions: RadarTrackingOptions.presetResponsive)
-            call.resolve()
-        }
+        startTracking(call, options: .presetResponsive)
     }
 
     @objc func startTrackingContinuous(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            Radar.startTracking(trackingOptions: RadarTrackingOptions.presetContinuous)
-            call.resolve()
-        }
+        startTracking(call, options: .presetContinuous)
     }
     
     @objc func startTrackingCustom(_ call: CAPPluginCall) {
+        let trackingOptionsDict = call.getObject("options") ?? [:]
+        let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
+        startTracking(call, options: trackingOptions)
+    }
+
+    func startTracking(_ call: CAPPluginCall,
+                       options: RadarTrackingOptions) {
         DispatchQueue.main.async {
-            let trackingOptionsDict = call.getObject("options") ?? [:]
-            let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
-            Radar.startTracking(trackingOptions: trackingOptions)
+            Radar.startTracking(trackingOptions: options)
             call.resolve()
         }
     }
@@ -208,6 +213,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
                 return
             }
+
             let originLatitude = originDict["latitude"] ?? 0.0
             let originLongitude = originDict["longitude"] ?? 0.0
             let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
@@ -221,17 +227,20 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let destinationLongitude = destinationDict["longitude"] ?? 0.0
             let destination = CLLocation(coordinate: CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-            guard let modeStr = call.getString("mode") else {
+            guard let modeStr = call.getString("mode")?.lowercased() else {
                 call.reject("mode is required")
 
                 return
             }
-            var mode = RadarRouteMode.car
-            if modeStr == "FOOT" || modeStr == "foot" {
+
+            var mode: RadarRouteMode
+
+            switch modeStr {
+            case "foot":
                 mode = .foot
-            } else if modeStr == "BIKE" || modeStr == "bike" {
+            case "bike":
                 mode = .bike
-            } else if modeStr == "CAR" || modeStr == "car" {
+            default:
                 mode = .car
             }
 
@@ -257,8 +266,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let options = RadarTripOptions(from: optionsDict)
             Radar.startTrip(options: options) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
-                    "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "status": status.stringValue,
+                    "trip": trip?.dictionaryValue ?? {},
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -287,8 +296,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
             Radar.updateTrip(options: options, status: status) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
-                    "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "status": status.stringValue,
+                    "trip": trip?.dictionaryValue ?? {},
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -299,8 +308,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             Radar.completeTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
-                    "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "status": status.stringValue,
+                    "trip": trip?.dictionaryValue ?? {},
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -311,8 +320,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             Radar.cancelTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
-                    "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "status": status.stringValue,
+                    "trip": trip?.dictionaryValue ?? {},
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -347,15 +356,17 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func getContext(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarContextCompletionHandler = { (status: RadarStatus, location: CLLocation?, context: RadarContext?) in
-                if status == .success && location != nil && context != nil {
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "location": Radar.dictionaryForLocation(location!),
-                        "context": context!.dictionaryValue()
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
+                guard status == .success, let location = location, let context = context else {
+                    call.reject(status.stringValue)
+
+                    return
                 }
+
+                call.resolve([
+                    "status": status.stringValue,
+                    "location": location.dictionaryValue,
+                    "context": context.dictionaryValue
+                ])
             }
 
             let latitude = call.getDouble("latitude") ?? 0.0
@@ -375,15 +386,16 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func searchPlaces(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarSearchPlacesCompletionHandler = { (status: RadarStatus, location: CLLocation?, places: [RadarPlace]?) in
-                if status == .success && location != nil && places != nil {
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "location": Radar.dictionaryForLocation(location!),
-                        "places": RadarPlace.array(for: places!) ?? []
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
+                guard status == .success, let location = location, let places = places else {
+                    call.reject(status.stringValue)
+
+                    return
                 }
+                call.resolve([
+                    "status": status.stringValue,
+                    "location": location.dictionaryValue,
+                    "places": RadarPlace.array(for: places) ?? []
+                ])
             }
 
             let radius = Int32(call.getInt("radius") ?? 1000)
@@ -409,15 +421,17 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func searchGeofences(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarSearchGeofencesCompletionHandler = { (status: RadarStatus, location: CLLocation?, geofences: [RadarGeofence]?) in
-                if status == .success && location != nil && geofences != nil {
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "location": Radar.dictionaryForLocation(location!),
-                        "geofences": RadarGeofence.array(for: geofences!) ?? []
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
+                guard status == .success, let location = location, let geofences = geofences else {
+                    call.reject(status.stringValue)
+
+                    return
                 }
+
+                call.resolve([
+                    "status": status.stringValue,
+                    "location": location.dictionaryValue,
+                    "geofences": RadarGeofence.array(for: geofences) ?? []
+                ])
             }
 
             let radius = Int32(call.getInt("radius") ?? 1000)
@@ -459,11 +473,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.autocomplete(query: query, near: near, limit: limit) { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
-                        "status": Radar.stringForStatus(status),
+                        "status": status.stringValue,
                         "addresses": RadarAddress.array(forAddresses: addresses!) ?? []
                     ])
                 } else {
-                    call.reject(Radar.stringForStatus(status))
+                    call.reject(status.stringValue)
                 }
             }
         }
@@ -480,11 +494,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.geocode(address: query) { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
-                        "status": Radar.stringForStatus(status),
+                        "status": status.stringValue,
                         "addresses": RadarAddress.array(forAddresses: addresses!) ?? []
                     ])
                 } else {
-                    call.reject(Radar.stringForStatus(status))
+                    call.reject(status.stringValue)
                 }
             }
         }
@@ -495,11 +509,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let completionHandler: RadarGeocodeCompletionHandler = { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
-                        "status": Radar.stringForStatus(status),
+                        "status": status.stringValue,
                         "addresses": RadarAddress.array(forAddresses: addresses!) ?? []
                     ])
                 } else {
-                    call.reject(Radar.stringForStatus(status))
+                    call.reject(status.stringValue)
                 }
             }
 
@@ -522,11 +536,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.ipGeocode { (status: RadarStatus, address: RadarAddress?, proxy: Bool) in
                 if status == .success && address != nil {
                     call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "address": address!.dictionaryValue()
+                        "status": status.stringValue,
+                        "address": address!.dictionaryValue
                     ])
                 } else {
-                    call.reject(Radar.stringForStatus(status))
+                    call.reject(status.stringValue)
                 }
             }
         }
@@ -537,11 +551,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let completionHandler: RadarRouteCompletionHandler = { (status: RadarStatus, routes: RadarRoutes?) in
                 if status == .success && routes != nil {
                     call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "routes": routes!.dictionaryValue()
+                        "status": status.stringValue,
+                        "routes": routes!.dictionaryValue
                     ])
                 } else {
-                    call.reject(Radar.stringForStatus(status))
+                    call.reject(status.stringValue)
                 }
             }
 
@@ -554,19 +568,24 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let destinationLongitude = destinationDict["longitude"] ?? 0.0
             let destination = CLLocation(coordinate: CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-            guard let modesArr = call.getArray("modes", String.self) else {
+            guard var modesArr = call.getArray("modes", String.self) else {
                 call.reject("modes is required")
 
                 return
             }
+
+            modesArr = modesArr.map { $0.lowercased() }
             var modes: RadarRouteMode = []
-            if modesArr.contains("FOOT") || modesArr.contains("foot") {
+
+            if modesArr.contains("foot") {
                 modes.insert(.foot)
             }
-            if modesArr.contains("BIKE") || modesArr.contains("bike") {
+
+            if modesArr.contains("bike") {
                 modes.insert(.bike)
             }
-            if modesArr.contains("CAR") || modesArr.contains("car") {
+
+            if modesArr.contains("car") {
                 modes.insert(.car)
             }
 
@@ -591,25 +610,58 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     @objc func setLogLevel(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let levelStr = call.getString("level") else {
+            guard let levelStr = call.getString("level")?.lowercased() else {
                 call.reject("level is required")
                 return
             }
-            var level: RadarLogLevel = .info
-            if levelStr.caseInsensitiveCompare("none") == .orderedSame {
+
+            let level: RadarLogLevel
+
+            switch levelStr {
+            case "none":
                 level = .none
-            } else if levelStr.caseInsensitiveCompare("error") == .orderedSame {
+            case "error":
                 level = .error
-            } else if levelStr.caseInsensitiveCompare("warning") == .orderedSame {
+            case "warning":
                 level = .warning
-            } else if levelStr.caseInsensitiveCompare("info") == .orderedSame {
-                level = .info
-            } else if levelStr.caseInsensitiveCompare("debug") == .orderedSame {
+            case "debug":
                 level = .debug
+            default:
+                level = .info
             }
+
             Radar.setLogLevel(level)
             call.resolve()
         }
+    }
+
+}
+
+// MARK: - Internal extensions
+
+extension RadarStatus {
+
+    /// Shorthand for `Radar.stringForStatus(:)`.
+    var stringValue: String {
+        return Radar.stringForStatus(self)
+    }
+
+}
+
+extension CLLocation {
+
+    /// Shorthand for `Radar.dictionaryForLocation(:)`.
+    var dictionaryValue: [AnyHashable: Any] {
+        return Radar.dictionaryForLocation(self)
+    }
+
+}
+
+extension RadarLocationSource {
+
+    /// Shorthand for `Radar.stringForLocationSource(:)`.
+    var stringValue: String {
+        return Radar.stringForLocationSource(self)
     }
 
 }
