@@ -20,7 +20,7 @@ pushd example
 npm install
 ionic build
 
-# Open example app in a Xcode or Android Studio.
+# Open the example app project in Xcode or Android Studio.
 npx cap sync
 ionic capacitor run ${1}
 
