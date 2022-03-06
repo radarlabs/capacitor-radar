@@ -20,8 +20,15 @@ pushd example
 npm install
 ionic build
 
-# Open the example app project in Xcode or Android Studio.
 npx cap sync
+
+if [ "$1" = "android" ]
+then
+    pushd android
+    ./gradlew assemble
+    popd
+fi
+
 ionic capacitor run ${1}
 
 popd
