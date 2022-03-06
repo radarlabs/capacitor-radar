@@ -69,7 +69,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     }
 
     override public func load() {
-
         Radar.setDelegate(self)
     }
 
@@ -641,7 +640,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
 extension RadarStatus {
 
-    /// Shorthand for `Radar.stringForStatus(:)`.
+    /// Shorthand for `Radar.stringForStatus(:)`. This is the equivalent of
+    /// `rawValue`, if `RadarStatus` were a Swift `enum`.
     var stringValue: String {
         return Radar.stringForStatus(self)
     }
@@ -659,7 +659,8 @@ extension CLLocation {
 
 extension RadarLocationSource {
 
-    /// Shorthand for `Radar.stringForLocationSource(:)`.
+    // Shorthand for `Radar.stringForLocationSource(:)`. This is the equivalent
+    // of `rawValue`, if `RadarLocationSource` were a Swift `enum`.
     var stringValue: String {
         return Radar.stringForLocationSource(self)
     }
