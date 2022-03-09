@@ -10,7 +10,7 @@ xcuserdata
 # macOS files
 .DS_Store
 
-
+run_example.sh
 
 # Based on Android gitignore template: https://github.com/github/gitignore/blob/master/Android.gitignore
 
