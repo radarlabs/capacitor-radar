@@ -1,11 +1,5 @@
 #!/bin/sh
 
-if [ "$#" -ne 1 ]
-then
-    echo "Usage: $0 [android|ios]"
-    exit
-fi
-
 # Updates, builds, and loads the example app in an IDE.
 # All commands have been copied from the project's CircleCI workflow.
 
@@ -22,14 +16,7 @@ ionic build
 
 npx cap sync
 
-if [ "$1" = "android" ]
-then
-    pushd android
-    ./gradlew assemble
-    popd
-fi
-
-ionic capacitor run ${1}
+ionic capacitor run ios
 
 popd
 
