@@ -1,9 +1,11 @@
 // @ts-nocheck
 
 import { WebPlugin } from '@capacitor/core';
+import { PermissionStatus } from './definitions'
 
 import type {
   RadarLocationPermissionsCallback,
+  RadarBeaconsPermissionsCallback,
   RadarLocationCallback,
   RadarTrackCallback,
   RadarContextCallback,
@@ -34,13 +36,38 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     Radar.setMetadata(options.metadata);
   }
 
+  async checkPermissions(): Promise<PermissionStatus> {
+    return new Promise(resolve => {
+      const navigator = window.navigator as any;
+
+      if (typeof navigator === 'undefined' || !navigator.permissions) {
+        throw this.unavailable('Permissions API not available in this browser.');
+      } else {
+        navigator.permissions.query({ name: 'geolocation' }).then((locationPermission) => {
+          navigator.permissions.query({ name: 'bluetooth' }).then((bluetoothPermission) => {
+            resolve({
+              location: locationPermission,
+              backgroundLocation: locationPermission,
+              beacons: bluetoothPermission,
+              beaconsAndroid12: bluetoothPermission
+            })
+          });
+        });
+      }
+    });
+  }
+
+  async requestPermissions(): Promise<PermissionStatus> {
+    throw this.unimplemented('Not implemented on web.');
+  }
+
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback> {
     return new Promise(resolve => {
       const navigator = window.navigator as any;
 
-      if (!navigator.permissions) {
+      if (typeof navigator === 'undefined' || !navigator.permissions) {
         resolve({
-          status: 'UNKNOWN'
+          status: 'NOT_DETERMINED'
         });
       } else {
         navigator.permissions.query({ name: 'geolocation' }).then((result) => {
@@ -53,7 +80,29 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
   }
 
   requestLocationPermissions(): void {
-    // not implemented
+    // Not implemented
+  }
+
+  getBeaconsPermissionStatus(): Promise<RadarBeaconsPermissionsCallback> {
+    return new Promise(resolve => {
+      const navigator = window.navigator as any;
+
+      if (typeof navigator === 'undefined' || !navigator.permissions) {
+        resolve({
+          status: 'NOT_DETERMINED'
+        });
+      } else {
+        navigator.permissions.query({ name: 'bluetooth' }).then((result) => {
+          resolve({
+            status: result.state === 'granted' ? 'GRANTED_FOREGROUND' : 'DENIED',
+          });
+        });
+      }
+    });
+  }
+
+  requestBeaconPermissions(): void {
+    // Not implemented
   }
 
   async getLocation(): Promise<RadarLocationCallback> {
