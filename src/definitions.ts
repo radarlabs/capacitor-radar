@@ -112,6 +112,7 @@ export interface RadarUser {
   state?: RadarRegion;
   dma?: RadarRegion;
   postalCode?: RadarRegion;
+  fraud?: RadarFraud;
 }
 
 export interface RadarTrip {
@@ -289,6 +290,11 @@ export interface RadarRouteDuration {
 export interface RadarTripEta {
   distance?: number;
   duration?: number;
+}
+
+export interface RadarFraud {
+  proxy: boolean;
+  mocked: boolean;
 }
 
 export interface PermissionStatus {
