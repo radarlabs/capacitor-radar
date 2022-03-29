@@ -126,52 +126,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
-    @objc func getBeaconsPermissionStatus(_ call: CAPPluginCall) {
-        getLocationPermissionsStatus(call)
-    }
-
-    @objc func requestBeaconPermissions(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            self.locationManager.requestWhenInUseAuthorization()
-            call.resolve()
-        }
-    }
-
-    @objc override public func checkPermissions(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            let authorizationStatus = CLLocationManager.authorizationStatus()
-            var location = "prompt"
-            var background = "prompt"
-            switch authorizationStatus {
-            case .notDetermined:
-                location = "prompt"
-                background = "prompt"
-            case .restricted, .denied:
-                location = "denied"
-                background = "denied"
-            case .authorizedAlways:
-                location = "granted"
-                background = "granted"
-            case .authorizedWhenInUse:
-                location = "granted"
-                background = "denied"
-            default:
-                location = "prompt"
-                background = "prompt"
-            }
-            call.resolve([
-                "location": location,
-                "backgroundLocation": background,
-                "beacons": location,
-                "beaconsAndroid12": location
-            ])
-        }
-    }
-
-    @objc override public func requestPermissions(_ call: CAPPluginCall) {
-        requestLocationPermissions(call)
-    }
-
     @objc func getLocation(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.getLocation { (status: RadarStatus, location: CLLocation?, stopped: Bool) in
@@ -317,20 +271,18 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let options = RadarTripOptions(from: optionsDict)
             let statusStr = call.getString("status")
             var status = RadarTripStatus.unknown
-            switch statusStr {
-            case "started":
-                status = RadarTripStatus.started
-            case "approaching":
-                status = RadarTripStatus.approaching
-            case "arrived":
-                status =  RadarTripStatus.arrived
-            case "completed":
-                status = RadarTripStatus.completed
-            case "canceled":
-                status = RadarTripStatus.canceled
-            default:
-                status = RadarTripStatus.unknown
+            if statusStr == "STARTED" || statusStr == "started" {
+                status = .started
+            } else if statusStr == "APPROACHING" || statusStr == "approaching" {
+                status = .approaching
+            } else if statusStr == "ARRIVED" || statusStr == "arrived" {
+                status = .arrived
+            } else if statusStr == "COMPLETED" || statusStr == "completed" {
+                status = .completed
+            } else if statusStr == "CANCELED" || statusStr == "canceled" {
+                status = .canceled
             }
+
             Radar.updateTrip(options: options, status: status) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
@@ -623,7 +575,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
             let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
 
-            if let originDict = call.options["origin"] as? [String:Double] {
+            if call.hasOption("origin") {
+                let originDict = call.options["origin"] as! [String:Double]
                 let originLatitude = originDict["latitude"] ?? 0.0
                 let originLongitude = originDict["longitude"] ?? 0.0
                 let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
@@ -632,29 +585,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             } else {
                 Radar.getDistance(destination: destination, modes: modes, units: units, completionHandler: completionHandler)
             }
-        }
-    }
-
-    @objc func setLogLevel(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            guard let levelStr = call.getString("level") else {
-                call.reject("level is required")
-                return
-            }
-            var level: RadarLogLevel = .info
-            if levelStr.caseInsensitiveCompare("none") == .orderedSame {
-                level = .none
-            } else if levelStr.caseInsensitiveCompare("error") == .orderedSame {
-                level = .error
-            } else if levelStr.caseInsensitiveCompare("warning") == .orderedSame {
-                level = .warning
-            } else if levelStr.caseInsensitiveCompare("info") == .orderedSame {
-                level = .info
-            } else if levelStr.caseInsensitiveCompare("debug") == .orderedSame {
-                level = .debug
-            }
-            Radar.setLogLevel(level)
-            call.resolve()
         }
     }
 

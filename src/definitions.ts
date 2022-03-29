@@ -1,5 +1,4 @@
 import type { PluginListenerHandle } from '@capacitor/core';
-import type { PermissionState } from '@capacitor/core';
 
 export interface RadarPlugin {
   addListener(eventName: 'clientLocation', listenerFunc: (result: { location: Location, stopped: boolean, source: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
@@ -11,12 +10,8 @@ export interface RadarPlugin {
   setUserId(options: { userId: string }): void;
   setDescription(options: { description: string }): void;
   setMetadata(options: { metadata: object }): void;
-  checkPermissions(): Promise<PermissionStatus>;
-  requestPermissions(): Promise<PermissionStatus>;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
-  getBeaconsPermissionStatus(): Promise<RadarBeaconsPermissionsCallback>;
-  requestBeaconsPermission(): void;
   getLocation(): Promise<RadarLocationCallback>;
   trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number }): Promise<RadarTrackCallback>;
   startTrackingEfficient(): void;
@@ -26,9 +21,9 @@ export interface RadarPlugin {
   mockTracking(options: { origin: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, mode: string, steps: number, interval: number }): void;
   stopTracking(): void;
   startTrip(options: object): Promise<RadarTripCallback>;
+  updateTrip(options: {options: object, status?: string}): Promise<RadarTripCallback>;
   completeTrip(): Promise<RadarTripCallback>;
   cancelTrip(): Promise<RadarTripCallback>;
-  updateTrip(options: {options: object, status?: string}): Promise<RadarTripCallback>;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
@@ -39,7 +34,6 @@ export interface RadarPlugin {
   reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
   getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
-  setLogLevel(options: {level: string}): void;
 }
 
 export interface RadarLocationCallback {
@@ -57,6 +51,8 @@ export interface RadarTrackCallback {
 
 export interface RadarTripCallback {
   status: string;
+  trip?: RadarTrip;
+  events?: RadarEvent[];
 }
 
 export interface RadarContextCallback {
@@ -240,10 +236,6 @@ export interface RadarLocationPermissionsCallback {
   status: string;
 }
 
-export interface RadarBeaconsPermissionsCallback {
-  status: string;
-}
-
 export interface RadarAddress {
   latitude: number;
   longitude: number;
@@ -295,11 +287,4 @@ export interface RadarTripEta {
 export interface RadarFraud {
   proxy: boolean;
   mocked: boolean;
-}
-
-export interface PermissionStatus {
-  location: PermissionState;
-  backgroundLocation: PermissionState;
-  beacons: PermissionState;
-  beaconsAndroid12: PermissionState;
 }
