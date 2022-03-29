@@ -8,8 +8,6 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(setMetadata, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocationPermissionsStatus, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(requestLocationPermissions, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(getBeaconsPermissionStatus, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(requestBeaconPermissions, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocation, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(trackOnce, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingEfficient, CAPPluginReturnPromise);
@@ -19,7 +17,6 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(mockTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(stopTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrip, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(updateTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(completeTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(cancelTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(acceptEvent, CAPPluginReturnPromise);
@@ -32,5 +29,4 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(reverseGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(ipGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getDistance, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(setLogLevel, CAPPluginReturnPromise);
 )
