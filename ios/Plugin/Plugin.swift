@@ -12,11 +12,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         Radar.setDelegate(self)
     }
 
-    public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser) {
+    public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser?) {
         DispatchQueue.main.async {
             self.notifyListeners("events", data: [
                 "events": RadarEvent.array(for: events) ?? [],
-                "user": user.dictionaryValue()
+                "user": user?.dictionaryValue() ?? {}
             ])
         }
     }
@@ -25,7 +25,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             self.notifyListeners("location", data: [
                 "location": Radar.dictionaryForLocation(location),
-                "user": user?.dictionaryValue() ?? {}
+                "user": user.dictionaryValue()
             ])
         }
     }
