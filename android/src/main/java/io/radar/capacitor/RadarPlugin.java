@@ -344,24 +344,24 @@ public class RadarPlugin extends Plugin {
     public void startTrip(PluginCall call) {
         JSObject optionsObj = call.getObject("options");
         JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);
+        if (optionsJson == null) {
+            call.reject("options is required");
+            return;
+        }
         RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
         Radar.startTrip(options, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(@NonNull Radar.RadarStatus status) {
+            public void onComplete(@NonNull Radar.RadarStatus status,
+                                   @Nullable RadarTrip trip,
+                                   @Nullable RadarEvent[] events) {
                 JSObject ret = new JSObject();
-                ret.put("status", status.toString());
-                call.resolve(ret);
-            }
-        });
-    }
-
-    @PluginMethod()
-    public void completeTrip(PluginCall call) {
-        Radar.completeTrip(new Radar.RadarTripCallback() {
-            @Override
-            public void onComplete(@NonNull Radar.RadarStatus status) {
-                JSObject ret = new JSObject();
-                ret.put("status", status.toString());
+                ret.put("status", radarStatus.toString());
+                if (trip != null) {
+                    ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
+                }
+                if (events != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(events));
+                }
                 call.resolve(ret);
             }
         });
@@ -398,7 +398,7 @@ public class RadarPlugin extends Plugin {
                                    @Nullable RadarTrip trip,
                                    @Nullable RadarEvent[] events) {
                 JSObject ret = new JSObject();
-                ret.put("status", radarStatus.name());
+                ret.put("status", status.toString());
                 if (trip != null) {
                     ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
                 }
@@ -411,12 +411,40 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void completeTrip(PluginCall call) {
+        Radar.completeTrip(new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status,
+                                   @Nullable RadarTrip trip,
+                                   @Nullable RadarEvent[] events) {
+                JSObject ret = new JSObject();
+                ret.put("status", status.toString());
+                if (radarTrip != null) {
+                    ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
+                }
+                if (radarEvents != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(radarEvents));
+                }
+                call.resolve(ret);
+            }
+        });
+    }
+
+    @PluginMethod()
     public void cancelTrip(PluginCall call) {
         Radar.cancelTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(@NonNull Radar.RadarStatus status) {
+            public void onComplete(@NonNull Radar.RadarStatus status,
+                                   @Nullable RadarTrip trip,
+                                   @Nullable RadarEvent[] events) {
                 JSObject ret = new JSObject();
                 ret.put("status", status.toString());
+                if (radarTrip != null) {
+                    ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
+                }
+                if (radarEvents != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(events));
+                }
                 call.resolve(ret);
             }
         });
