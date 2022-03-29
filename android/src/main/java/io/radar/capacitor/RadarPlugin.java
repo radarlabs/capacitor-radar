@@ -44,90 +44,92 @@ public class RadarPlugin extends Plugin {
     private static final String TAG = "RadarPlugin";
     protected static RadarPlugin sPlugin;
 
-    public static class RadarPluginReceiver extends RadarReceiver {
-        @Override
-        public void onEventsReceived(@NonNull Context context, @NonNull RadarEvent[] events, @NonNull RadarUser user) {
-            if (sPlugin == null) {
-                return;
-            }
-
-            try {
-                JSObject ret = new JSObject();
-                ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
-                ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
-                sPlugin.notifyListeners("events", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-            }
-        }
-
-        @Override
-        public void onLocationUpdated(@NonNull Context context, @NonNull Location location, @NonNull RadarUser user) {
-            if (sPlugin == null) {
-                return;
-            }
-
-            try {
-                JSObject ret = new JSObject();
-                ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
-                ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
-                sPlugin.notifyListeners("location", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-            }
-        }
-
-        @Override
-        public void onClientLocationUpdated(@NonNull Context context, @NonNull Location location, boolean stopped, @NonNull Radar.RadarLocationSource source) {
-            if (sPlugin == null) {
-                return;
-            }
-
-            try {
-                JSObject ret = new JSObject();
-                ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
-                ret.put("stopped", stopped);
-                ret.put("source", Radar.stringForSource(source));
-                sPlugin.notifyListeners("clientLocation", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-            }
-        }
-
-        @Override
-        public void onError(@NonNull Context context, @NonNull Radar.RadarStatus status) {
-            if (sPlugin == null) {
-                return;
-            }
-
-            try {
-                JSObject ret = new JSObject();
-                ret.put("status", status.toString());
-                sPlugin.notifyListeners("error", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-            }
-        }
-
-        @Override
-        public void onLog(@NonNull Context context, @NonNull String message) {
-            if (sPlugin == null) {
-                return;
-            }
-
-            try {
-                JSObject ret = new JSObject();
-                ret.put("message", message);
-                sPlugin.notifyListeners("log", ret);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-            }
-        }
-    }
-
     @Override
     public void load() {
         sPlugin = this;
+
+        Radar.setReceiver(new RadarReceiver() {
+            @Override
+            public void onEventsReceived(@NonNull Context context, @NonNull RadarEvent[] events, @Nullable RadarUser user) {
+                if (sPlugin == null) {
+                    return;
+                }
+
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
+                    if (user != null) {
+                        ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                    }
+                    sPlugin.notifyListeners("events", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+            }
+
+            @Override
+            public void onLocationUpdated(@NonNull Context context, @NonNull Location location, @NonNull RadarUser user) {
+                if (sPlugin == null) {
+                    return;
+                }
+
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                    sPlugin.notifyListeners("location", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+            }
+
+            @Override
+            public void onClientLocationUpdated(@NonNull Context context, @NonNull Location location, boolean stopped, @NonNull Radar.RadarLocationSource source) {
+                if (sPlugin == null) {
+                    return;
+                }
+
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("stopped", stopped);
+                    ret.put("source", Radar.stringForSource(source));
+                    sPlugin.notifyListeners("clientLocation", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Context context, @NonNull Radar.RadarStatus status) {
+                if (sPlugin == null) {
+                    return;
+                }
+
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    sPlugin.notifyListeners("error", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+            }
+
+            @Override
+            public void onLog(@NonNull Context context, @NonNull String message) {
+                if (sPlugin == null) {
+                    return;
+                }
+
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("message", message);
+                    sPlugin.notifyListeners("log", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+            }
+        });
     }
 
     @PluginMethod()
@@ -360,6 +362,49 @@ public class RadarPlugin extends Plugin {
             public void onComplete(@NonNull Radar.RadarStatus status) {
                 JSObject ret = new JSObject();
                 ret.put("status", status.toString());
+                call.resolve(ret);
+            }
+        });
+    }
+
+    @PluginMethod
+    public void updateTrip(PluginCall call) {
+        JSObject optionsObj = call.getObject("options");
+        JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);
+        if (optionsJson == null) {
+            call.reject("options is required");
+            return;
+        }
+        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
+        RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
+        if (call.hasOption("status")) {
+            String statusStr = call.getString("status");
+            if (statusStr.equals("STARTED") || statusStr.equals("started")) {
+                status = RadarTrip.RadarTripStatus.STARTED;
+            } else if (statusStr.equals("APPROACHING") || statusStr.equals("approaching")) {
+                status = RadarTrip.RadarTripStatus.APPROACHING;
+            } else if (statusStr.equals("ARRIVED") || statusStr.equals("arrived")) {
+                status = RadarTrip.RadarTripStatus.ARRIVED;
+            } else if (statusStr.equals("COMPLETED") || statusStr.equals("completed")) {
+                status = RadarTrip.RadarTripStatus.COMPLETED;
+            } else if (statusStr.equals("CANCELED") || statusStr.equals("canceled")) {
+                status = RadarTrip.RadarTripStatus.CANCELED;
+            }
+        }
+
+        Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status,
+                                   @Nullable RadarTrip trip,
+                                   @Nullable RadarEvent[] events) {
+                JSObject ret = new JSObject();
+                ret.put("status", radarStatus.name());
+                if (trip != null) {
+                    ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
+                }
+                if (events != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(events));
+                }
                 call.resolve(ret);
             }
         });

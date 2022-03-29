@@ -123,6 +123,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  updateTrip(): void {
+    // not implemented
+  }
+
   completeTrip(): void {
     // not implemented
   }
