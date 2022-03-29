@@ -355,7 +355,7 @@ public class RadarPlugin extends Plugin {
                                    @Nullable RadarTrip trip,
                                    @Nullable RadarEvent[] events) {
                 JSObject ret = new JSObject();
-                ret.put("status", radarStatus.toString());
+                ret.put("status", status.toString());
                 if (trip != null) {
                     ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
                 }
@@ -419,11 +419,11 @@ public class RadarPlugin extends Plugin {
                                    @Nullable RadarEvent[] events) {
                 JSObject ret = new JSObject();
                 ret.put("status", status.toString());
-                if (radarTrip != null) {
+                if (trip != null) {
                     ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
                 }
-                if (radarEvents != null) {
-                    ret.put("events", RadarPlugin.jsArrayForArray(radarEvents));
+                if (events != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(events));
                 }
                 call.resolve(ret);
             }
@@ -439,10 +439,10 @@ public class RadarPlugin extends Plugin {
                                    @Nullable RadarEvent[] events) {
                 JSObject ret = new JSObject();
                 ret.put("status", status.toString());
-                if (radarTrip != null) {
+                if (trip != null) {
                     ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
                 }
-                if (radarEvents != null) {
+                if (events != null) {
                     ret.put("events", RadarPlugin.jsArrayForArray(events));
                 }
                 call.resolve(ret);
