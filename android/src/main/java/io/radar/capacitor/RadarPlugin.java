@@ -36,6 +36,7 @@ import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
 import io.radar.sdk.model.RadarPlace;
 import io.radar.sdk.model.RadarRoutes;
+import io.radar.sdk.model.RadarTrip;
 import io.radar.sdk.model.RadarUser;
 
 @CapacitorPlugin(name = "Radar")
@@ -804,6 +805,10 @@ public class RadarPlugin extends Plugin {
         } catch (JSONException j) {
             return null;
         }
+    }
+
+    private static JSArray jsArrayForArray(Object[] array) {
+        return jsArrayForJSONArray(new JSONArray(Arrays.asList(array)));
     }
 
     private static String[] stringArrayForJSArray(JSArray jsArr) {
