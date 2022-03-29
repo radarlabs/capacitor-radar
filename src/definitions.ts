@@ -51,6 +51,8 @@ export interface RadarTrackCallback {
 
 export interface RadarTripCallback {
   status: string;
+  trip?: RadarTrip;
+  events?: RadarEvent[];
 }
 
 export interface RadarContextCallback {

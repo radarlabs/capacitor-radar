@@ -185,6 +185,8 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void requestLocationPermissions(PluginCall call) {
+        boolean foreground = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+
         if (!call.hasOption("background")) {
             call.reject("background is required");
 
@@ -194,10 +196,10 @@ public class RadarPlugin extends Plugin {
 
         if (Build.VERSION.SDK_INT >= 23) {
             int requestCode = 0;
-            if (background && Build.VERSION.SDK_INT >= 29) {
-                pluginRequestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION }, requestCode);
+            if (foreground && background && Build.VERSION.SDK_INT >= 29) {
+                pluginRequestPermissions(new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION }, requestCode);
             } else {
-                pluginRequestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, requestCode);
+                pluginRequestPermissions(new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION }, requestCode);
             }
         }
         call.resolve();
