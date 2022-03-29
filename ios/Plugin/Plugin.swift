@@ -271,15 +271,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let options = RadarTripOptions(from: optionsDict)
             let statusStr = call.getString("status")
             var status = RadarTripStatus.unknown
-            if modeStr == "STARTED" || modeStr == "started" {
+            if statusStr == "STARTED" || statusStr == "started" {
                 status = .started
-            } else if modeStr == "APPROACHING" || modeStr == "approaching" {
+            } else if statusStr == "APPROACHING" || statusStr == "approaching" {
                 status = .approaching
-            } else if modeStr == "ARRIVED" || modeStr == "arrived" {
+            } else if statusStr == "ARRIVED" || statusStr == "arrived" {
                 status = .arrived
-            } else if modeStr == "COMPLETED" || modeStr == "completed" {
+            } else if statusStr == "COMPLETED" || statusStr == "completed" {
                 status = .completed
-            } else if modeStr == "CANCELED" || modeStr == "canceled" {
+            } else if statusStr == "CANCELED" || statusStr == "canceled" {
                 status = .canceled
             }
 
