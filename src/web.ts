@@ -123,15 +123,15 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  updateTrip(): void {
+    // not implemented
+  }
+
   completeTrip(): void {
     // not implemented
   }
 
   cancelTrip(): void {
-    // not implemented
-  }
-
-  updateTrip(): void {
     // not implemented
   }
 
@@ -276,10 +276,6 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
         }
       });
     });
-  }
-
-  setLogLevel(options: { level: string }): void {
-    // not implemented
   }
 
 }

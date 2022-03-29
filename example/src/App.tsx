@@ -52,7 +52,7 @@ class App extends React.Component {
       alert(JSON.stringify(result));
     });
 
-    Radar.requestLocationPermissions({ background: true });
+    Radar.requestLocationPermissions({ background: false });
 
     /*
     Radar.startTrackingContinuous();
