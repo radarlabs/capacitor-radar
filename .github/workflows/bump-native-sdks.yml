@@ -7,7 +7,7 @@ on:
 jobs:
   update_android_sdk_version:
     runs-on: ubuntu-latest
-    if: github.event.client_payload.platform == "android"
+    if: github.event.client_payload.platform == 'android'
     steps:
       - name: Event Information
         run: echo ${{ github.event.client_payload.release }}
