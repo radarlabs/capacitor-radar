@@ -7,7 +7,7 @@ on:
 jobs:
   update_android_sdk_version:
     runs-on: ubuntu-latest
-    if: github.event.client_payload.platform == "android"
+    if: github.event.client_payload.platform == 'android'
     steps:
       - name: Event Information
         run: echo ${{ github.event.client_payload.release }}
@@ -19,29 +19,29 @@ jobs:
       - name: Copy android/build.gradle template file
         uses: canastro/copy-action@master
         with:
-          source: "android/build.gradle.template"
-          target: "android/build.gradle"
+          source: 'android/build.gradle.template'
+          target: 'android/build.gradle'
 
       # render the build.gradle template using the input sdk version
       - name: Render radar-sdk-android release version onto android/build.gradle
         uses: jayamanikharyono/jinja-action@v0.1
         with:
           data: version=${{ github.event.client_payload.release }}
-          path: "android/build.gradle"
+          path: 'android/build.gradle'
 
       # copy the template file to its final destination
       - name: Copy example/android/app/build.gradle template file
         uses: canastro/copy-action@master
         with:
-          source: "example/android/app/build.gradle.template"
-          target: "example/android/app/build.gradle"
+          source: 'example/android/app/build.gradle.template'
+          target: 'example/android/app/build.gradle'
 
       # render the template using the input sdk version
       - name: Render radar-sdk-android release version onto example/android/app/build.gradle
         uses: jayamanikharyono/jinja-action@v0.1
         with:
           data: version=${{ github.event.client_payload.release }}
-          path: "example/android/app/build.gradle"
+          path: 'example/android/app/build.gradle'
 
       # Update package.json to latest version
       - name: Update package.json to latest
@@ -68,29 +68,29 @@ jobs:
       - name: Copy ios/Cartfile.resolved template
         uses: canastro/copy-action@master
         with:
-          source: "ios/Podfile.template"
-          target: "ios/Podfile"
+          source: 'ios/Podfile.template'
+          target: 'ios/Podfile'
 
       # render the podfile template with the sdk version
       - name: Render radar-sdk-ios release version onto Cartfile template
         uses: jayamanikharyono/jinja-action@v0.1
         with:
           data: version=${{ github.event.client_payload.release }}
-          path: "ios/Podfile"
+          path: 'ios/Podfile'
 
       # copy the podspec template to its final destination
       - name: Copy the podspec template
         uses: canastro/copy-action@master
         with:
-          source: "CapacitorRadar.podspec.template"
-          target: "CapacitorRadar.podspec"
+          source: 'CapacitorRadar.podspec.template'
+          target: 'CapacitorRadar.podspec'
 
       # render the podspec template with the sdk version
       - name: Render radar-sdk-ios release version onto podspec template
         uses: jayamanikharyono/jinja-action@v0.1
         with:
           data: version=${{ github.event.client_payload.release }}
-          path: "CapacitorRadar.podspec"
+          path: 'CapacitorRadar.podspec'
 
       # Update package.json to latest version
       - name: Update package.json to latest
