@@ -15,6 +15,10 @@ jobs:
       # checkout the repo
       - uses: actions/checkout@v2
 
+      # Update package.json to latest version
+      - name: Update package.json to latest
+        run: npm version ${{ github.event.client_payload.release }}
+
       # copy the build.gradle template file to its final destination
       - name: Copy android/build.gradle template file
         uses: canastro/copy-action@master
@@ -43,10 +47,6 @@ jobs:
           data: version=${{ github.event.client_payload.release }}
           path: 'example/android/app/build.gradle'
 
-      # Update package.json to latest version
-      - name: Update package.json to latest
-        run: npm version ${{ github.event.client_payload.release }}
-
       # open a pull request with the new sdk version
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
@@ -63,6 +63,10 @@ jobs:
 
       # checkout the repo
       - uses: actions/checkout@v2
+
+      # Update package.json to latest version
+      - name: Update package.json to latest
+        run: npm version ${{ github.event.client_payload.release }}
 
       # copy the podfile template to its final destination
       - name: Copy ios/Cartfile.resolved template
@@ -91,10 +95,6 @@ jobs:
         with:
           data: version=${{ github.event.client_payload.release }}
           path: 'CapacitorRadar.podspec'
-
-      # Update package.json to latest version
-      - name: Update package.json to latest
-        run: npm version ${{ github.event.client_payload.release }}
 
       # open a pull request with the new sdk version
       - name: Create Pull Request
