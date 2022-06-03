@@ -119,6 +119,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  setForegroundServiceOptions(): void {
+    // not implemented
+  }
+
   startTrip(): void {
     // not implemented
   }
