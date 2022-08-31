@@ -31,6 +31,7 @@ import java.util.List;
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
+import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
 import io.radar.sdk.model.RadarContext;
@@ -342,6 +343,15 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void stopTracking(PluginCall call) {
         Radar.stopTracking();
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void setForegroundServiceOptions(PluginCall call) {
+        JSObject optionsObj = call.getObject("options");
+        JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);
+        RadarTrackingOptionsForegroundService options = RadarTrackingOptionsForegroundService.fromJson(optionsJson);
+        Radar.setForegroundServiceOptions(options);
         call.resolve();
     }
 
