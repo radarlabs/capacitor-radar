@@ -3,7 +3,7 @@ jobs:
   android:
     working_directory: ~/capacitor-radar
     docker:
-      - image: circleci/android:api-28-node
+      - image: cimg/android:2022.04.1-node
     steps:
       - checkout:
           path: ~/capacitor-radar
@@ -17,7 +17,7 @@ jobs:
       - run: cd example/android && ./gradlew assembleDebug
   ios:
     macos:
-      xcode: "12.3.0"
+      xcode: 13.1.0
     working_directory: ~/capacitor-radar
     steps:
       - checkout:
@@ -25,7 +25,7 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: sudo npm install -g @ionic/cli
-      - run: sudo chown -R 501:20 "/Users/distiller/.npm"
+      - run: sudo chown -R 502:20 "/Users/distiller/.npm"
       - run: cd example && npm install
       - run: cd example && ionic build
       - run: cd example && npx cap sync

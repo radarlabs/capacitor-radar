@@ -1,6 +1,6 @@
 {
   "name": "capacitor-radar",
-  "version": "3.2.0",
+  "version": "3.4.2",
   "description": "Capacitor plugin for Radar, the leading geofencing and location tracking platform",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -11,12 +11,15 @@
     "prepublishOnly": "npm run build"
   },
   "author": "Radar Labs, Inc.",
-  "homepage": "https://radar.io",
+  "homepage": "https://radar.com",
   "license": "Apache-2.0",
+  "resolutions": {
+    "source-map": "^0.8.0-beta.0"
+  },
   "dependencies": {
     "@capacitor/core": "^3.0.1",
-    "ionic": "^5.4.16",
-    "radar-sdk-js": "^3.1.0-beta.9"
+    "radar-sdk-js": "^3.1.1",
+    "source-map": "^0.8.0-beta.0"
   },
   "devDependencies": {
     "@capacitor/android": "^3.0.1",

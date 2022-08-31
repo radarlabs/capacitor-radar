@@ -16,6 +16,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(startTrackingCustom, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(mockTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(stopTracking, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setForegroundServiceOptions, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(updateTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(completeTrip, CAPPluginReturnPromise);
@@ -30,5 +31,4 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(reverseGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(ipGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getDistance, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(setLogLevel, CAPPluginReturnPromise);
 )

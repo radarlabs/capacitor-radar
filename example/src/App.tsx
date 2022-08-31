@@ -52,16 +52,22 @@ class App extends React.Component {
       alert(JSON.stringify(result));
     });
 
-    Radar.requestLocationPermissions({ background: true });
+    Radar.requestLocationPermissions({ background: false });
 
-    /*
+    Radar.setForegroundServiceOptions({
+      options: {
+        title: 'Foreground service title',
+        text: 'Foreground service text'
+      }
+    });
+
     Radar.startTrackingContinuous();
 
     Radar.trackOnce().then((result) => {
       alert(JSON.stringify(result));
     });
-    */
 
+    /*
     Radar.startTrip({
       options: {
         externalId: '299',
@@ -74,6 +80,7 @@ class App extends React.Component {
         mode: 'car'
       }
     });
+    */
 
     Radar.mockTracking({
       origin: {

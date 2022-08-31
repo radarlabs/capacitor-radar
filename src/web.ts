@@ -119,7 +119,15 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  setForegroundServiceOptions(): void {
+    // not implemented
+  }
+
   startTrip(): void {
+    // not implemented
+  }
+
+  updateTrip(): void {
     // not implemented
   }
 
@@ -128,10 +136,6 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
   }
 
   cancelTrip(): void {
-    // not implemented
-  }
-
-  updateTrip(): void {
     // not implemented
   }
 
@@ -276,10 +280,6 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
         }
       });
     });
-  }
-
-  setLogLevel(options: { level: string }): void {
-    // not implemented
   }
 
 }

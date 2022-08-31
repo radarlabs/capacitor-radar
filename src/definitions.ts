@@ -20,10 +20,11 @@ export interface RadarPlugin {
   startTrackingCustom(options: object): void;
   mockTracking(options: { origin: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, mode: string, steps: number, interval: number }): void;
   stopTracking(): void;
+  setForegroundServiceOptions(options: object): void;
   startTrip(options: object): Promise<RadarTripCallback>;
+  updateTrip(options: {options: object, status?: string}): Promise<RadarTripCallback>;
   completeTrip(): Promise<RadarTripCallback>;
   cancelTrip(): Promise<RadarTripCallback>;
-  updateTrip(options: {options: object, status?: string}): Promise<RadarTripCallback>;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
@@ -34,7 +35,6 @@ export interface RadarPlugin {
   reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
   getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
-  setLogLevel(options: {level: string}): void;
 }
 
 export interface RadarLocationCallback {
@@ -52,6 +52,8 @@ export interface RadarTrackCallback {
 
 export interface RadarTripCallback {
   status: string;
+  trip?: RadarTrip;
+  events?: RadarEvent[];
 }
 
 export interface RadarContextCallback {
@@ -107,6 +109,7 @@ export interface RadarUser {
   state?: RadarRegion;
   dma?: RadarRegion;
   postalCode?: RadarRegion;
+  fraud?: RadarFraud;
 }
 
 export interface RadarTrip {
@@ -280,4 +283,9 @@ export interface RadarRouteDuration {
 export interface RadarTripEta {
   distance?: number;
   duration?: number;
+}
+
+export interface RadarFraud {
+  proxy: boolean;
+  mocked: boolean;
 }
