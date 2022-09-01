@@ -27,6 +27,7 @@ export interface RadarPlugin {
   cancelTrip(): Promise<RadarTripCallback>;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
+  sendEvent(options: { customType: string, location?: { latitude: number, longitude: number }, metadata?: object }): Promise<RadarEventCallback>;
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
   searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
@@ -87,6 +88,11 @@ export interface RadarIPGeocodeCallback {
 export interface RadarRouteCallback {
   status: string;
   routes?: RadarRoutes;
+}
+
+export interface RadarEventCallback {
+  status: string;
+  events?: RadarEvent[];
 }
 
 export interface Location {
