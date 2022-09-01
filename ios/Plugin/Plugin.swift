@@ -455,6 +455,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
             let radius = Int32(call.getInt("radius") ?? 1000)
             let chains = call.getArray("chains", String.self)
+            let chainMetadata = call.options["chainMetadata"] as? [String: String] ?? nil
             let categories = call.getArray("categories", String.self)
             let groups = call.getArray("groups", String.self)
             let limit = Int32(call.getInt("limit") ?? 10)
@@ -466,9 +467,22 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
                 
-                Radar.searchPlaces(near: near, radius: radius, chains: chains, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
+                Radar.searchPlaces(near: near,
+                                   radius: radius,
+                                   chains: chains,
+                                   chainMetadata: chainMetadata,
+                                   categories: categories,
+                                   groups: groups,
+                                   limit: limit,
+                                   completionHandler: completionHandler)
             } else {
-                Radar.searchPlaces(radius: radius, chains: chains, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
+                Radar.searchPlaces(radius: radius,
+                                   chains: chains,
+                                   chainMetadata: chainMetadata,
+                                   categories: categories,
+                                   groups: groups,
+                                   limit: limit,
+                                   completionHandler: completionHandler)
             }
         }
     }
