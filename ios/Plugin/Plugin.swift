@@ -349,6 +349,68 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func sendEvent(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let customType = call.getString("customType") else {
+                call.reject("customType must be specified")
+
+                return
+            }
+
+            let metadata = call.getObject("metadata") as? [String: String]
+            let location: CLLocation?
+
+            if let locationDict = call.getObject("location"),
+               let latString = locationDict["latitude"] as? String,
+               let lonString = locationDict["longitude"] as? String {
+                guard let lat = CLLocationDegrees(latString),
+                      let lon = CLLocationDegrees(lonString) else {
+                    call.reject("location was specified, but lat/lon values aren't numeric")
+
+                    return
+                }
+
+                let coords = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+
+                if !CLLocationCoordinate2DIsValid(coords) {
+                    call.reject("location coordinates are invalid")
+
+                    return
+                }
+
+                location = CLLocation(coordinate: coords,
+                                      altitude: -1,
+                                      horizontalAccuracy: 5.0,
+                                      verticalAccuracy: -1,
+                                      timestamp: Date())
+            } else {
+                location = nil
+            }
+
+            Radar.sendEvent(customType: customType,
+                            location: location,
+                            metadata: metadata) { (status, location, events, user) in
+                if status != .success {
+                    call.reject(Radar.stringForStatus(status))
+                } else if events?.first?.customType != customType {
+                    call.reject("custom event could not be created")
+                } else {
+                    var returnVal: [String: Any] = [
+                        "status": Radar.stringForStatus(status),
+                        "events": RadarEvent.array(for: events) ?? [],
+                        "user": user?.dictionaryValue() ?? {}
+                    ]
+
+                    if let location = location {
+                        returnVal["location"] = Radar.dictionaryForLocation(location)
+                    }
+
+                    call.resolve(returnVal)
+                }
+            }
+        }
+    }
+
     @objc func getContext(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarContextCompletionHandler = { (status: RadarStatus, location: CLLocation?, context: RadarContext?) in
