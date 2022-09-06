@@ -18,7 +18,9 @@
   },
   "dependencies": {
     "@capacitor/core": "^3.0.1",
+    "build": "^0.1.4",
     "radar-sdk-js": "^3.1.1",
+    "run": "^1.4.0",
     "source-map": "^0.8.0-beta.0"
   },
   "devDependencies": {
