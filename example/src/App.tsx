@@ -54,6 +54,14 @@ class App extends React.Component {
 
     Radar.requestLocationPermissions({ background: false });
 
+    Radar.sendEvent({ customType: 'capacitorExampleEvent' })
+    .then((callback) => {
+      alert(`Received event ${callback.events?.first}`);
+    })
+    .catch((reason) => {
+      alert('Failed to send a custom event')
+    });
+ 
     Radar.setForegroundServiceOptions({
       options: {
         title: 'Foreground service title',

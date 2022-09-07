@@ -360,6 +360,26 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     }
 
     @objc func sendEvent(_ call: CAPPluginCall) {
+        let completionBlock: RadarSendEventCompletionHandler = { (status, location, events, user) in
+            if status != .success {
+                call.reject(Radar.stringForStatus(status))
+            } else if events?.first == nil {
+                call.reject("custom event could not be created")
+            } else {
+                var returnVal: [String: Any] = [
+                    "status": Radar.stringForStatus(status),
+                    "events": RadarEvent.array(for: events) ?? [],
+                    "user": user?.dictionaryValue() ?? {}
+                ]
+
+                if let location = location {
+                    returnVal["location"] = Radar.dictionaryForLocation(location)
+                }
+
+                call.resolve(returnVal)
+            }
+        }
+
         DispatchQueue.main.async {
             guard let customType = call.getString("customType") else {
                 call.reject("customType must be specified")
@@ -368,7 +388,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
 
             let metadata = call.getObject("metadata") as? [String: String]
-            let location: CLLocation?
 
             if let locationDict = call.getObject("location"),
                let latString = locationDict["latitude"] as? String,
@@ -388,35 +407,20 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                     return
                 }
 
-                location = CLLocation(coordinate: coords,
-                                      altitude: -1,
-                                      horizontalAccuracy: 5.0,
-                                      verticalAccuracy: -1,
-                                      timestamp: Date())
+                let location = CLLocation(coordinate: coords,
+                                          altitude: -1,
+                                          horizontalAccuracy: 5.0,
+                                          verticalAccuracy: -1,
+                                          timestamp: Date())
+
+                Radar.sendEvent(customType: customType,
+                                location: location,
+                                metadata: metadata,
+                                completionHandler: completionBlock)
             } else {
-                location = nil
-            }
-
-            Radar.sendEvent(customType: customType,
-                            location: location,
-                            metadata: metadata) { (status, location, events, user) in
-                if status != .success {
-                    call.reject(Radar.stringForStatus(status))
-                } else if events?.first?.customType != customType {
-                    call.reject("custom event could not be created")
-                } else {
-                    var returnVal: [String: Any] = [
-                        "status": Radar.stringForStatus(status),
-                        "events": RadarEvent.array(for: events) ?? [],
-                        "user": user?.dictionaryValue() ?? {}
-                    ]
-
-                    if let location = location {
-                        returnVal["location"] = Radar.dictionaryForLocation(location)
-                    }
-
-                    call.resolve(returnVal)
-                }
+                Radar.sendEvent(customType: customType,
+                                metadata: metadata,
+                                completionHandler: completionBlock)
             }
         }
     }
