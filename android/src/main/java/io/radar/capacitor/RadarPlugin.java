@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
@@ -576,6 +578,7 @@ public class RadarPlugin extends Plugin {
         String[] chains = RadarPlugin.stringArrayForJSArray(call.getArray("chains"));
         String[] categories = RadarPlugin.stringArrayForJSArray(call.getArray("categories"));
         String[] groups = RadarPlugin.stringArrayForJSArray(call.getArray("groups"));
+        Map<String, String> chainMetadata = RadarPlugin.mapForJSObject(call.getObject("chainMetadata"));
         int limit = call.getInt("limit", 10);
 
         if (call.hasOption("near")) {
@@ -587,9 +590,9 @@ public class RadarPlugin extends Plugin {
             near.setLongitude(longitude);
             near.setAccuracy(5);
 
-            Radar.searchPlaces(near, radius, chains, categories, groups, limit, callback);
+            Radar.searchPlaces(near, radius, chains, chainMetadata, categories, groups, limit, callback);
         } else {
-            Radar.searchPlaces(radius, chains, categories, groups, limit, callback);
+            Radar.searchPlaces(radius, chains, chainMetadata, categories, groups, limit, callback);
         }
     }
 
@@ -824,6 +827,26 @@ public class RadarPlugin extends Plugin {
                 }
             }
             return obj;
+        } catch (JSONException j) {
+            return null;
+        }
+    }
+
+    private static Map<String, String> mapForJSObject(JSObject jsObj) {
+        try {
+            if (jsObj == null) {
+                return null;
+            }
+
+            Map<String, String> map = new TreeMap<String, String>();
+            Iterator<String> keys = jsObj.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (jsObj.get(key) != null) {
+                    map.put(key, jsObj.get(key).toString());
+                }
+            }
+            return map;
         } catch (JSONException j) {
             return null;
         }
