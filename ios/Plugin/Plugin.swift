@@ -270,6 +270,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             let optionsDict = call.getObject("options") ?? [:]
             let options = RadarTripOptions(from: optionsDict)
+            options.approachingThreshold = UInt8(optionsDict["approachingThreshold"] as? Int ?? 0)
+
             Radar.startTrip(options: options) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": status.stringValue,

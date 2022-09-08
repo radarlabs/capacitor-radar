@@ -88,7 +88,20 @@ class App extends React.Component {
       alert(JSON.stringify(result));
     });
 
-    /*
+    Radar.searchPlaces({
+      near: { latitude: 38.8788532792686, longitude: -77.182197750912 },
+      radius: 10,
+      chains: ['mcdonalds'],
+      chainsMetadata: { orderActive: 'true' },
+      limit: 10
+    }).then((result) => {
+      if (result.status == 'SUCCESS') {
+        alert(`Found ${result.places?.length} places`);
+      } else {
+        alert(JSON.stringify(result));
+      }
+    });
+
     Radar.startTrip({
       options: {
         externalId: '299',
@@ -101,7 +114,6 @@ class App extends React.Component {
         mode: 'car'
       }
     });
-    */
 
     Radar.mockTracking({
       origin: {
