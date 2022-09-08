@@ -54,14 +54,27 @@ class App extends React.Component {
 
     Radar.requestLocationPermissions({ background: false });
 
-    Radar.sendEvent({ customType: 'capacitorExampleEvent' })
+    Radar.sendEvent({ customType: 'capacitorCustomEvent' })
     .then((callback) => {
-      alert(`Received event ${callback.events?.first}`);
+      alert(`Received events ${callback.events}`);
+  
+      // Calling sendEvent() twice in a row triggers a rate-limit error,
+      // so don't send the second one until the first one is finished.
+      Radar.sendEvent({
+        customType: 'capacitorCustomEventWithLocation',
+        location: { latitude: 42.0585, longitude: -87.6834 }
+      })
+      .then((callback) => {
+        alert(`Received events ${callback.events}`);
+      })
+      .catch((reason) => {
+        alert('Failed to send a custom event with a specific location')
+      });
     })
     .catch((reason) => {
-      alert('Failed to send a custom event')
+      alert('Failed to send a custom event with no location')
     });
- 
+
     Radar.setForegroundServiceOptions({
       options: {
         title: 'Foreground service title',

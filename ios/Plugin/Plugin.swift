@@ -390,15 +390,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let metadata = call.getObject("metadata") as? [String: String]
 
             if let locationDict = call.getObject("location"),
-               let latString = locationDict["latitude"] as? String,
-               let lonString = locationDict["longitude"] as? String {
-                guard let lat = CLLocationDegrees(latString),
-                      let lon = CLLocationDegrees(lonString) else {
-                    call.reject("location was specified, but lat/lon values aren't numeric")
-
-                    return
-                }
-
+               let lat = locationDict["latitude"] as? Double,
+               let lon = locationDict["longitude"] as? Double {
                 let coords = CLLocationCoordinate2D(latitude: lat, longitude: lon)
 
                 if !CLLocationCoordinate2DIsValid(coords) {
