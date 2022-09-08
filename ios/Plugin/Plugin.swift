@@ -5,7 +5,7 @@ import RadarSDK
 
 @objc(RadarPlugin)
 public class RadarPlugin: CAPPlugin, RadarDelegate {
-    
+
     let locationManager = CLLocationManager()
 
     // MARK: - RadarDelegate
@@ -269,8 +269,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func startTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let optionsDict = call.getObject("options") ?? [:]
-            let options = RadarTripOptions(from: optionsDict)
-            options.approachingThreshold = UInt8(optionsDict["approachingThreshold"] as? Int ?? 0)
+            let options = RadarTripOptions.tripOptionsFromJSDictionary(optionsDict)
 
             Radar.startTrip(options: options) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
@@ -285,7 +284,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func updateTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let optionsDict = call.getObject("options") ?? [:]
-            let options = RadarTripOptions(from: optionsDict)
+            let options = RadarTripOptions.tripOptionsFromJSDictionary(optionsDict)
             let statusStr = call.getString("status")
             var status = RadarTripStatus.unknown
             switch statusStr {
@@ -745,6 +744,28 @@ extension RadarLocationSource {
     // of `rawValue`, if `RadarLocationSource` were a Swift `enum`.
     var stringValue: String {
         return Radar.stringForLocationSource(self)
+    }
+
+}
+
+extension RadarTripOptions {
+
+    static let jsDateFormatter = ISO8601DateFormatter()
+
+    /// `RadarTripOptions(from:)` in the SDK expects the `scheduledArrivalAt`
+    /// value to be an `NSDate`, but when a JavaScript Date is passed in, it
+    /// winds up as a `String`.
+    static func tripOptionsFromJSDictionary(_ jsDictionary: [AnyHashable: Any]) -> RadarTripOptions {
+        let options = RadarTripOptions(from: jsDictionary)
+
+        if let scheduledArrivalAtString = jsDictionary["scheduledArrivalAt"] as? String,
+           let scheduledArrivalAt = Self.jsDateFormatter.date(from: scheduledArrivalAtString) {
+            options.scheduledArrivalAt = scheduledArrivalAt
+        }
+
+        options.approachingThreshold = UInt8(jsDictionary["approachingThreshold"] as? Int ?? 0)
+
+        return options
     }
 
 }

@@ -102,6 +102,8 @@ class App extends React.Component {
       }
     });
 
+    var arrivalTime = new Date()
+    arrivalTime.setHours(arrivalTime.getHours() + 1)
     Radar.startTrip({
       options: {
         externalId: '299',
@@ -111,7 +113,8 @@ class App extends React.Component {
           foo: 'bar',
           baz: true
         },
-        mode: 'car'
+        mode: 'car',
+        scheduledArrivalAt: arrivalTime
       }
     });
 
