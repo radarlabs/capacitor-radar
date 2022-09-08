@@ -2,7 +2,6 @@ package io.radar.capacitor;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Build;
 import android.util.Log;
@@ -22,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -478,6 +476,52 @@ public class RadarPlugin extends Plugin {
         String eventId = call.getString("eventId");
         Radar.rejectEvent(eventId);
         call.resolve();
+    }
+
+    @PluginMethod()
+    public void sendEvent(PluginCall call) {
+        Radar.RadarSendEventCallback callback = new Radar.RadarSendEventCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status,
+                                   @androidx.annotation.Nullable Location location,
+                                   @androidx.annotation.Nullable RadarEvent[] events,
+                                   @androidx.annotation.Nullable RadarUser user) {
+                if (status == Radar.RadarStatus.SUCCESS) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("events", RadarEvent.toJson(events));
+                    ret.put("user", user.toJson());
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+
+                }
+            }
+        };
+
+        String customType = call.getString("customType");
+
+        if (customType == null) {
+            call.reject("customType must be specified");
+
+            return;
+        }
+
+        JSONObject metadata = call.getObject("metadata");
+
+        if (call.hasOption("location")) {
+            double latitude = call.getDouble("latitude");
+            double longitude = call.getDouble("longitude");
+            Location location = new Location("RadarSDK");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            location.setAccuracy(5);
+
+            Radar.sendEvent(customType, location, metadata, callback);
+        } else {
+            Radar.sendEvent(customType, metadata, callback);
+        }
     }
 
     @PluginMethod()
