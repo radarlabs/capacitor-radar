@@ -56,7 +56,7 @@ class App extends React.Component {
 
     Radar.sendEvent({ customType: 'capacitorCustomEvent' })
     .then((callback) => {
-      alert(`Received events ${callback.events}`);
+      alert(`Received ${callback.events?.length} events`);
   
       // Calling sendEvent() twice in a row triggers a rate-limit error,
       // so don't send the second one until the first one is finished.
@@ -65,7 +65,7 @@ class App extends React.Component {
         location: { latitude: 42.0585, longitude: -87.6834 }
       })
       .then((callback) => {
-        alert(`Received events ${callback.events}`);
+        alert(`Received ${callback.events?.length} events using specific location`);
       })
       .catch((reason) => {
         alert('Failed to send a custom event with a specific location')
