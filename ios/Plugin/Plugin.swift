@@ -69,6 +69,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     }
 
     override public func load() {
+        shouldStringifyDatesInCalls = false
         Radar.setDelegate(self)
     }
 
@@ -750,18 +751,12 @@ extension RadarLocationSource {
 
 extension RadarTripOptions {
 
-    static let jsDateFormatter = ISO8601DateFormatter()
-
     /// `RadarTripOptions(from:)` in the SDK expects the `scheduledArrivalAt`
     /// value to be an `NSDate`, but when a JavaScript Date is passed in, it
     /// winds up as a `String`.
     static func tripOptionsFromJSDictionary(_ jsDictionary: [AnyHashable: Any]) -> RadarTripOptions {
         let options = RadarTripOptions(from: jsDictionary)
-
-        if let scheduledArrivalAtString = jsDictionary["scheduledArrivalAt"] as? String,
-           let scheduledArrivalAt = Self.jsDateFormatter.date(from: scheduledArrivalAtString) {
-            options.scheduledArrivalAt = scheduledArrivalAt
-        }
+        options.scheduledArrivalAt = jsDictionary["scheduledArrivalAt"] as? Date
 
         options.approachingThreshold = UInt8(jsDictionary["approachingThreshold"] as? Int ?? 0)
 
