@@ -98,7 +98,7 @@ class App extends React.Component {
       if (result.status == 'SUCCESS') {
         alert(`Found ${result.places?.length} places`);
       } else {
-        alert(JSON.stringify(result));
+        alert(`Search failed: ${JSON.stringify(result)}`);
       }
     });
 
@@ -115,6 +115,12 @@ class App extends React.Component {
         },
         mode: 'car',
         scheduledArrivalAt: arrivalTime
+      }
+    }).then((result) => {
+      if (result.status == 'SUCCESS') {
+        alert(`Started trip ${result.trip}`)
+      } else {
+        alert(`Trip failed to start: ${JSON.stringify(result)}`);
       }
     });
 
@@ -136,13 +142,8 @@ class App extends React.Component {
       Radar.cancelTrip().then((result) => {
         alert(JSON.stringify(result));
       });
-    }, 30000);
-
-    /*
-    setTimeout(() => {
       Radar.stopTracking();
     }, 30000);
-    */
   }
 
   render() {

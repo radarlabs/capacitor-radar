@@ -21,7 +21,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -363,7 +367,7 @@ public class RadarPlugin extends Plugin {
             call.reject("options is required");
             return;
         }
-        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
+        RadarTripOptions options = tripOptionsFromCapacitorJson(optionsJson);
         Radar.startTrip(options, new Radar.RadarTripCallback() {
             @Override
             public void onComplete(@NonNull Radar.RadarStatus status,
@@ -390,7 +394,7 @@ public class RadarPlugin extends Plugin {
             call.reject("options is required");
             return;
         }
-        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
+        RadarTripOptions options = tripOptionsFromCapacitorJson(optionsJson);
         RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
         if (call.hasOption("status")) {
             String statusStr = call.getString("status");
@@ -906,6 +910,23 @@ public class RadarPlugin extends Plugin {
         } catch (JSONException j) {
             return null;
         }
+    }
+
+    private RadarTripOptions tripOptionsFromCapacitorJson(org.json.JSONObject json) {
+        RadarTripOptions options = RadarTripOptions.fromJson(json);
+
+        if (json.has("scheduledArrivalAt")) {
+            try {
+                String dateString = json.getString("scheduledArrivalAt");
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                Date date = format.parse(dateString);
+                options.setScheduledArrivalAt(date);
+            } catch (Exception e) {
+                // Ignore it.
+            }
+        }
+
+        return options;
     }
 
 }
