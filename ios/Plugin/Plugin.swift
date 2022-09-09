@@ -751,13 +751,11 @@ extension RadarLocationSource {
 
 extension RadarTripOptions {
 
-    /// `RadarTripOptions(from:)` in the SDK expects the `scheduledArrivalAt`
-    /// value to be an `NSDate`, but when a JavaScript Date is passed in, it
-    /// winds up as a `String`.
+    /// The native SDK doesn't yet set `scheduledArrivalAt` or
+    /// `approachingThreshold` from a dictionary, so do those here, for now.
     static func tripOptionsFromJSDictionary(_ jsDictionary: [AnyHashable: Any]) -> RadarTripOptions {
         let options = RadarTripOptions(from: jsDictionary)
         options.scheduledArrivalAt = jsDictionary["scheduledArrivalAt"] as? Date
-
         options.approachingThreshold = UInt8(jsDictionary["approachingThreshold"] as? Int ?? 0)
 
         return options
