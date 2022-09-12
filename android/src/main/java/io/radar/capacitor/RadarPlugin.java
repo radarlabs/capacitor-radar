@@ -24,6 +24,9 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
@@ -282,8 +285,9 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void startTrackingCustom(PluginCall call) {
         JSObject trackingOptionsObj = call.getObject("options");
+
         JSONObject trackingOptionsJson = RadarPlugin.jsonObjectForJSObject(trackingOptionsObj);
-        RadarTrackingOptions trackingOptions  = RadarTrackingOptions.fromJson(trackingOptionsJson);
+        RadarTrackingOptions trackingOptions = trackingOptionsFromCapacitorJson(trackingOptionsJson);
         Radar.startTracking(trackingOptions);
         call.resolve();
     }
@@ -912,21 +916,54 @@ public class RadarPlugin extends Plugin {
         }
     }
 
-    private RadarTripOptions tripOptionsFromCapacitorJson(org.json.JSONObject json) {
-        RadarTripOptions options = RadarTripOptions.fromJson(json);
+    private RadarTrackingOptions trackingOptionsFromCapacitorJson(JSONObject json) {
+        RadarTrackingOptions options = RadarTrackingOptions.fromJson(json);
 
-        if (json.has("scheduledArrivalAt")) {
-            try {
-                String dateString = json.getString("scheduledArrivalAt");
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                Date date = format.parse(dateString);
-                options.setScheduledArrivalAt(date);
-            } catch (Exception e) {
-                // Ignore it.
-            }
+        Date startTrackingAfter = dateFromJSONDateField(json, "startTrackingAfter");
+
+        if (startTrackingAfter != null) {
+            options.setStartTrackingAfter(startTrackingAfter);
+        }
+
+        Date stopTrackingAfter = dateFromJSONDateField(json, "stopTrackingAfter");
+
+        if (stopTrackingAfter != null) {
+            options.setStopTrackingAfter(stopTrackingAfter);
         }
 
         return options;
+    }
+
+    private RadarTripOptions tripOptionsFromCapacitorJson(JSONObject json) {
+        RadarTripOptions options = RadarTripOptions.fromJson(json);
+
+        Date scheduledArrivalAt = dateFromJSONDateField(json, "scheduledArrivalAt");
+
+        if (scheduledArrivalAt != null) {
+            options.setScheduledArrivalAt(scheduledArrivalAt);
+        }
+
+        return options;
+    }
+
+    /* Date Utilities */
+    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+    private Date dateFromJSONDateField(JSONObject json, String fieldName) {
+        if (json.has(fieldName)) {
+            try {
+                String dateString = json.getString(fieldName);
+                Date date = format.parse(dateString);
+
+                return date;
+            } catch (Exception e) {
+                System.err.println("Failed to parse " + fieldName);
+
+                return null;
+            }
+        }
+
+        return null;
     }
 
 }

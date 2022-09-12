@@ -123,6 +123,17 @@ class App extends React.Component {
         alert(`Trip failed to start: ${JSON.stringify(result)}`);
       }
     });
+    
+    var startTrackingTime = new Date()
+    startTrackingTime.setHours(startTrackingTime.getHours() + 3)
+    var stopTrackingTime = new Date()
+    stopTrackingTime.setHours(stopTrackingTime.getHours() + 4)
+    Radar.startTrackingCustom({
+      options: {
+        startTrackingAfter: startTrackingTime,
+        stopTrackingAfter: stopTrackingTime
+      }
+    });
 
     Radar.mockTracking({
       origin: {
