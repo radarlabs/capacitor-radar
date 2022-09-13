@@ -756,7 +756,11 @@ extension RadarTripOptions {
     static func tripOptionsFromJSDictionary(_ jsDictionary: [AnyHashable: Any]) -> RadarTripOptions {
         let options = RadarTripOptions(from: jsDictionary)
         options.scheduledArrivalAt = jsDictionary["scheduledArrivalAt"] as? Date
-        options.approachingThreshold = UInt8(jsDictionary["approachingThreshold"] as? Int ?? 0)
+
+        if let approachingThresholdString = jsDictionary["approachingThreshold"] as? String,
+           let approachingThreshold = UInt8(approachingThresholdString) {
+            options.approachingThreshold = approachingThreshold
+        }
 
         return options
     }

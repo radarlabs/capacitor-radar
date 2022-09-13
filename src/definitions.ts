@@ -29,7 +29,7 @@ export interface RadarPlugin {
   rejectEvent(options: { eventId: string }): void;
   sendEvent(options: { customType: string, location?: { latitude: number, longitude: number }, metadata?: object }): Promise<RadarEventCallback>;
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
-  searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], chainsMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
+  searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
   autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, limit: number }): Promise<RadarGeocodeCallback>;
   geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
