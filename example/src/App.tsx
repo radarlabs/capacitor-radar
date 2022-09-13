@@ -92,7 +92,7 @@ class App extends React.Component {
       near: { latitude: 38.8788532792686, longitude: -77.182197750912 },
       radius: 10,
       chains: ['mcdonalds'],
-      chainsMetadata: { orderActive: 'true' },
+      chainMetadata: { orderActive: 'true' },
       limit: 10
     }).then((result) => {
       if (result.status == 'SUCCESS') {
