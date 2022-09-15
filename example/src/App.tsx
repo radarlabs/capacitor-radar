@@ -54,33 +54,20 @@ class App extends React.Component {
 
     Radar.requestLocationPermissions({ background: false });
 
-    // Radar.setForegroundServiceOptions({
-    //   options: {
-    //     title: 'Foreground service title',
-    //     text: 'Foreground service text'
-    //   }
-    // });
-
-    Radar.startTrackingContinuous();
-
     Radar.trackOnce().then((result) => {
       alert(JSON.stringify(result));
     });
-
-    /*
-    Radar.startTrip({
+    
+    var startTrackingTime = new Date()
+    startTrackingTime.setHours(startTrackingTime.getHours() + 3)
+    var stopTrackingTime = new Date()
+    stopTrackingTime.setHours(stopTrackingTime.getHours() + 4)
+    Radar.startTrackingCustom({
       options: {
-        externalId: '299',
-        destinationGeofenceTag: 'store',
-        destinationGeofenceExternalId: '123',
-        metadata: {
-          foo: 'bar',
-          baz: true
-        },
-        mode: 'car'
+        startTrackingAfter: startTrackingTime,
+        stopTrackingAfter: stopTrackingTime
       }
     });
-    */
 
     Radar.mockTracking({
       origin: {
