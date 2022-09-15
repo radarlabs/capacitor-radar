@@ -8,10 +8,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     
     let locationManager = CLLocationManager()
 
-    override public func load() {
-        Radar.setDelegate(self)
-    }
-
     public func didReceiveEvents(_ events: [RadarEvent], user: RadarUser?) {
         DispatchQueue.main.async {
             self.notifyListeners("events", data: [
@@ -56,6 +52,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    // MARK: - CAPPlugin
+
     @objc func initialize(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             guard let publishableKey = call.getString("publishableKey") else {
@@ -66,6 +64,17 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             Radar.initialize(publishableKey: publishableKey)
             call.resolve()
         }
+    }
+
+    override public func load() {
+        // By default, Capacitor passes JavaScript Dates to native code as
+        // ISO8601 strings. Setting this to false keeps them as Date objects,
+        // so no further string -> Date parsing needs to take place in iOS.
+        // (Android doesn't have this property, so it _does_ need to do the
+        // conversion manually.)
+        // (https://capacitorjs.com/docs/core-apis/data-types#dates)
+        shouldStringifyDatesInCalls = false
+        Radar.setDelegate(self)
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
@@ -582,8 +591,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
             let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
 
-            if call.hasOption("origin") {
-                let originDict = call.options["origin"] as! [String:Double]
+            if let originDict = call.options["origin"] as? [String: Double] {
                 let originLatitude = originDict["latitude"] ?? 0.0
                 let originLongitude = originDict["longitude"] ?? 0.0
                 let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
