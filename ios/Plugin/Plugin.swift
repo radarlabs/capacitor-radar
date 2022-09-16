@@ -278,7 +278,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 } else {
                     call.resolve([
                         "status": status.stringValue,
-                        "trip": trip?.dictionaryValue ?? {},
+                        "trip": trip?.dictionaryValue() ?? [:],
                         "events": RadarEvent.array(for: events) ?? []
                     ])
                 }
@@ -312,7 +312,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 } else {
                     call.resolve([
                         "status": status.stringValue,
-                        "trip": trip?.dictionaryValue ?? {},
+                        "trip": trip?.dictionaryValue() ?? [:],
                         "events": RadarEvent.array(for: events) ?? []
                     ])
                 }
@@ -328,7 +328,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 } else {
                     call.resolve([
                         "status": status.stringValue,
-                        "trip": trip?.dictionaryValue ?? {},
+                        "trip": trip?.dictionaryValue() ?? [:],
                         "events": RadarEvent.array(for: events) ?? []
                     ])
                 }
@@ -344,7 +344,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 } else {
                     call.resolve([
                         "status": status.stringValue,
-                        "trip": trip?.dictionaryValue ?? {},
+                        "trip": trip?.dictionaryValue() ?? [:],
                         "events": RadarEvent.array(for: events) ?? []
                     ])
                 }
@@ -387,7 +387,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 var returnVal: [String: Any] = [
                     "status": Radar.stringForStatus(status),
                     "events": RadarEvent.array(for: events) ?? [],
-                    "user": user?.dictionaryValue() ?? {}
+                    "user": user?.dictionaryValue() ?? [:]
                 ]
 
                 if let location = location {
@@ -634,7 +634,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 if status == .success && address != nil {
                     call.resolve([
                         "status": status.stringValue,
-                        "address": address!.dictionaryValue
+                        "address": address!.dictionaryValue()
                     ])
                 } else {
                     call.reject(status.stringValue)
@@ -649,7 +649,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 if status == .success && routes != nil {
                     call.resolve([
                         "status": status.stringValue,
-                        "routes": routes!.dictionaryValue
+                        "routes": routes!.dictionaryValue()
                     ])
                 } else {
                     call.reject(status.stringValue)
