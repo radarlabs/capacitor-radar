@@ -273,11 +273,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let options = RadarTripOptions.tripOptionsFromJSDictionary(optionsDict)
 
             Radar.startTrip(options: options) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
-                call.resolve([
-                    "status": status.stringValue,
-                    "trip": trip?.dictionaryValue ?? {},
-                    "events": RadarEvent.array(for: events) ?? []
-                ])
+                if status != .success {
+                    call.reject(status.stringValue)
+                } else {
+                    call.resolve([
+                        "status": status.stringValue,
+                        "trip": trip?.dictionaryValue ?? {},
+                        "events": RadarEvent.array(for: events) ?? []
+                    ])
+                }
             }
         }
     }
@@ -303,11 +307,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 status = RadarTripStatus.unknown
             }
             Radar.updateTrip(options: options, status: status) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
-                call.resolve([
-                    "status": status.stringValue,
-                    "trip": trip?.dictionaryValue ?? {},
-                    "events": RadarEvent.array(for: events) ?? []
-                ])
+                if status != .success {
+                    call.reject(status.stringValue)
+                } else {
+                    call.resolve([
+                        "status": status.stringValue,
+                        "trip": trip?.dictionaryValue ?? {},
+                        "events": RadarEvent.array(for: events) ?? []
+                    ])
+                }
             }
         }
     }
@@ -315,11 +323,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func completeTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.completeTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
-                call.resolve([
-                    "status": status.stringValue,
-                    "trip": trip?.dictionaryValue ?? {},
-                    "events": RadarEvent.array(for: events) ?? []
-                ])
+                if status != .success {
+                    call.reject(status.stringValue)
+                } else {
+                    call.resolve([
+                        "status": status.stringValue,
+                        "trip": trip?.dictionaryValue ?? {},
+                        "events": RadarEvent.array(for: events) ?? []
+                    ])
+                }
             }
         }
     }
@@ -327,11 +339,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func cancelTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.cancelTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
-                call.resolve([
-                    "status": status.stringValue,
-                    "trip": trip?.dictionaryValue ?? {},
-                    "events": RadarEvent.array(for: events) ?? []
-                ])
+                if status != .success {
+                    call.reject(status.stringValue)
+                } else {
+                    call.resolve([
+                        "status": status.stringValue,
+                        "trip": trip?.dictionaryValue ?? {},
+                        "events": RadarEvent.array(for: events) ?? []
+                    ])
+                }
             }
         }
     }
