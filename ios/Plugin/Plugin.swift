@@ -14,7 +14,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             self.notifyListeners("events", data: [
                 "events": RadarEvent.array(for: events) ?? [],
-                "user": user?.dictionaryValue() ?? {}
+                "user": user?.dictionaryValue() ?? [:]
             ])
         }
     }
@@ -152,7 +152,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func trackOnce(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarTrackCompletionHandler = { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
-                guard status == .success, let location = location, let events = events, let user = user else {
+                guard status == .success, let location = location else {
                     call.reject(status.stringValue)
 
                     return
@@ -162,7 +162,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                     "status": status.stringValue,
                     "location": location.dictionaryValue,
                     "events": RadarEvent.array(for: events) ?? [],
-                    "user": user.dictionaryValue
+                    "user": user?.dictionaryValue() ?? [:]
                 ])
             }
 
