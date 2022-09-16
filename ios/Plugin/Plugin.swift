@@ -69,6 +69,12 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     }
 
     override public func load() {
+        // By default, Capacitor passes JavaScript Dates to native code as
+        // ISO8601 strings. Setting this to false keeps them as Date objects,
+        // so no further string -> Date parsing needs to take place in iOS.
+        // (Android doesn't have this property, so it _does_ need to do the
+        // conversion manually.)
+        // (https://capacitorjs.com/docs/core-apis/data-types#dates)
         shouldStringifyDatesInCalls = false
         Radar.setDelegate(self)
     }

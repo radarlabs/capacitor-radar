@@ -10,8 +10,7 @@ fi
 # All commands have been copied from the project's CircleCI workflow.
 
 # Update and build the root-level components..
-npm install
-npm run build
+npm install run build
 npm install -g @ionic/cli
 
 pushd example
