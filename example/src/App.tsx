@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet } from '@ionic/react';
+import { IonApp, IonButton, IonContent, IonHeader, IonItem, IonLabel, IonRouterOutlet, IonTitle, IonToolbar } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 import { Radar } from 'capacitor-radar';
@@ -41,19 +41,40 @@ Radar.addListener('error', (result) => {
 });
 
 class App extends React.Component {
-  componentDidMount() {
-    Radar.setUserId({ userId: 'capacitor' });
 
-    Radar.setMetadata({ metadata: {
-      foo: 'bar',
-    }});
-
-    Radar.getLocationPermissionsStatus().then((result) => {
-      alert(JSON.stringify(result));
+  mockTracking() {
+    Radar.mockTracking({
+      origin: {
+        latitude: 40.717122,
+        longitude: -74.035504
+      },
+      destination: {
+        latitude: 40.7120678,
+        longitude: -74.0396181
+      },
+      mode: 'car',
+      steps: 5,
+      interval: 1
     });
+  }
 
-    Radar.requestLocationPermissions({ background: false });
+  searchPlaces() {
+    Radar.searchPlaces({
+      near: { latitude: 38.8788532792686, longitude: -77.182197750912 },
+      radius: 10,
+      chains: ['mcdonalds'],
+      chainMetadata: { orderActive: 'true' },
+      limit: 10
+    }).then((result) => {
+      if (result.status == 'SUCCESS') {
+        alert(`Found ${result.places?.length} places`);
+      } else {
+        alert(`Search failed: ${JSON.stringify(result)}`);
+      }
+    });
+  }
 
+  sendEvent() {
     Radar.sendEvent({ customType: 'capacitorCustomEvent' })
     .then((callback) => {
       alert(`Received ${callback.events?.length} events`);
@@ -74,34 +95,32 @@ class App extends React.Component {
     .catch((reason) => {
       alert('Failed to send a custom event with no location')
     });
+  }
 
-    Radar.setForegroundServiceOptions({
+  startTracking() {
+    var startTrackingTime = new Date()
+    startTrackingTime.setHours(startTrackingTime.getHours() + 3)
+    var stopTrackingTime = new Date()
+    stopTrackingTime.setHours(stopTrackingTime.getHours() + 4)
+    Radar.startTrackingCustom({
       options: {
-        title: 'Foreground service title',
-        text: 'Foreground service text'
+        startTrackingAfter: startTrackingTime,
+        stopTrackingAfter: stopTrackingTime
       }
     });
+  }
+  
+  stopTracking() {
+    Radar.stopTracking();
+  }
 
-    Radar.startTrackingContinuous();
-
-    Radar.trackOnce().then((result) => {
+  stopTrip(): void {
+    Radar.cancelTrip().then((result) => {
       alert(JSON.stringify(result));
     });
+  }
 
-    Radar.searchPlaces({
-      near: { latitude: 38.8788532792686, longitude: -77.182197750912 },
-      radius: 10,
-      chains: ['mcdonalds'],
-      chainMetadata: { orderActive: 'true' },
-      limit: 10
-    }).then((result) => {
-      if (result.status == 'SUCCESS') {
-        alert(`Found ${result.places?.length} places`);
-      } else {
-        alert(`Search failed: ${JSON.stringify(result)}`);
-      }
-    });
-
+  startTrip() {
     var arrivalTime = new Date()
     arrivalTime.setHours(arrivalTime.getHours() + 1)
     Radar.startTrip({
@@ -123,44 +142,54 @@ class App extends React.Component {
         alert(`Trip failed to start: ${JSON.stringify(result)}`);
       }
     });
-    
-    var startTrackingTime = new Date()
-    startTrackingTime.setHours(startTrackingTime.getHours() + 3)
-    var stopTrackingTime = new Date()
-    stopTrackingTime.setHours(stopTrackingTime.getHours() + 4)
-    Radar.startTrackingCustom({
-      options: {
-        startTrackingAfter: startTrackingTime,
-        stopTrackingAfter: stopTrackingTime
-      }
+  }
+
+  trackOnce() {
+    Radar.trackOnce().then((result) => {
+      alert(JSON.stringify(result));
+    });
+  }
+
+  componentDidMount() {
+    Radar.setUserId({ userId: 'capacitor' });
+
+    Radar.setMetadata({ metadata: {
+      foo: 'bar',
+    }});
+
+    Radar.getLocationPermissionsStatus().then((result) => {
+      alert(JSON.stringify(result));
     });
 
-    Radar.mockTracking({
-      origin: {
-        latitude: 40.717122,
-        longitude: -74.035504
-      },
-      destination: {
-        latitude: 40.7120678,
-        longitude: -74.0396181
-      },
-      mode: 'car',
-      steps: 5,
-      interval: 1
+    Radar.requestLocationPermissions({ background: false });
+
+    Radar.setForegroundServiceOptions({
+      options: {
+        title: 'Foreground service title',
+        text: 'Foreground service text'
+      }
     });
-    
-    setTimeout(() => {
-      Radar.cancelTrip().then((result) => {
-        alert(JSON.stringify(result));
-      });
-      Radar.stopTracking();
-    }, 30000);
   }
 
   render() {
     return (
       <IonApp>
-        <IonReactRouter>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Radar SDK for Capacitor</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          <IonButton onClick={() => { this.sendEvent() }}>Send Event</IonButton>
+          <IonButton onClick={() => { this.trackOnce() }}>Track Once</IonButton>
+          <IonButton onClick={() => { this.searchPlaces() }}>Search Places</IonButton>
+          <IonButton onClick={() => { this.startTracking() }}>Start Tracking</IonButton>
+          <IonButton onClick={() => { this.stopTracking() }}>Stop Tracking</IonButton>
+          <IonButton onClick={() => { this.startTrip() }}>Start Trip</IonButton>
+          <IonButton onClick={() => { this.stopTrip() }}>Stop Trip</IonButton>
+          <IonButton onClick={() => { this.mockTracking() }}>Mock Tracking</IonButton>
+        </IonContent>
+        {/* <IonReactRouter>
           <IonRouterOutlet>
             <Route exact path="/home">
               <Home />
@@ -169,7 +198,7 @@ class App extends React.Component {
               <Redirect to="/home" />
             </Route>
           </IonRouterOutlet>
-        </IonReactRouter>
+        </IonReactRouter> */}
       </IonApp>
     );
   }
