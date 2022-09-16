@@ -890,7 +890,7 @@ public class RadarPlugin extends Plugin {
 
                 return date;
             } catch (Exception e) {
-                System.err.println("Failed to parse " + fieldName);
+                Log.e(TAG, "Exception", e);
 
                 return null;
             }
