@@ -60,8 +60,8 @@ class App extends React.Component {
 
   searchPlaces() {
     Radar.searchPlaces({
-      near: { latitude: 38.8788532792686, longitude: -77.182197750912 },
-      radius: 10,
+      near: { latitude: 41.947786323510186, longitude:  -87.65628243940535 },
+      radius: 1000,
       chains: ['mcdonalds'],
       chainMetadata: { orderActive: 'true' },
       limit: 10
@@ -126,8 +126,8 @@ class App extends React.Component {
     Radar.startTrip({
       options: {
         externalId: '299',
-        destinationGeofenceTag: 'store',
-        destinationGeofenceExternalId: '123',
+        destinationGeofenceTag: 'Home',
+        destinationGeofenceExternalId: '119',
         metadata: {
           foo: 'bar',
           baz: true

@@ -172,7 +172,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
             let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
 
-            if latitude != 0.0 && longitude != 0.0 && accuracy != 0.0 {
+            if location.isValid {
                 Radar.trackOnce(location: location, completionHandler: completionHandler)
             } else {
                 Radar.trackOnce(completionHandler: completionHandler)
