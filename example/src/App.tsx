@@ -57,18 +57,35 @@ class App extends React.Component {
     Radar.trackOnce().then((result) => {
       alert(JSON.stringify(result));
     });
-    
-    var startTrackingTime = new Date()
-    startTrackingTime.setHours(startTrackingTime.getHours() + 3)
-    var stopTrackingTime = new Date()
-    stopTrackingTime.setHours(stopTrackingTime.getHours() + 4)
-    Radar.startTrackingCustom({
+   
+    // var stopTrackingTime = new Date()
+    // stopTrackingTime.setMinutes(stopTrackingTime.getMinutes() + 1)
+    // Radar.startTrackingCustom({
+    //   options: {
+    //     stopTrackingAfter: stopTrackingTime
+    //   }
+    // });
+
+    var scheduledArrivalAt = new Date()
+    scheduledArrivalAt.setMinutes(scheduledArrivalAt.getMinutes() + 9)
+    Radar.startTrip({
       options: {
-        startTrackingAfter: startTrackingTime,
-        stopTrackingAfter: stopTrackingTime
+        externalId: 1564,
+        destinationGeofenceTag: "Home",
+        destinationGeofenceExternalId: "119",
+        scheduledArrivalAt: scheduledArrivalAt
+      }
+    }).then((result) => {
+      alert(`trip ${JSON.stringify(result.trip)}`)
+
+      if (result.status == "SUCCESS") {
+        Radar.startTrackingResponsive()
+      } else {
+        alert(`failed to start trip ${JSON.stringify(result)}`);
       }
     });
 
+    /*
     Radar.mockTracking({
       origin: {
         latitude: 40.717122,
