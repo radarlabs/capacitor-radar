@@ -54,34 +54,38 @@ class App extends React.Component {
 
     Radar.requestLocationPermissions({ background: false });
 
-    Radar.setForegroundServiceOptions({
-      options: {
-        title: 'Foreground service title',
-        text: 'Foreground service text'
-      }
-    });
-
-    Radar.startTrackingContinuous();
-
     Radar.trackOnce().then((result) => {
       alert(JSON.stringify(result));
     });
+   
+    // var stopTrackingTime = new Date()
+    // stopTrackingTime.setMinutes(stopTrackingTime.getMinutes() + 1)
+    // Radar.startTrackingCustom({
+    //   options: {
+    //     stopTrackingAfter: stopTrackingTime
+    //   }
+    // });
 
-    /*
+    var scheduledArrivalAt = new Date()
+    scheduledArrivalAt.setMinutes(scheduledArrivalAt.getMinutes() + 9)
     Radar.startTrip({
       options: {
-        externalId: '299',
-        destinationGeofenceTag: 'store',
-        destinationGeofenceExternalId: '123',
-        metadata: {
-          foo: 'bar',
-          baz: true
-        },
-        mode: 'car'
+        externalId: 1564,
+        destinationGeofenceTag: "Home",
+        destinationGeofenceExternalId: "119",
+        scheduledArrivalAt: scheduledArrivalAt
+      }
+    }).then((result) => {
+      alert(`trip ${JSON.stringify(result.trip)}`)
+
+      if (result.status == "SUCCESS") {
+        Radar.startTrackingResponsive()
+      } else {
+        alert(`failed to start trip ${JSON.stringify(result)}`);
       }
     });
-    */
 
+    /*
     Radar.mockTracking({
       origin: {
         latitude: 40.717122,

@@ -121,6 +121,7 @@ export interface RadarTrip {
   mode?: string;
   eta?: RadarTripEta;
   status: string;
+  scheduledArrivalAt?: Date;
 }
 
 export interface RadarContext {
