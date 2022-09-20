@@ -68,11 +68,7 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "3.2.5",
-    "source-map": "^0.8.0-beta.0"
-  },
-  "resolutions": {
-    "source-map": "^0.8.0-beta.0"
+    "@capacitor/cli": "3.2.5"
   },
   "description": "An Ionic project"
 }
