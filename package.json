@@ -13,13 +13,9 @@
   "author": "Radar Labs, Inc.",
   "homepage": "https://radar.com",
   "license": "Apache-2.0",
-  "resolutions": {
-    "source-map": "^0.8.0-beta.0"
-  },
   "dependencies": {
     "@capacitor/core": "^3.0.1",
-    "radar-sdk-js": "^3.1.1",
-    "source-map": "^0.8.0-beta.0"
+    "radar-sdk-js": "^3.1.1"
   },
   "devDependencies": {
     "@capacitor/android": "^3.0.1",
