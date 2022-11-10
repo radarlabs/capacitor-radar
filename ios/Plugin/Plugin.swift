@@ -171,11 +171,23 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let accuracy = call.getDouble("accuracy") ?? 0.0
             let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
             let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
+            var accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"medium")
+            let beaconsTrackingOption = call.getBool("beacons") ?? false
+            var desiredAccuracy = call.getString("desiredAccuracy") ?? "medium"
+            desiredAccuracy = desiredAccuracy.lowercased()
+
+            if desiredAccuracy == "high" {
+                accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"high")
+            } else if desiredAccuracy == "medium" {
+                accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"medium")
+            } else if desiredAccuracy == "low" {
+                accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"low")
+            }
 
             if latitude != 0.0 && longitude != 0.0 && accuracy != 0.0 {
                 Radar.trackOnce(location: location, completionHandler: completionHandler)
             } else {
-                Radar.trackOnce(completionHandler: completionHandler)
+                Radar.trackOnce(desiredAccuracy: accuracyLevel, beacons: beaconsTrackingOption, completionHandler: completionHandler)
             }
         }
     }

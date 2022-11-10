@@ -72,7 +72,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number }): Promise<RadarTrackCallback> {
+  async trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number } | { desiredAccuracy: string, beacons: boolean}): Promise<RadarTrackCallback> {
     return new Promise((resolve, reject) => {
       const callback = (err, { status, location, user, events }) => {
         if (err) {

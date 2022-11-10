@@ -259,6 +259,25 @@ public class RadarPlugin extends Plugin {
             location.setAccuracy(accuracy);
 
             Radar.trackOnce(location, callback);
+        } else if (call.hasOption("desiredAccuracy")) {            
+            RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+            
+            String desiredAccuracy = call.getString("desiredAccuracy").toLowerCase();
+            if (desiredAccuracy.equals("none")) {
+                accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.NONE;
+            } else if (desiredAccuracy.equals("low")) {
+                accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.LOW;
+            } else if (desiredAccuracy.equals("medium")) {
+                accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+            } else if (desiredAccuracy.equals("high")) {
+                accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
+            }
+            
+            boolean beaconsTrackingOption = false;
+            if (call.hasOption("beacons")) {
+                beaconsTrackingOption = call.getBoolean("beacons");
+            }            
+            Radar.trackOnce(accuracyLevel, beaconsTrackingOption, callback);
         } else {
             Radar.trackOnce(callback);
         }
