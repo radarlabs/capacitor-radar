@@ -287,7 +287,7 @@ public class RadarPlugin extends Plugin {
         JSObject trackingOptionsObj = call.getObject("options");
 
         JSONObject trackingOptionsJson = RadarPlugin.jsonObjectForJSObject(trackingOptionsObj);
-        RadarTrackingOptions trackingOptions = trackingOptionsFromCapacitorJson(trackingOptionsJson);
+        RadarTrackingOptions trackingOptions = RadarTrackingOptions.fromJson(trackingOptionsJson);
         Radar.startTracking(trackingOptions);
         call.resolve();
     }
@@ -371,7 +371,7 @@ public class RadarPlugin extends Plugin {
             call.reject("options is required");
             return;
         }
-        RadarTripOptions options = tripOptionsFromCapacitorJson(optionsJson);
+        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
         Radar.startTrip(options, new Radar.RadarTripCallback() {
             @Override
             public void onComplete(@NonNull Radar.RadarStatus status,
@@ -398,7 +398,7 @@ public class RadarPlugin extends Plugin {
             call.reject("options is required");
             return;
         }
-        RadarTripOptions options = tripOptionsFromCapacitorJson(optionsJson);
+        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
         RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
         if (call.hasOption("status")) {
             String statusStr = call.getString("status");
@@ -848,55 +848,4 @@ public class RadarPlugin extends Plugin {
             return null;
         }
     }
-
-    private RadarTrackingOptions trackingOptionsFromCapacitorJson(JSONObject json) {
-        RadarTrackingOptions options = RadarTrackingOptions.fromJson(json);
-
-        Date startTrackingAfter = dateFromJSONDateField(json, "startTrackingAfter");
-
-        if (startTrackingAfter != null) {
-            options.setStartTrackingAfter(startTrackingAfter);
-        }
-
-        Date stopTrackingAfter = dateFromJSONDateField(json, "stopTrackingAfter");
-
-        if (stopTrackingAfter != null) {
-            options.setStopTrackingAfter(stopTrackingAfter);
-        }
-
-        return options;
-    }
-
-    private RadarTripOptions tripOptionsFromCapacitorJson(JSONObject json) {
-        RadarTripOptions options = RadarTripOptions.fromJson(json);
-
-        Date scheduledArrivalAt = dateFromJSONDateField(json, "scheduledArrivalAt");
-
-        if (scheduledArrivalAt != null) {
-            options.setScheduledArrivalAt(scheduledArrivalAt);
-        }
-
-        return options;
-    }
-
-    /* Date Utilities */
-    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
-    private Date dateFromJSONDateField(JSONObject json, String fieldName) {
-        if (json.has(fieldName)) {
-            try {
-                String dateString = json.getString(fieldName);
-                Date date = format.parse(dateString);
-
-                return date;
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-
-                return null;
-            }
-        }
-
-        return null;
-    }
-
 }
