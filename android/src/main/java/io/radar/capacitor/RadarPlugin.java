@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.HashMap;
 
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
@@ -557,6 +558,7 @@ public class RadarPlugin extends Plugin {
 
         int radius = call.getInt("radius", 1000);
         String[] chains = RadarPlugin.stringArrayForJSArray(call.getArray("chains"));
+        Map<String, String> chainMetadata = RadarPlugin.stringStringMap(call.getObject("chainMetadata"));
         String[] categories = RadarPlugin.stringArrayForJSArray(call.getArray("categories"));
         String[] groups = RadarPlugin.stringArrayForJSArray(call.getArray("groups"));
         int limit = call.getInt("limit", 10);
@@ -570,9 +572,9 @@ public class RadarPlugin extends Plugin {
             near.setLongitude(longitude);
             near.setAccuracy(5);
 
-            Radar.searchPlaces(near, radius, chains, categories, groups, limit, callback);
+            Radar.searchPlaces(near, radius, chains, chainMetadata, categories, groups, limit, callback);
         } else {
-            Radar.searchPlaces(radius, chains, categories, groups, limit, callback);
+            Radar.searchPlaces(radius, chains, chainMetadata, categories, groups, limit, callback);
         }
     }
 
@@ -863,6 +865,26 @@ public class RadarPlugin extends Plugin {
                 arr[i] = jsArr.getString(i);
             }
             return arr;
+        } catch (JSONException j) {
+            return null;
+        }
+    }
+
+    private static Map<String, String> stringStringMap(JSObject jsObj) {        
+        try {            
+            if (jsObj == null) {
+                return null;
+            }
+
+            Map<String, String> stringMap = new HashMap<String, String>();
+            Iterator<String> keys = jsObj.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (jsObj.get(key) != null) {
+                    stringMap.put(key, jsObj.getString(key));
+                }
+            }
+            return stringMap;
         } catch (JSONException j) {
             return null;
         }
