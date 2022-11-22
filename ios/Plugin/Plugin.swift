@@ -88,7 +88,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func getUserId(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
-                "userId": Radar.getUserId()
+                "userId": Radar.getUserId()!
             ]);
         }
     }
@@ -104,7 +104,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func getDescription(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
-                "description": Radar.getDescription()
+                "description": Radar.getDescription()!
             ]);
         }
     }
@@ -119,7 +119,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     @objc func getMetadata(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            call.resolve(Radar.getMetadata());
+            call.resolve(Radar.getMetadata() as? [String:String] ?? [:]);
         }
     }
 
