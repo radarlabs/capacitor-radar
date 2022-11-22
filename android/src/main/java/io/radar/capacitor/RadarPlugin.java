@@ -173,6 +173,13 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void getDescription(PluginCall call) {        
+        JSObject ret = new JSObject();
+        ret.put("description", Radar.getDescription());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
     public void setMetadata(PluginCall call) {
         JSObject metadata = call.getObject("metadata");
         Radar.setMetadata(RadarPlugin.jsonObjectForJSObject(metadata));

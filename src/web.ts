@@ -34,6 +34,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     Radar.setDescription(options.description);
   }
 
+  getDescription(): Promise<object> {
+    // not implemented
+  }
+
   setMetadata(options: { metadata: object }): void {
     Radar.setMetadata(options.metadata);
   }

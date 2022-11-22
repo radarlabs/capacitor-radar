@@ -10,6 +10,7 @@ export interface RadarPlugin {
   setUserId(options: { userId: string }): void;
   getUserId(): Promise<object>,
   setDescription(options: { description: string }): void;
+  getDescription(): Promise<object>,
   setMetadata(options: { metadata: object }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;

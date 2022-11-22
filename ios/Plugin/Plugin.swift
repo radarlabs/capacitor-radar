@@ -101,6 +101,14 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func getDescription(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "description": Radar.getDescription()
+            ]);
+        }
+    }
+
     @objc func setMetadata(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let metadata = call.getObject("metadata")
