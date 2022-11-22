@@ -159,6 +159,13 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void getUserId(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("userId", Radar.getUserId());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
     public void setDescription(PluginCall call) {
         String description = call.getString("description");
         Radar.setDescription(description);

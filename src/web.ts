@@ -26,6 +26,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     Radar.setUserId(options.userId);
   }
 
+  getUserId(): Promise<object> {
+    // not implemented
+  }
+
   setDescription(options: { description: string }): void {
     Radar.setDescription(options.description);
   }

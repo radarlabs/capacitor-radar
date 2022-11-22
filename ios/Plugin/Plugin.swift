@@ -85,6 +85,14 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func getUserId(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "userId": Radar.getUserId()
+            ]);
+        }
+    }
+
     @objc func setDescription(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let description = call.getString("description")

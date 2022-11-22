@@ -8,6 +8,7 @@ export interface RadarPlugin {
   addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string }): void;
   setUserId(options: { userId: string }): void;
+  getUserId(): Promise<object>,
   setDescription(options: { description: string }): void;
   setMetadata(options: { metadata: object }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;

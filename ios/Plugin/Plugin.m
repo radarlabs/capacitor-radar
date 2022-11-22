@@ -4,6 +4,7 @@
 CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(initialize, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setUserId, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getUserId, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setDescription, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setMetadata, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocationPermissionsStatus, CAPPluginReturnPromise);
