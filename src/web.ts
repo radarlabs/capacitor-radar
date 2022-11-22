@@ -42,6 +42,9 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     Radar.setMetadata(options.metadata);
   }
 
+  getMetadata(): Promise<object> {
+    // not implemented
+  }
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback> {
     return new Promise(resolve => {
       const navigator = window.navigator as any;

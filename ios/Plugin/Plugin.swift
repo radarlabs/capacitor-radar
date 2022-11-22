@@ -117,6 +117,12 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func getMetadata(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve(Radar.getMetadata());
+        }
+    }
+
     @objc func getLocationPermissionsStatus(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let authorizationStatus = CLLocationManager.authorizationStatus()
