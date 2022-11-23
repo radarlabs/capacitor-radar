@@ -9,6 +9,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(getDescription, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setMetadata, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getMetadata, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setAnonymousTrackingEnabled, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocationPermissionsStatus, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(requestLocationPermissions, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocation, CAPPluginReturnPromise);

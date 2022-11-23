@@ -45,6 +45,11 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
   getMetadata(): Promise<object> {
     // not implemented
   }
+
+  setAnonymousTrackingEnabled(options: { enabled: boolean }): void {
+    // not implemented
+  }
+
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback> {
     return new Promise(resolve => {
       const navigator = window.navigator as any;

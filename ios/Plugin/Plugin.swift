@@ -123,6 +123,18 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func setAnonymousTrackingEnabled(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let enabled = call.getBool("enabled") else {
+                call.reject("enabled is required")
+
+                return
+            };
+            Radar.setAnonymousTrackingEnabled(enabled)
+            call.resolve()
+        }
+    }
+
     @objc func getLocationPermissionsStatus(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let authorizationStatus = CLLocationManager.authorizationStatus()

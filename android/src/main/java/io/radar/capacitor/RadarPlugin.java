@@ -192,6 +192,13 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void setAnonymousTrackingEnabled(PluginCall call) {        
+        boolean enabled = call.getBoolean("enabled");
+        Radar.setAnonymousTrackingEnabled(enabled);
+        call.resolve();
+    }
+
+    @PluginMethod()
     public void getLocationPermissionsStatus(PluginCall call) {
         boolean foreground = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
 
