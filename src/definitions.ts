@@ -14,6 +14,7 @@ export interface RadarPlugin {
   setMetadata(options: { metadata: object }): void;
   getMetadata(): Promise<object>,
   setAnonymousTrackingEnabled(options: { enabled: boolean }): void;
+  setAdIdEnabled(options: { enabled: boolean }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
   getLocation(): Promise<RadarLocationCallback>;
