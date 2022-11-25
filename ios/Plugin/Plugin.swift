@@ -184,7 +184,22 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     @objc func getLocation(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.getLocation { (status: RadarStatus, location: CLLocation?, stopped: Bool) in
+            let desiredAccuracy = call.getString("desiredAccuracy") ?? "medium";
+            var accuracy = RadarTrackingOptions.desiredAccuracy(for:"medium");
+            
+            switch desiredAccuracy.lowercased() {
+            case "high":
+                accuracy = RadarTrackingOptions.desiredAccuracy(for:"high")
+            case "medium":
+                accuracy = RadarTrackingOptions.desiredAccuracy(for:"medium")
+            case "low":
+                accuracy = RadarTrackingOptions.desiredAccuracy(for:"low")
+            default:
+                call.reject("bad request")
+                return
+            }
+
+            Radar.getLocation(desiredAccuracy: accuracy,  completionHandler: { (status: RadarStatus, location: CLLocation?, stopped: Bool) in
                 if status == .success && location != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
@@ -194,7 +209,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 } else {
                     call.reject(Radar.stringForStatus(status))
                 }
-            }
+            })
         }
     }
 

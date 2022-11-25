@@ -76,7 +76,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
-  async getLocation(): Promise<RadarLocationCallback> {
+  async getLocation(options: { desiredAccuracy: string }): Promise<RadarLocationCallback> {
     return new Promise((resolve, reject) => {
       Radar.getLocation((err, { status, location, stopped }) => {
         if (err) {

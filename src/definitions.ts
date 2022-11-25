@@ -17,7 +17,7 @@ export interface RadarPlugin {
   setAdIdEnabled(options: { enabled: boolean }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
-  getLocation(): Promise<RadarLocationCallback>;
+  getLocation(options: { desiredAccuracy: string }): Promise<RadarLocationCallback>;
   trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number } | { desiredAccuracy: string, beacons: boolean}): Promise<RadarTrackCallback>;
   startTrackingEfficient(): void;
   startTrackingResponsive(): void;

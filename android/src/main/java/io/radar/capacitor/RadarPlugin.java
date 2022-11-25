@@ -249,7 +249,21 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void getLocation(final PluginCall call) throws JSONException {
-        Radar.getLocation(new Radar.RadarLocationCallback() {
+        String desiredAccuracy = call.getString("desiredAccuracy");
+        RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;        
+        String accuracy = desiredAccuracy != null ? desiredAccuracy.toLowerCase()  : "medium";
+        
+        if (accuracy.equals("low")) {
+            accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.LOW;
+        } else if (accuracy.equals("medium")) {
+            accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+        } else if (accuracy.equals("high")) {
+            accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
+        } else {
+            call.reject(Radar.RadarStatus.ERROR_BAD_REQUEST.toString());
+        }
+
+        Radar.getLocation(accuracyLevel, new Radar.RadarLocationCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, boolean stopped) {
                 if (status == Radar.RadarStatus.SUCCESS && location != null) {
