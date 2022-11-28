@@ -422,6 +422,13 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void isTracking(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("isTracking", Radar.isTracking());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
     public void setForegroundServiceOptions(PluginCall call) {
         JSObject optionsObj = call.getObject("options");
         JSONObject optionsJson = RadarPlugin.jsonObjectForJSObject(optionsObj);

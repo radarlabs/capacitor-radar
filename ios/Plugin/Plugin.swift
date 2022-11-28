@@ -334,6 +334,14 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func isTracking(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "isTracking": Radar.isTracking()
+            ]);
+        }
+    }
+
     @objc func setForegroundServiceOptions(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             // not implemented

@@ -139,6 +139,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  isTracking(): Promise<object> {
+    // not implemented
+  }
+
   setForegroundServiceOptions(): void {
     // not implemented
   }
