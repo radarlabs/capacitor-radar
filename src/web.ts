@@ -171,6 +171,14 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  getTripOptions(): Promise<object> {
+    return new Promise((resolve, reject) => {
+      resolve({
+        options: Radar.getTripOptions()
+      });
+    });
+  }
+
   async getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback> {
     return new Promise((resolve, reject) => {
       const callback = (err, { status, location, context }) => {

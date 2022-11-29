@@ -440,6 +440,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+     @objc func getTripOptions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let options = Radar.getTripOptions()
+            call.resolve([
+                "options": options!.dictionaryValue()
+            ])
+        }
+    }
+
     @objc func getContext(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarContextCompletionHandler = { (status: RadarStatus, location: CLLocation?, context: RadarContext?) in

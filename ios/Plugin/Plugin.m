@@ -29,6 +29,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(cancelTrip, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(acceptEvent, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(rejectEvent, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getTripOptions, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getContext, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(searchPlaces, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(searchGeofences, CAPPluginReturnPromise);

@@ -563,6 +563,14 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void getTripOptions(PluginCall call) {
+        RadarTripOptions options = Radar.getTripOptions();
+        JSObject ret = new JSObject();
+        ret.put("options", options != null ? options.toJson() : null);
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
     public void getContext(final PluginCall call) {
         Radar.RadarContextCallback callback = new Radar.RadarContextCallback() {
             @Override
