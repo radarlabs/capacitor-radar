@@ -22,6 +22,9 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     Radar.initialize(options.publishableKey);
   }
 
+  setLogLevel(options: { level: string }): void {
+    // not implemented
+  }
   setUserId(options: { userId: string }): void {
     Radar.setUserId(options.userId);
   }
