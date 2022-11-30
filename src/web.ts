@@ -12,6 +12,7 @@ import type {
   RadarGeocodeCallback,
   RadarIPGeocodeCallback,
   RadarRouteCallback,
+  RadarSendEventCallback,
   RadarPlugin
 } from './definitions';
 
@@ -315,6 +316,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
         }
       });
     });
+  }
+
+  sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback> {
+    // not implemented
   }
 
 }

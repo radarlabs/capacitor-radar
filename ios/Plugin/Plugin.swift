@@ -717,4 +717,25 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func sendEvent(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let customType = call.getString("customType")
+            let metadata = call.getObject("metadata")
+            let completionHandler: RadarSendEventCompletionHandler  = { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
+                if status == .success && location != nil && events != nil && user != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "events": RadarEvent.array(for: events!) ?? [],
+                        "user": user!.dictionaryValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+            Radar.sendEvent(customType: customType!, metadata: metadata!, completionHandler: completionHandler)
+        }
+        
+    }
+
 }

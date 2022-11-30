@@ -43,6 +43,7 @@ export interface RadarPlugin {
   reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
   getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
+  sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback>;
 }
 
 export interface RadarLocationCallback {
@@ -95,6 +96,13 @@ export interface RadarIPGeocodeCallback {
 export interface RadarRouteCallback {
   status: string;
   routes?: RadarRoutes;
+}
+
+export interface RadarSendEventCallback {
+  status: string;
+  location?: Location;
+  user?: RadarUser;
+  events?: RadarEvent[];
 }
 
 export interface Location {

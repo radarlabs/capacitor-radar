@@ -879,6 +879,35 @@ public class RadarPlugin extends Plugin {
         }
     }
 
+    @PluginMethod()
+    public void sendEvent(final PluginCall call) throws JSONException  {        
+        String customType = call.getString("customType");
+        JSObject metadataObj = call.getObject("metadata");
+        JSONObject metadataJson = RadarPlugin.jsonObjectForJSObject(metadataObj);
+
+        Radar.sendEvent(customType, metadataJson, new Radar.RadarSendEventCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
+                if (status == Radar.RadarStatus.SUCCESS) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    if (location != null) {
+                        ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    }
+                    if (events != null) {
+                        ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
+                    }
+                    if (user != null) {
+                        ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                    }
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
+    }
+    
     private static JSObject jsObjectForJSONObject(JSONObject jsonObj) {
         try {
             if (jsonObj == null) {
