@@ -38,7 +38,7 @@ export interface RadarPlugin {
   getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
   searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, metadata?: object, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
-  autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, limit: number }): Promise<RadarGeocodeCallback>;
+  autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string }): Promise<RadarGeocodeCallback>;
   geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
   reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;

@@ -723,8 +723,10 @@ public class RadarPlugin extends Plugin {
         near.setAccuracy(5);
 
         int limit = call.getInt("limit", 10);
+        String country = call.getString("country");
+        String[] layers = RadarPlugin.stringArrayForJSArray(call.getArray("layers"));
 
-        Radar.autocomplete(query, near, limit, new Radar.RadarGeocodeCallback() {
+        Radar.autocomplete(query, near, layers, limit, country, new Radar.RadarGeocodeCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
                 if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
