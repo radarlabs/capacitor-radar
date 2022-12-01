@@ -221,7 +221,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback> {
+  async searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], metadata?: object, limit: number }): Promise<RadarSearchGeofencesCallback> {
     return new Promise((resolve, reject) => {
       Radar.searchGeofences(options, (err, { status, location, geofences }) => {
         if (err) {

@@ -550,6 +550,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
             let radius = Int32(call.getInt("radius") ?? 1000)
             let tags = call.getArray("tags", String.self)
+            let metadata = call.getObject("metadata") ?? nil
             let limit = Int32(call.getInt("limit") ?? 10)
 
             let nearDict = call.options["near"] as? [String:Double] ?? nil
@@ -558,9 +559,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: metadata, limit: limit, completionHandler: completionHandler)
             } else {
-                Radar.searchGeofences(radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(radius: radius, tags: tags, metadata: metadata, limit: limit, completionHandler: completionHandler)
             }
         }
     }
