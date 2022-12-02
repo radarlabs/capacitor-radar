@@ -46,6 +46,7 @@ import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
 import io.radar.sdk.model.RadarPlace;
+import io.radar.sdk.model.RadarRouteMatrix;
 import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarTrip;
 import io.radar.sdk.model.RadarUser;
@@ -153,7 +154,7 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void setLogLevel(PluginCall call) {
-        String level = call.getString("level");        
+        String level = call.getString("level");
         Radar.RadarLogLevel logLevel = Radar.RadarLogLevel.NONE;
         if (level != null) {
             level = level.toLowerCase();
@@ -165,7 +166,7 @@ public class RadarPlugin extends Plugin {
                 logLevel = Radar.RadarLogLevel.INFO;
             } else if (level.equals("debug")) {
                 logLevel = Radar.RadarLogLevel.DEBUG;
-            } else {                
+            } else {
                 call.reject("bad request");
                 return;
             }
@@ -196,7 +197,7 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void getDescription(PluginCall call) {        
+    public void getDescription(PluginCall call) {
         JSObject ret = new JSObject();
         ret.put("description", Radar.getDescription());
         call.resolve(ret);
@@ -215,14 +216,14 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void setAnonymousTrackingEnabled(PluginCall call) {        
+    public void setAnonymousTrackingEnabled(PluginCall call) {
         boolean enabled = call.getBoolean("enabled");
         Radar.setAnonymousTrackingEnabled(enabled);
         call.resolve();
     }
 
     @PluginMethod()
-    public void setAdIdEnabled(PluginCall call) {        
+    public void setAdIdEnabled(PluginCall call) {
         boolean enabled = call.getBoolean("enabled");
         Radar.setAdIdEnabled(enabled);
         call.resolve();
@@ -273,9 +274,9 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void getLocation(final PluginCall call) throws JSONException {
         String desiredAccuracy = call.getString("desiredAccuracy");
-        RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;        
+        RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
         String accuracy = desiredAccuracy != null ? desiredAccuracy.toLowerCase()  : "medium";
-        
+
         if (accuracy.equals("low")) {
             accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.LOW;
         } else if (accuracy.equals("medium")) {
@@ -330,9 +331,9 @@ public class RadarPlugin extends Plugin {
             location.setAccuracy(accuracy);
 
             Radar.trackOnce(location, callback);
-        } else if (call.hasOption("desiredAccuracy")) {            
+        } else if (call.hasOption("desiredAccuracy")) {
             RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
-            
+
             String desiredAccuracy = call.getString("desiredAccuracy").toLowerCase();
             if (desiredAccuracy.equals("none")) {
                 accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.NONE;
@@ -343,11 +344,11 @@ public class RadarPlugin extends Plugin {
             } else if (desiredAccuracy.equals("high")) {
                 accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
             }
-            
+
             boolean beaconsTrackingOption = false;
             if (call.hasOption("beacons")) {
                 beaconsTrackingOption = call.getBoolean("beacons");
-            }            
+            }
             Radar.trackOnce(accuracyLevel, beaconsTrackingOption, callback);
         } else {
             Radar.trackOnce(callback);
@@ -883,7 +884,7 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void sendEvent(final PluginCall call) throws JSONException  {        
+    public void sendEvent(final PluginCall call) throws JSONException  {
         String customType = call.getString("customType");
         JSObject metadataObj = call.getObject("metadata");
         JSONObject metadataJson = RadarPlugin.jsonObjectForJSObject(metadataObj);
@@ -910,7 +911,67 @@ public class RadarPlugin extends Plugin {
             }
         });
     }
-    
+
+    @PluginMethod
+    public void getMatrix(final PluginCall call) throws JSONException {
+        JSArray originsArr = call.getArray("origins");
+        Location[] origins = new Location[originsArr.length()];
+        for (int i = 0; i < originsArr.length(); i++) {
+            JSONObject originObj = originsArr.getJSONObject(i);
+            double latitude = originObj.getDouble("latitude");
+            double longitude = originObj.getDouble("longitude");
+            Location origin = new Location("RadarSDK");
+            origin.setLatitude(latitude);
+            origin.setLongitude(longitude);
+            origins[i] = origin;
+        }
+        JSArray destinationsArr = call.getArray("origins");
+        Location[] destinations = new Location[destinationsArr.length()];
+        for (int i = 0; i < destinationsArr.length(); i++) {
+            JSONObject destinationObj = destinationsArr.getJSONObject(i);
+            double latitude = destinationObj.getDouble("latitude");
+            double longitude = destinationObj.getDouble("longitude");
+            Location destination = new Location("RadarSDK");
+            destination.setLatitude(latitude);
+            destination.setLongitude(longitude);
+            destinations[i] = destination;
+        }
+        String modeStr = call.getString("mode");
+        Radar.RadarRouteMode mode = Radar.RadarRouteMode.CAR;
+        if (modeStr != null) {
+            modeStr = modeStr.toLowerCase();
+            if ( modeStr.equals("foot")) {
+                mode = Radar.RadarRouteMode.FOOT;
+            } else if (modeStr.equals("bike")) {
+                mode = Radar.RadarRouteMode.BIKE;
+            } else if (modeStr.equals("car")) {
+                mode = Radar.RadarRouteMode.CAR;
+            } else if (modeStr.equals("truck")) {
+                mode = Radar.RadarRouteMode.TRUCK;
+            } else if (modeStr.equals("motorbike")) {
+                mode = Radar.RadarRouteMode.MOTORBIKE;
+            }
+        }
+        String unitsStr = call.getString("units");
+        Radar.RadarRouteUnits units = unitsStr != null && unitsStr.toLowerCase().equals("metric") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
+
+        Radar.getMatrix(origins, destinations, mode, units, new Radar.RadarMatrixCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status, @Nullable RadarRouteMatrix matrix) {
+                if (status == Radar.RadarStatus.SUCCESS) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    if (matrix != null) {
+                        ret.put("matrix", matrix.toJson());
+                    }
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
+    }
+
     private static JSObject jsObjectForJSONObject(JSONObject jsonObj) {
         try {
             if (jsonObj == null) {
@@ -987,8 +1048,8 @@ public class RadarPlugin extends Plugin {
         }
     }
 
-    private static Map<String, String> stringStringMap(JSObject jsObj) {        
-        try {            
+    private static Map<String, String> stringStringMap(JSObject jsObj) {
+        try {
             if (jsObj == null) {
                 return null;
             }

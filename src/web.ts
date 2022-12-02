@@ -13,6 +13,7 @@ import type {
   RadarIPGeocodeCallback,
   RadarRouteCallback,
   RadarSendEventCallback,
+  RadarRouteMatrix,
   RadarPlugin
 } from './definitions';
 
@@ -320,6 +321,21 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
 
   sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback> {
     // not implemented
+  }
+
+  getMatrix(options: { origins?: { latitude: number, longitude: number }[], destinations?: { latitude: number, longitude: number }[], mode: string, units: string }): Promise<RadarRouteMatrix> {
+    return new Promise((resolve, reject) => {
+      Radar.getMatrix(options, (err, { status, matrix }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            matrix,
+          });
+        }
+      });
+    });
   }
 
 }

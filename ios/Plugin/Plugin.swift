@@ -741,4 +741,61 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         
     }
 
+    @objc func getMatrix(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarRouteMatrixCompletionHandler  = { (status: RadarStatus, matrix: RadarRouteMatrix?) in
+                if status == .success && matrix != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "matrix": matrix!.arrayValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+            let originsArr = call.getArray("origins", JSObject.self) ?? []
+            let origins: [CLLocation] = originsArr.map{ (originDict) -> CLLocation in
+                let originLatitude = originDict["latitude"] as? Double ?? 0.0
+                let originLongitude = originDict["longitude"] as? Double ?? 0.0
+                let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+                return origin
+            }
+
+            let destinationsArr = call.getArray("destinations", JSObject.self) ?? []
+            let destinations: [CLLocation] = destinationsArr.map{ (destinationDict) -> CLLocation in
+                let destinationLatitude = destinationDict["latitude"] as? Double ?? 0.0
+                let destinationLongitude = destinationDict["longitude"] as? Double ?? 0.0
+                let destination = CLLocation(coordinate: CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+                return destination
+            }
+
+            guard let modeStr = call.getString("mode") else {
+                call.reject("mode is required")
+
+                return
+            }
+            var mode: RadarRouteMode = .car
+            switch modeStr.lowercased() {
+            case "foot":
+                mode = .foot
+            case "bike":
+                mode = .bike
+            case "car":
+                mode = .car
+            default:                
+                call.reject("bad request")
+                return
+            }
+
+            guard let unitsStr = call.getString("units") else {
+                call.reject("units is required")
+
+                return
+            }
+            let units: RadarRouteUnits = unitsStr.lowercased() == "metric" ? .metric : .imperial;
+            Radar.getMatrix(origins: origins, destinations: destinations, mode: mode, units: units, completionHandler: completionHandler)            
+        }
+    }
+
 }

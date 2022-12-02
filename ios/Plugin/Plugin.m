@@ -40,4 +40,5 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(ipGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getDistance, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(sendEvent, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getMatrix, CAPPluginReturnPromise);
 )
