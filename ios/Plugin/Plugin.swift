@@ -466,7 +466,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             let options = Radar.getTripOptions()
             call.resolve([
-                "options": options!.dictionaryValue()
+                "options": options?.dictionaryValue() ?? {}
             ])
         }
     }
