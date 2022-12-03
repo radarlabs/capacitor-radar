@@ -271,7 +271,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             let optionsDict = call.getObject("options") ?? [:]
             let options = RadarTripOptions(from: optionsDict)
-            Radar.startTrip(options: options) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
+            let trackingOptionsDict = call.getObject("trackingOptions") ?? [:]
+            let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
+            Radar.startTrip(options: options, trackingOptions: trackingOptions) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
                     "trip": trip?.dictionaryValue() ?? {},
