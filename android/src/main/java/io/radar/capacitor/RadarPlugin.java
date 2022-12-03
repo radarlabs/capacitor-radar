@@ -374,7 +374,7 @@ public class RadarPlugin extends Plugin {
         RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
         JSObject trackingOptionsObj = call.getObject("trackingOptions");
         JSONObject trackingOptionsJson = RadarPlugin.jsonObjectForJSObject(trackingOptionsObj);
-        RadarTripOptions options = RadarTrackingOptions.fromJson(trackingOptionsJson);
+        RadarTrackingOptions trackingOptions = RadarTrackingOptions.fromJson(trackingOptionsJson);
         Radar.startTrip(options, trackingOptions, new Radar.RadarTripCallback() {
             @Override
             public void onComplete(@NonNull Radar.RadarStatus status,
