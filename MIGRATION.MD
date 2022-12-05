@@ -1,7 +1,8 @@
 # Migration guides
 
 ## 3.5.0 to 3.5.2
-- the `startTrip` function now accepts two params: `{ tripOptions, trackingOptions }`. The SDK will now automatically `startTracking` using `trackingOptions` when a trip is created.
+- the `startTrip` function now accepts `tripOptions` and `trackingOptions` in the `options` param:  
+`startTrip( { options: { tripOptions, trackingOptions } } )`. The SDK will now automatically `startTracking` using `trackingOptions` when a trip is created.
 
 ```javascript
 // 3.5.2 - new param format
@@ -9,9 +10,8 @@ Radar.startTrip({
   options: {
     tripOptions: {
       externalId: "1600",
-      destinationGeofenceTag: "foo",
-      destinationGeofenceExternalId: "bamly",
-      scheduledArrivalAt: scheduledArrivalAt
+      destinationGeofenceTag: "store",
+      destinationGeofenceExternalId: "12345"
     },
     trackingOptions: {
       "desiredStoppedUpdateInterval": 30,
@@ -42,9 +42,8 @@ Radar.startTrip({
 // 3.5.0 - deprecated param format
 Radar.startTrip({
   options: {
-    externalId: "1601",
-    destinationGeofenceTag: "foo",
-    destinationGeofenceExternalId: "bamly",
-    scheduledArrivalAt: scheduledArrivalAt
+    externalId: "1600",
+    destinationGeofenceTag: "store",
+    destinationGeofenceExternalId: "12345"
   }
 })
