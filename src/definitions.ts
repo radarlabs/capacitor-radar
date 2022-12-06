@@ -372,7 +372,7 @@ export interface RadarTrackingOptionsForegroundService {
 }
 
 export interface RadarTripOptions {
-   externalId: string;
+   externalId: number;
    metadata?: object;
    destinationGeofenceTag?: string;
    destinationGeofenceExternalId?: string;
