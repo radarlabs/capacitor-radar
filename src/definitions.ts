@@ -18,32 +18,32 @@ export interface RadarPlugin {
   setAdIdEnabled(options: { enabled: boolean }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
-  getLocation(options: { desiredAccuracy: string }): Promise<RadarLocationCallback>;
-  trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number } | { desiredAccuracy: string, beacons: boolean}): Promise<RadarTrackCallback>;
+  getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
+  trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
   startTrackingEfficient(): void;
   startTrackingResponsive(): void;
   startTrackingContinuous(): void;
-  startTrackingCustom(options: object): void;
-  mockTracking(options: { origin: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, mode: string, steps: number, interval: number }): void;
+  startTrackingCustom(options: { options: RadarTrackingOptions}): void;
+  mockTracking(options: { origin: Location, destination: Location, mode: RadarRouteMode, steps: number, interval: number }): void;
   stopTracking(): void;
-  isTracking(): Promise<object>;
-  setForegroundServiceOptions(options: object): void;
-  startTrip(options: object): Promise<RadarTripCallback>;
-  updateTrip(options: {options: object, status?: string}): Promise<RadarTripCallback>;
+  isTracking(): Promise<RadarTrackingStatus>;
+  setForegroundServiceOptions(options: { options: RadarTrackingOptionsForegroundService }): void;
+  startTrip(options: { options: RadarTripOptions }): Promise<RadarTripCallback>;
+  updateTrip(options: {options: RadarTripOptions, status?: RadarTripStatus}): Promise<RadarTripCallback>;
   completeTrip(): Promise<RadarTripCallback>;
   cancelTrip(): Promise<RadarTripCallback>;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
-  getTripOptions(): Promise<object>,
-  getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback>;
-  searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
-  searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, metadata?: object, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
-  autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string }): Promise<RadarGeocodeCallback>;
+  getTripOptions(): Promise<RadarTripOptions>,
+  getContext(options?: Location): Promise<RadarContextCallback>;
+  searchPlaces(options: { near?: Location, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
+  searchGeofences(options: { near?: Location, radius: number, metadata?: object, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
+  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string }): Promise<RadarGeocodeCallback>;
   geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
-  reverseGeocode(options?: { latitude?: number, longitude?: number }): Promise<RadarGeocodeCallback>;
+  reverseGeocode(options?: Location): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
-  getDistance(options: { origin?: { latitude: number, longitude: number }, destination: { latitude: number, longitude: number }, modes: string[], units: string }): Promise<RadarRouteCallback>;
-  getMatrix(options: { origins?: { latitude: number, longitude: number }[], destinations?: { latitude: number, longitude: number }[], mode: string, units: string }): Promise<RadarRouteMatrix>;
+  getDistance(options: { origin?: Location, destination: Location, modes: string[], units: string }): Promise<RadarRouteCallback>;
+  getMatrix(options: { origins?: Location[], destinations?: Location[], mode: string, units: string }): Promise<RadarRouteMatrix>;
   sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback>;
 }
 
@@ -200,6 +200,12 @@ export type RadarEventType =
   | 'user.arrived_at_trip_destination'
   | 'user.stopped_trip';
 
+export type RadarTrackingOptionsDesiredAccuracy = 
+  | 'high'
+  | 'medium'
+  | 'low'
+  | 'none'
+
 export enum RadarEventVerification {
   accept = 1,
   unverify = 0,
@@ -312,3 +318,74 @@ export interface RadarFraud {
   proxy: boolean;
   mocked: boolean;
 }
+
+export type RadarTrackingOptionsReplay = 
+  | 'stops'
+  | 'none'
+
+export type RadarTrackingOptionsSync =
+  | 'none'
+  | 'stopsAndExits'
+  | 'all'
+
+export interface RadarTrackingOptions {
+   desiredStoppedUpdateInterval: number;
+   fastestStoppedUpdateInterval: number;
+   desiredMovingUpdateInterval: number;
+   fastestMovingUpdateInterval: number;
+   desiredSyncInterval: number;
+   desiredAccuracy: RadarTrackingOptionsDesiredAccuracy,
+   stopDuration: number;
+   stopDistance: number;
+   startTrackingAfter?: Date;
+   stopTrackingAfter?: Date;
+   replay: RadarTrackingOptionsReplay;
+   sync: RadarTrackingOptionsSync;
+   useStoppedGeofence: Boolean,
+   stoppedGeofenceRadius: number;
+   useMovingGeofence: Boolean,
+   movingGeofenceRadius: number;
+   syncGeofences: Boolean,
+   syncGeofencesLimit: number;
+   foregroundServiceEnabled: Boolean,
+   beacons: Boolean
+}
+
+export type RadarRouteMode =
+  | 'foot'
+  | 'bike'
+  | 'car'
+
+export interface RadarTrackingStatus {
+  isTracking: string;
+}
+
+export interface RadarTrackingOptionsForegroundService {
+  text?: string;
+  title?: string;
+  icon?: number;
+  updatesOnly: boolean;
+  activity?: string;
+  importance?: number;
+  id?: number;
+  channelName?: string;
+}
+
+export interface RadarTripOptions {
+   externalId: string;
+   metadata?: object;
+   destinationGeofenceTag?: string;
+   destinationGeofenceExternalId?: string;
+   mode?: RadarRouteMode;
+   scheduledArrivalAt?: Date;
+   approachingThreshold?: number
+}
+
+export type RadarTripStatus = 
+  | "started"
+  | "approaching"
+  | "arrived"
+  | "expired"
+  | "completed"
+  | "canceled"
+
