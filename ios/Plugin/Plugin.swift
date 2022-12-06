@@ -301,7 +301,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             let trackingOptionsDict = call.getObject("options") ?? [:]
             let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
-            Radar.startTracking(trackingOptions: trackingOptions)
+            Radar.startTracking(trackingOptions: trackingOptions!)
             call.resolve()
         }
     }
@@ -375,7 +375,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             let optionsDict = call.getObject("options") ?? [:]
             let options = RadarTripOptions(from: optionsDict)
-            Radar.startTrip(options: options) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
+            Radar.startTrip(options: options!) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
                     "trip": trip?.dictionaryValue() ?? {},
@@ -403,7 +403,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 status = .canceled
             }
 
-            Radar.updateTrip(options: options, status: status) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
+            Radar.updateTrip(options: options!, status: status) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
                     "trip": trip?.dictionaryValue() ?? {},
