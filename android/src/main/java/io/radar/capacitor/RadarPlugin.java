@@ -371,8 +371,20 @@ public class RadarPlugin extends Plugin {
             call.reject("options is required");
             return;
         }
-        RadarTripOptions options = RadarTripOptions.fromJson(optionsJson);
-        Radar.startTrip(options, new Radar.RadarTripCallback() {
+        // new format is { tripOptions, trackingOptions }
+        JSONObject tripOptionsJson = optionsJson.optJSONObject("tripOptions");
+        if (tripOptionsJson == null) {
+            // legacy format
+            tripOptionsJson = optionsJson;
+        }
+        RadarTripOptions options = RadarTripOptions.fromJson(tripOptionsJson);
+
+        RadarTrackingOptions trackingOptions = null;
+        JSONObject trackingOptionsJson = optionsJson.optJSONObject("trackingOptions");
+        if (trackingOptionsJson != null) {
+            trackingOptions = RadarTrackingOptions.fromJson(trackingOptionsJson);
+        }
+        Radar.startTrip(options, trackingOptions, new Radar.RadarTripCallback() {
             @Override
             public void onComplete(@NonNull Radar.RadarStatus status,
                                    @Nullable RadarTrip trip,

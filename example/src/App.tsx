@@ -54,9 +54,9 @@ class App extends React.Component {
 
     Radar.requestLocationPermissions({ background: false });
 
-    Radar.trackOnce().then((result) => {
+    /*Radar.trackOnce().then((result) => {
       alert(JSON.stringify(result));
-    });
+    });*/
    
     // var stopTrackingTime = new Date()
     // stopTrackingTime.setMinutes(stopTrackingTime.getMinutes() + 1)
@@ -68,12 +68,35 @@ class App extends React.Component {
 
     var scheduledArrivalAt = new Date()
     scheduledArrivalAt.setMinutes(scheduledArrivalAt.getMinutes() + 9)
-    Radar.startTrip({
+    /*Radar.startTrip({
       options: {
-        externalId: 1564,
-        destinationGeofenceTag: "Home",
-        destinationGeofenceExternalId: "119",
+        externalId: "1601",
+        destinationGeofenceTag: "foo",
+        destinationGeofenceExternalId: "bamly",
         scheduledArrivalAt: scheduledArrivalAt
+      }
+    }).then((result) => {
+      alert(`trip ${JSON.stringify(result.trip)}`)
+
+      Radar.startTrackingResponsive()
+
+      if (result.status == "SUCCESS") {
+        Radar.startTrackingResponsive()
+      } else {
+        alert(`failed to start trip ${JSON.stringify(result)}`);
+      }
+    }).catch((error) => {
+      alert(`error ${JSON.stringify(error)}`);
+    });*/
+
+    /*Radar.startTrip({
+      options: {
+        tripOptions: {
+          externalId: "1597",
+          destinationGeofenceTag: "foo",
+          destinationGeofenceExternalId: "bamly",
+          scheduledArrivalAt: scheduledArrivalAt
+        }
       }
     }).then((result) => {
       alert(`trip ${JSON.stringify(result.trip)}`)
@@ -83,6 +106,50 @@ class App extends React.Component {
       } else {
         alert(`failed to start trip ${JSON.stringify(result)}`);
       }
+    }).catch((error) => {
+      alert(`error ${JSON.stringify(error)}`);
+    });*/
+
+    Radar.startTrip({
+      options: {
+        tripOptions: {
+          externalId: "1600",
+          destinationGeofenceTag: "foo",
+          destinationGeofenceExternalId: "bamly",
+          scheduledArrivalAt: scheduledArrivalAt
+        },
+        trackingOptions: {
+          "desiredStoppedUpdateInterval": 30,
+          "fastestStoppedUpdateInterval": 30,
+          "desiredMovingUpdateInterval": 30,
+          "fastestMovingUpdateInterval": 30,
+          "desiredSyncInterval": 20,
+          "desiredAccuracy": "HIGH",
+          "stopDuration": 0,
+          "stopDistance": 0,
+	  "replay": "none",
+	  "sync": "all",
+	  "showBlueBar": true,
+          "useStoppedGeofence": false,
+          "stoppedGeofenceRadius": 0,
+          "useMovingGeofence": false,
+          "movingGeofenceRadius": 0,
+          "syncGeofences": false,
+          "syncGeofencesLimit": 0,
+          "beacons": false,
+          "foregroundServiceEnabled": false
+        }
+      }
+    }).then((result) => {
+      alert(`trip ${JSON.stringify(result.trip)}`)
+
+      if (result.status == "SUCCESS") {
+
+      } else {
+        alert(`failed to start trip ${JSON.stringify(result)}`);
+      }
+    }).catch((error) => {
+      alert(`error ${JSON.stringify(error)}`);
     });
 
     /*
