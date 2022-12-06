@@ -23,7 +23,7 @@ Radar.startTrip({
       "stopDuration": 0,
       "stopDistance": 0,
       "replay": "none",
-      "syncLocations": "all",
+      "sync": "all",
       "showBlueBar": true,
       "useStoppedGeofence": false,
       "stoppedGeofenceRadius": 0,
