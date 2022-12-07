@@ -300,8 +300,12 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func startTrackingCustom(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let trackingOptionsDict = call.getObject("options") ?? [:]
-            let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict)
-            Radar.startTracking(trackingOptions: trackingOptions!)
+            guard let trackingOptions = RadarTrackingOptions(from: trackingOptionsDict) else {
+                call.reject("options is required")
+
+                return
+            }
+            Radar.startTracking(trackingOptions: trackingOptions)
             call.resolve()
         }
     }
@@ -374,8 +378,20 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func startTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let optionsDict = call.getObject("options") ?? [:]
-            let options = RadarTripOptions(from: optionsDict)
-            Radar.startTrip(options: options!) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
+            // { tripOptions, trackingOptions } is the new req format.
+            // fallback to reading trip options from the top level options.
+            let tripOptionsDict = optionsDict["tripOptions"] as? [String:Any] ?? optionsDict
+            guard let options = RadarTripOptions(from: tripOptionsDict) else {
+                call.reject("tripOptions is required")
+
+                return
+            }
+            let trackingOptionsDict = optionsDict["trackingOptions"] as? [String:Any]
+            var trackingOptions: RadarTrackingOptions?
+            if (trackingOptionsDict != nil) {
+                trackingOptions = RadarTrackingOptions(from: trackingOptionsDict!)
+            }
+            Radar.startTrip(options: options, trackingOptions: trackingOptions) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
                     "trip": trip?.dictionaryValue() ?? {},
@@ -388,7 +404,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func updateTrip(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let optionsDict = call.getObject("options") ?? [:]
-            let options = RadarTripOptions(from: optionsDict)
+            guard let options = RadarTripOptions(from: optionsDict) else {
+                call.reject("options is required")
+
+                return
+            }
             let statusStr = call.getString("status")
             var status = RadarTripStatus.unknown
             if statusStr == "STARTED" || statusStr == "started" {
@@ -486,7 +506,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
 
             let latitude = call.getDouble("latitude") ?? 0.0
-            let longitude = call.getDouble("latitude") ?? 0.0
+            let longitude = call.getDouble("longitude") ?? 0.0
             
             if latitude != 0.0 && longitude != 0.0 {
                 let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
@@ -635,7 +655,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
 
             let latitude = call.getDouble("latitude") ?? 0.0
-            let longitude = call.getDouble("latitude") ?? 0.0
+            let longitude = call.getDouble("longitude") ?? 0.0
             
             if latitude != 0.0 && longitude != 0.0 {
                 let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
