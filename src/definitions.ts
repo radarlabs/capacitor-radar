@@ -28,7 +28,7 @@ export interface RadarPlugin {
   stopTracking(): void;
   isTracking(): Promise<RadarTrackingStatus>;
   setForegroundServiceOptions(options: { options: RadarTrackingOptionsForegroundService }): void;
-  startTrip(options: { options: RadarTripOptions }): Promise<RadarTripCallback>;
+  startTrip(options: { options: RadarTripOptions | { tripOptions: RadarTripOptions, trackingOptions?: RadarTrackingOptions }}): Promise<RadarTripCallback>;
   updateTrip(options: {options: RadarTripOptions, status?: RadarTripStatus}): Promise<RadarTripCallback>;
   completeTrip(): Promise<RadarTripCallback>;
   cancelTrip(): Promise<RadarTripCallback>;
@@ -341,14 +341,15 @@ export interface RadarTrackingOptions {
    stopTrackingAfter?: Date;
    replay: RadarTrackingOptionsReplay;
    sync: RadarTrackingOptionsSync;
-   useStoppedGeofence: Boolean,
+   showBlueBar: boolean;
+   useStoppedGeofence: boolean,
    stoppedGeofenceRadius: number;
-   useMovingGeofence: Boolean,
+   useMovingGeofence: boolean,
    movingGeofenceRadius: number;
-   syncGeofences: Boolean,
+   syncGeofences: boolean,
    syncGeofencesLimit: number;
-   foregroundServiceEnabled: Boolean,
-   beacons: Boolean
+   foregroundServiceEnabled: boolean,
+   beacons: boolean
 }
 
 export type RadarRouteMode =
@@ -372,7 +373,7 @@ export interface RadarTrackingOptionsForegroundService {
 }
 
 export interface RadarTripOptions {
-   externalId: number;
+   externalId: string;
    metadata?: object;
    destinationGeofenceTag?: string;
    destinationGeofenceExternalId?: string;
