@@ -40,7 +40,26 @@ Radar.addListener('error', (result) => {
   alert(`error: ${JSON.stringify(result)}`);
 });
 
-class App extends React.Component {
+interface AppProps {}
+
+interface AppState {
+  logs: string[]
+}
+
+class App extends React.Component<AppProps, AppState> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      logs: []
+    }
+  }
+
+  logOutput(...args: any) {
+    this.setState((prevState: AppState) => ({
+      logs: [...prevState.logs, args.join(" ")]
+    }));
+  }
+
   componentDidMount() {
     Radar.setUserId({ userId: 'capacitor' });
 
@@ -49,13 +68,13 @@ class App extends React.Component {
     }});
 
     Radar.getLocationPermissionsStatus().then((result) => {
-      alert(JSON.stringify(result));
+      this.logOutput(JSON.stringify(result));
     });
 
     Radar.requestLocationPermissions({ background: false });
 
     /*Radar.trackOnce().then((result) => {
-      alert(JSON.stringify(result));
+      this.logOutput(JSON.stringify(result));
     });*/
    
     // var stopTrackingTime = new Date()
@@ -76,17 +95,17 @@ class App extends React.Component {
         scheduledArrivalAt: scheduledArrivalAt
       }
     }).then((result) => {
-      alert(`trip ${JSON.stringify(result.trip)}`)
+      this.logOutput(`trip ${JSON.stringify(result.trip)}`)
 
       Radar.startTrackingResponsive()
 
       if (result.status == "SUCCESS") {
         Radar.startTrackingResponsive()
       } else {
-        alert(`failed to start trip ${JSON.stringify(result)}`);
+        this.logOutput(`failed to start trip ${JSON.stringify(result)}`);
       }
     }).catch((error) => {
-      alert(`error ${JSON.stringify(error)}`);
+      this.logOutput(`error ${JSON.stringify(error)}`);
     });*/
 
     /*Radar.startTrip({
@@ -99,15 +118,15 @@ class App extends React.Component {
         }
       }
     }).then((result) => {
-      alert(`trip ${JSON.stringify(result.trip)}`)
+      this.logOutput(`trip ${JSON.stringify(result.trip)}`)
 
       if (result.status == "SUCCESS") {
         Radar.startTrackingResponsive()
       } else {
-        alert(`failed to start trip ${JSON.stringify(result)}`);
+        this.logOutput(`failed to start trip ${JSON.stringify(result)}`);
       }
     }).catch((error) => {
-      alert(`error ${JSON.stringify(error)}`);
+      this.logOutput(`error ${JSON.stringify(error)}`);
     });*/
 
     Radar.startTrip({
@@ -141,15 +160,15 @@ class App extends React.Component {
         }
       }
     }).then((result) => {
-      alert(`trip ${JSON.stringify(result.trip)}`)
+      this.logOutput(`trip ${JSON.stringify(result.trip)}`)
 
       if (result.status == "SUCCESS") {
 
       } else {
-        alert(`failed to start trip ${JSON.stringify(result)}`);
+        this.logOutput(`failed to start trip ${JSON.stringify(result)}`);
       }
     }).catch((error) => {
-      alert(`error ${JSON.stringify(error)}`);
+      this.logOutput(`error ${JSON.stringify(error)}`);
     });
 
     /*
@@ -169,7 +188,7 @@ class App extends React.Component {
     
     setTimeout(() => {
       Radar.cancelTrip().then((result) => {
-        alert(JSON.stringify(result));
+        this.logOutput(JSON.stringify(result));
       });
     }, 30000);
 
@@ -186,7 +205,7 @@ class App extends React.Component {
         <IonReactRouter>
           <IonRouterOutlet>
             <Route exact path="/home">
-              <Home />
+              <Home logs={this.state.logs}/>
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />
