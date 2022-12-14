@@ -937,7 +937,7 @@ public class RadarPlugin extends Plugin {
             origin.setLongitude(longitude);
             origins[i] = origin;
         }
-        JSArray destinationsArr = call.getArray("origins");
+        JSArray destinationsArr = call.getArray("destinations");
         Location[] destinations = new Location[destinationsArr.length()];
         for (int i = 0; i < destinationsArr.length(); i++) {
             JSONObject destinationObj = destinationsArr.getJSONObject(i);
