@@ -958,25 +958,41 @@ public class RadarPlugin extends Plugin {
         }
         String modeStr = call.getString("mode");
         Radar.RadarRouteMode mode = Radar.RadarRouteMode.CAR;
-        if (modeStr != null) {
-            modeStr = modeStr.toLowerCase();
-            if ( modeStr.equals("foot")) {
-                mode = Radar.RadarRouteMode.FOOT;
-            } else if (modeStr.equals("bike")) {
-                mode = Radar.RadarRouteMode.BIKE;
-            } else if (modeStr.equals("car")) {
-                mode = Radar.RadarRouteMode.CAR;
-            } else if (modeStr.equals("truck")) {
-                mode = Radar.RadarRouteMode.TRUCK;
-            } else if (modeStr.equals("motorbike")) {
-                mode = Radar.RadarRouteMode.MOTORBIKE;
-            } else {
-                call.reject("invalid mode: " + mode);
-                return;
-            }
+        if (modeStr == null) {
+            call.reject("mode is required");
+            return;
         }
+        modeStr = modeStr.toLowerCase();
+        if ( modeStr.equals("foot")) {
+            mode = Radar.RadarRouteMode.FOOT;
+        } else if (modeStr.equals("bike")) {
+            mode = Radar.RadarRouteMode.BIKE;
+        } else if (modeStr.equals("car")) {
+            mode = Radar.RadarRouteMode.CAR;
+        } else if (modeStr.equals("truck")) {
+            mode = Radar.RadarRouteMode.TRUCK;
+        } else if (modeStr.equals("motorbike")) {
+            mode = Radar.RadarRouteMode.MOTORBIKE;
+        } else {
+            call.reject("invalid mode: " + mode);
+            return;
+        }
+
         String unitsStr = call.getString("units");
-        Radar.RadarRouteUnits units = unitsStr != null && unitsStr.toLowerCase().equals("metric") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
+        if (unitsStr == null) {
+            call.reject("units is required");
+            return;
+        }
+        unitsStr = unitsStr.toLowerCase();
+        Radar.RadarRouteUnits units = Radar.RadarRouteUnits.METRIC;
+        if (unitsStr.equals("metric")) {
+            units = Radar.RadarRouteUnits.METRIC;
+        } else if (unitsStr.equals("imperial")) {
+            units = Radar.RadarRouteUnits.IMPERIAL;
+        } else {
+            call.reject("invalid units: " + unitsStr);
+            return;
+        }
 
         Radar.getMatrix(origins, destinations, mode, units, new Radar.RadarMatrixCallback() {
             @Override

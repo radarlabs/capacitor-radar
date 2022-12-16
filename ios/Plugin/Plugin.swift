@@ -825,7 +825,17 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
                 return
             }
-            let units: RadarRouteUnits = unitsStr.lowercased() == "metric" ? .metric : .imperial;
+            var units: RadarRouteUnits = .metric;
+            switch modeStr.lowercased() {
+                case "metric":
+                    units = .metric
+                case "imperial":
+                    units = .imperial
+                default:                
+                    call.reject("invalid units: " + unitsStr)
+                    return
+            }
+            
             Radar.getMatrix(origins: origins, destinations: destinations, mode: mode, units: units, completionHandler: completionHandler)            
         }
     }
