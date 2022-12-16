@@ -156,21 +156,25 @@ public class RadarPlugin extends Plugin {
     public void setLogLevel(PluginCall call) {
         String level = call.getString("level");
         Radar.RadarLogLevel logLevel = Radar.RadarLogLevel.NONE;
-        if (level != null) {
-            level = level.toLowerCase();
-            if (level.equals("error")) {
-                logLevel = Radar.RadarLogLevel.ERROR;
-            } else if (level.equals("warning")) {
-                logLevel = Radar.RadarLogLevel.WARNING;
-            } else if (level.equals("info")) {
-                logLevel = Radar.RadarLogLevel.INFO;
-            } else if (level.equals("debug")) {
-                logLevel = Radar.RadarLogLevel.DEBUG;
-            } else {
-                call.reject("bad request");
-                return;
-            }
+        if (level == null) {
+            call.reject("level is required");
+            return;
         }
+
+        level = level.toLowerCase();
+        if (level.equals("error")) {
+            logLevel = Radar.RadarLogLevel.ERROR;
+        } else if (level.equals("warning")) {
+            logLevel = Radar.RadarLogLevel.WARNING;
+        } else if (level.equals("info")) {
+            logLevel = Radar.RadarLogLevel.INFO;
+        } else if (level.equals("debug")) {
+            logLevel = Radar.RadarLogLevel.DEBUG;
+        } else {
+            call.reject("invalid level: " + level);
+            return;
+        }
+
         Radar.setLogLevel(logLevel);
         call.resolve();
     }

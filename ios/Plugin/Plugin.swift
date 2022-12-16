@@ -88,6 +88,10 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
     @objc func setLogLevel(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let level = call.getString("level") ?? ""
+            if (level == "") {                
+                call.reject("level is required")
+                return
+            }
             var logLevel = RadarLogLevel.none
             switch level.lowercased() {
             case "error":
@@ -99,7 +103,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             case "debug":
                 logLevel = RadarLogLevel.debug
             default:                
-                call.reject("bad request")
+                call.reject("invalid level: " + level)
                 return
             }
             Radar.setLogLevel(logLevel)
