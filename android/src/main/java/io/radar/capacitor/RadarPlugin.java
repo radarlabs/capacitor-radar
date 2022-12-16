@@ -970,6 +970,9 @@ public class RadarPlugin extends Plugin {
                 mode = Radar.RadarRouteMode.TRUCK;
             } else if (modeStr.equals("motorbike")) {
                 mode = Radar.RadarRouteMode.MOTORBIKE;
+            } else {
+                call.reject("invalid mode: " + mode);
+                return;
             }
         }
         String unitsStr = call.getString("units");

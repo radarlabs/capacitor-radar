@@ -271,7 +271,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             } else if desiredAccuracy == "low" {
                 accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"low")
             } else {
-                "invalid desiredAccuracy: " + desiredAccuracy
+                call.reject("invalid desiredAccuracy: " + desiredAccuracy)
+
+                return
             }
 
             if latitude != 0.0 && longitude != 0.0 && accuracy != 0.0 {
@@ -809,8 +811,12 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 mode = .bike
             case "car":
                 mode = .car
+            case "truck":
+                mode = .truck
+            case "motorbike":
+                mode = .motorbike
             default:                
-                call.reject("bad request")
+                call.reject("invalid mode: " + modeStr)
                 return
             }
 
