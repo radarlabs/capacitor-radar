@@ -664,7 +664,7 @@ public class RadarPlugin extends Plugin {
 
         int radius = call.getInt("radius", 1000);
         String[] chains = RadarPlugin.stringArrayForJSArray(call.getArray("chains"));
-        Map<String, String> chainMetadata = RadarPlugin.stringStringMap(call.getObject("chainMetadata"));
+        Map<String, String> chainMetadata = RadarPlugin.stringMapForJSObject(call.getObject("chainMetadata"));
         String[] categories = RadarPlugin.stringArrayForJSArray(call.getArray("categories"));
         String[] groups = RadarPlugin.stringArrayForJSArray(call.getArray("groups"));
         int limit = call.getInt("limit", 10);
@@ -1087,7 +1087,7 @@ public class RadarPlugin extends Plugin {
         }
     }
 
-    private static Map<String, String> stringStringMap(JSObject jsObj) {
+    private static Map<String, String> stringMapForJSObject(JSObject jsObj) {
         try {
             if (jsObj == null) {
                 return null;
