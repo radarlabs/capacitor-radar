@@ -288,7 +288,8 @@ public class RadarPlugin extends Plugin {
         } else if (accuracy.equals("high")) {
             accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
         } else {
-            call.reject(Radar.RadarStatus.ERROR_BAD_REQUEST.toString());
+            call.reject("invalid desiredAccuracy: " + desiredAccuracy);
+            return;
         }
 
         Radar.getLocation(accuracyLevel, new Radar.RadarLocationCallback() {
@@ -347,6 +348,9 @@ public class RadarPlugin extends Plugin {
                 accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
             } else if (desiredAccuracy.equals("high")) {
                 accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
+            } else {
+                call.reject("invalid desiredAccuracy: " + desiredAccuracy);
+                return;
             }
 
             boolean beaconsTrackingOption = false;

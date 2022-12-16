@@ -221,7 +221,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             case "low":
                 accuracy = RadarTrackingOptions.desiredAccuracy(for:"low")
             default:
-                call.reject("bad request")
+                call.reject("invalid desiredAccuracy: " + desiredAccuracy)
                 return
             }
 
@@ -270,6 +270,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"medium")
             } else if desiredAccuracy == "low" {
                 accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"low")
+            } else {
+                "invalid desiredAccuracy: " + desiredAccuracy
             }
 
             if latitude != 0.0 && longitude != 0.0 && accuracy != 0.0 {
