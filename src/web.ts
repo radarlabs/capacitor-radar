@@ -14,7 +14,8 @@ import type {
   RadarRouteCallback,
   RadarSendEventCallback,
   RadarRouteMatrix,
-  RadarPlugin
+  RadarPlugin,
+  RadarTrackingOptions
 } from './definitions';
 
 import Radar from 'radar-sdk-js';
@@ -145,6 +146,11 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
   }
 
   isTracking(): Promise<object> {
+    // not implemented
+  }
+
+  
+  getTrackingOptions(): Promise<RadarTrackingOptions> {
     // not implemented
   }
 

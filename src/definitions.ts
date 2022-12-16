@@ -27,6 +27,7 @@ export interface RadarPlugin {
   mockTracking(options: { origin: Location, destination: Location, mode: RadarRouteMode, steps: number, interval: number }): void;
   stopTracking(): void;
   isTracking(): Promise<RadarTrackingStatus>;
+  getTrackingOptions(): Promise<RadarTrackingOptions>,
   setForegroundServiceOptions(options: { options: RadarTrackingOptionsForegroundService }): void;
   startTrip(options: { options: RadarTripOptions | { tripOptions: RadarTripOptions, trackingOptions?: RadarTrackingOptions }}): Promise<RadarTripCallback>;
   updateTrip(options: {options: RadarTripOptions, status?: RadarTripStatus}): Promise<RadarTripCallback>;

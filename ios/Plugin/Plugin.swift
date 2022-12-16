@@ -376,6 +376,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func getTrackingOptions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let options = Radar.getTrackingOptions()
+            call.resolve([
+                "options": options.dictionaryValue()
+            ])
+        }
+    }
+
     @objc func setForegroundServiceOptions(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             // not implemented
