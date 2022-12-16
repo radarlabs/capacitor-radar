@@ -750,7 +750,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     @objc func sendEvent(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            let customType = call.getString("customType")
+            guard let customType = call.getString("customType") else {
+                call.reject("customType is required")
+
+                return
+            }
             let metadata = call.getObject("metadata")
             let completionHandler: RadarSendEventCompletionHandler  = { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
                 if status == .success && location != nil && events != nil && user != nil {
@@ -764,7 +768,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                     call.reject(Radar.stringForStatus(status))
                 }
             }
-            Radar.sendEvent(customType: customType!, metadata: metadata!, completionHandler: completionHandler)
+            Radar.sendEvent(customType: customType, metadata: metadata, completionHandler: completionHandler)
         }
         
     }
@@ -835,7 +839,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                     call.reject("invalid units: " + unitsStr)
                     return
             }
-            
+
             Radar.getMatrix(origins: origins, destinations: destinations, mode: mode, units: units, completionHandler: completionHandler)            
         }
     }
