@@ -61,7 +61,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidMount() {
-    Radar.initialize({ publishableKey: 'prj_test_pk_a427957bed04f6a7a5ed0b21b9002fb536946ea5' });
+    Radar.initialize({ publishableKey: 'prj_test_pk_0000000000000000000000000000000000000000' });
     Radar.setLogLevel({level: 'debug'});
     Radar.setUserId({ userId: 'capacitor' });
     Radar.setDescription({ description: 'capacitor example'});
