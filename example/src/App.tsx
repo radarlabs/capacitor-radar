@@ -25,39 +25,181 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 Radar.addListener('clientLocation', (result) => {
-  alert(`location: ${JSON.stringify(result)}`);
+  console.log(`location: ${JSON.stringify(result)}`);
 });
 
 Radar.addListener('location', (result) => {
-  alert(`location: ${JSON.stringify(result)}`);
+  console.log(`location: ${JSON.stringify(result)}`);
 });
 
 Radar.addListener('events', (result) => {
-  alert(`events: ${JSON.stringify(result)}`);
+  console.log(`events: ${JSON.stringify(result)}`);
 });
 
 Radar.addListener('error', (result) => {
-  alert(`error: ${JSON.stringify(result)}`);
+  console.log(`error: ${JSON.stringify(result)}`);
 });
 
-class App extends React.Component {
-  componentDidMount() {
-    Radar.setUserId({ userId: 'capacitor' });
+interface AppProps {}
 
+interface AppState {
+  logs: string[]
+}
+
+class App extends React.Component<AppProps, AppState> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      logs: []
+    }
+  }
+
+  logOutput(...args: any) {
+    this.setState((prevState: AppState) => ({
+      logs: [...prevState.logs, args.join(" ")]
+    }));
+  }
+
+  componentDidMount() {
+    Radar.initialize({ publishableKey: 'prj_test_pk_0000000000000000000000000000000000000000' });
+    Radar.setLogLevel({level: 'debug'});
+    Radar.setUserId({ userId: 'capacitor' });
+    Radar.setDescription({ description: 'capacitor example'});
     Radar.setMetadata({ metadata: {
       foo: 'bar',
     }});
+    Radar.setAnonymousTrackingEnabled({ enabled: true});
+    Radar.setAdIdEnabled({ enabled: true });
 
     Radar.getLocationPermissionsStatus().then((result) => {
-      alert(JSON.stringify(result));
+      this.logOutput(JSON.stringify(result));
     });
 
     Radar.requestLocationPermissions({ background: false });
-
-    /*Radar.trackOnce().then((result) => {
-      alert(JSON.stringify(result));
-    });*/
-   
+    Radar.getUserId().then((result) => {
+      this.logOutput(`getUserId: ${JSON.stringify(result)}\n`)
+    }).catch((error) => {
+      this.logOutput(`getUserId: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.getDescription().then((result) => {
+      this.logOutput(`getDescription: ${JSON.stringify(result)}\n`)
+    }).catch((error) => {
+      this.logOutput(`getDescription: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.getMetadata().then((result) => {
+      this.logOutput(`getMetadata: ${JSON.stringify(result)}\n`)
+    }).catch((error) => {
+      this.logOutput(`getMetadata: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.getLocation({desiredAccuracy: 'high'}).then((result) => {
+      this.logOutput(`getLocation: ${JSON.stringify(result)}\n`)
+    }).catch((error) => {
+      this.logOutput(`getLocation: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.trackOnce({
+      desiredAccuracy: 'high',
+      beacons: false
+    }).then((result) => {
+      this.logOutput(`trackOnce: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`trackOnce: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.isTracking().then((result) => {
+      this.logOutput(`isTracking: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`isTracking: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.getTrackingOptions().then((result) => {
+      this.logOutput(`getTrackingOptions: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`getTrackingOptions: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.sendEvent({
+      customType: "in_app_purchase",
+      metadata: {"price": "150USD"}
+    }).then((result) => {
+      this.logOutput(`sendEvent: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`sendEvent: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.getTripOptions().then((result) => {
+      this.logOutput(`getTripOptions: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`getTripOptions: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.searchPlaces({
+      near: {
+        'latitude': 40.783826,
+        'longitude': -73.975363,
+      },
+      radius: 1000,
+      chains: ["starbucks"],
+      chainMetadata: {
+        "customFlag": "true"
+      },
+      limit: 10,
+    }).then((result) => {
+      this.logOutput(`searchPlaces: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`searchPlaces: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.searchGeofences({
+      near: {
+        'latitude': 40.783826,
+        'longitude': -73.975363,
+      },
+      radius: 1000,
+      metadata: {
+        "customFlag": "true"
+      },
+      limit: 10,
+    }).then((result) => {
+      this.logOutput(`searchGeofences: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`searchGeofences: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.autocomplete({
+      query: 'brooklyn roasting',
+      near: {
+        'latitude': 40.783826,
+        'longitude': -73.975363,
+      },
+      limit: 10,
+      layers: ['address', 'street'],
+      country: 'US'
+    }).then((result) => {
+      this.logOutput(`autocomplete: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`autocomplete: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.getMatrix({
+      origins: [
+        {
+          'latitude': 40.78382,
+          'longitude': -73.97536,
+        },
+        {
+          'latitude': 40.70390,
+          'longitude': -73.98670,
+        },
+      ],
+      destinations: [
+        {
+          'latitude': 40.64189,
+          'longitude': -73.78779,
+        },
+        {
+          'latitude': 35.99801,
+          'longitude': -78.94294,
+        },
+      ],
+      mode: 'car',
+      units: 'imperial',
+    }).then((result) => {
+      this.logOutput(`getMatrix: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`getMatrix: error ${JSON.stringify(error)}\n`);
+    });
     // var stopTrackingTime = new Date()
     // stopTrackingTime.setMinutes(stopTrackingTime.getMinutes() + 1)
     // Radar.startTrackingCustom({
@@ -76,17 +218,17 @@ class App extends React.Component {
         scheduledArrivalAt: scheduledArrivalAt
       }
     }).then((result) => {
-      alert(`trip ${JSON.stringify(result.trip)}`)
+      this.logOutput(`trip ${JSON.stringify(result.trip)}`)
 
       Radar.startTrackingResponsive()
 
       if (result.status == "SUCCESS") {
         Radar.startTrackingResponsive()
       } else {
-        alert(`failed to start trip ${JSON.stringify(result)}`);
+        this.logOutput(`failed to start trip ${JSON.stringify(result)}`);
       }
     }).catch((error) => {
-      alert(`error ${JSON.stringify(error)}`);
+      this.logOutput(`error ${JSON.stringify(error)}`);
     });*/
 
     /*Radar.startTrip({
@@ -99,23 +241,24 @@ class App extends React.Component {
         }
       }
     }).then((result) => {
-      alert(`trip ${JSON.stringify(result.trip)}`)
+      this.logOutput(`trip ${JSON.stringify(result.trip)}`)
 
       if (result.status == "SUCCESS") {
         Radar.startTrackingResponsive()
       } else {
-        alert(`failed to start trip ${JSON.stringify(result)}`);
+        this.logOutput(`failed to start trip ${JSON.stringify(result)}`);
       }
     }).catch((error) => {
-      alert(`error ${JSON.stringify(error)}`);
+      this.logOutput(`error ${JSON.stringify(error)}`);
     });*/
 
     Radar.startTrip({
       options: {
         tripOptions: {
-          externalId: "1600",
-          destinationGeofenceTag: "foo",
-          destinationGeofenceExternalId: "bamly",
+          externalId: "299",
+          destinationGeofenceTag: "store",
+          destinationGeofenceExternalId: "123",
+          mode: "car",
           scheduledArrivalAt: scheduledArrivalAt
         },
         trackingOptions: {
@@ -124,12 +267,12 @@ class App extends React.Component {
           "desiredMovingUpdateInterval": 30,
           "fastestMovingUpdateInterval": 30,
           "desiredSyncInterval": 20,
-          "desiredAccuracy": "HIGH",
+          "desiredAccuracy": "high",
           "stopDuration": 0,
           "stopDistance": 0,
-	  "replay": "none",
-	  "sync": "all",
-	  "showBlueBar": true,
+          "replay": "none",
+          "sync": "all",
+          "showBlueBar": true,
           "useStoppedGeofence": false,
           "stoppedGeofenceRadius": 0,
           "useMovingGeofence": false,
@@ -141,15 +284,15 @@ class App extends React.Component {
         }
       }
     }).then((result) => {
-      alert(`trip ${JSON.stringify(result.trip)}`)
+      this.logOutput(`trip ${JSON.stringify(result.trip)}`)
 
       if (result.status == "SUCCESS") {
 
       } else {
-        alert(`failed to start trip ${JSON.stringify(result)}`);
+        this.logOutput(`failed to start trip ${JSON.stringify(result)}`);
       }
     }).catch((error) => {
-      alert(`error ${JSON.stringify(error)}`);
+      this.logOutput(`error ${JSON.stringify(error)}`);
     });
 
     /*
@@ -169,7 +312,7 @@ class App extends React.Component {
     
     setTimeout(() => {
       Radar.cancelTrip().then((result) => {
-        alert(JSON.stringify(result));
+        this.logOutput(JSON.stringify(result));
       });
     }, 30000);
 
@@ -186,7 +329,7 @@ class App extends React.Component {
         <IonReactRouter>
           <IonRouterOutlet>
             <Route exact path="/home">
-              <Home />
+              <Home logs={this.state.logs}/>
             </Route>
             <Route exact path="/">
               <Redirect to="/home" />

@@ -85,11 +85,53 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func setLogLevel(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let level = call.getString("level") ?? ""
+            if (level == "") {                
+                call.reject("level is required")
+                return
+            }
+            var logLevel = RadarLogLevel.none
+            switch level.lowercased() {
+            case "error":
+                logLevel = RadarLogLevel.error
+            case "warning":
+                logLevel = RadarLogLevel.warning
+            case "info":
+                logLevel = RadarLogLevel.info
+            case "debug":
+                logLevel = RadarLogLevel.debug
+            default:                
+                call.reject("invalid level: " + level)
+                return
+            }
+            Radar.setLogLevel(logLevel)
+            call.resolve()
+        }
+    }
+
+    @objc func getUserId(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "userId": Radar.getUserId()!
+            ]);
+        }
+    }
+
     @objc func setDescription(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let description = call.getString("description")
             Radar.setDescription(description)
             call.resolve()
+        }
+    }
+
+    @objc func getDescription(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "description": Radar.getDescription()!
+            ]);
         }
     }
 
@@ -100,6 +142,37 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             call.resolve()
         }
     }
+
+    @objc func getMetadata(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve(Radar.getMetadata() as? [String:String] ?? [:]);
+        }
+    }
+
+    @objc func setAnonymousTrackingEnabled(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let enabled = call.getBool("enabled") else {
+                call.reject("enabled is required")
+
+                return
+            };
+            Radar.setAnonymousTrackingEnabled(enabled)
+            call.resolve()
+        }
+    }
+
+    @objc func setAdIdEnabled(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let enabled = call.getBool("enabled") else {
+                call.reject("enabled is required")
+
+                return
+            };
+            Radar.setAdIdEnabled(enabled)
+            call.resolve()
+        }
+    }
+
 
     @objc func getLocationPermissionsStatus(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
@@ -137,7 +210,22 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     @objc func getLocation(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.getLocation { (status: RadarStatus, location: CLLocation?, stopped: Bool) in
+            let desiredAccuracy = call.getString("desiredAccuracy") ?? "medium";
+            var accuracy = RadarTrackingOptions.desiredAccuracy(for:"medium");
+            
+            switch desiredAccuracy.lowercased() {
+            case "high":
+                accuracy = RadarTrackingOptions.desiredAccuracy(for:"high")
+            case "medium":
+                accuracy = RadarTrackingOptions.desiredAccuracy(for:"medium")
+            case "low":
+                accuracy = RadarTrackingOptions.desiredAccuracy(for:"low")
+            default:
+                call.reject("invalid desiredAccuracy: " + desiredAccuracy)
+                return
+            }
+
+            Radar.getLocation(desiredAccuracy: accuracy,  completionHandler: { (status: RadarStatus, location: CLLocation?, stopped: Bool) in
                 if status == .success && location != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
@@ -147,7 +235,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 } else {
                     call.reject(Radar.stringForStatus(status))
                 }
-            }
+            })
         }
     }
 
@@ -171,11 +259,27 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let accuracy = call.getDouble("accuracy") ?? 0.0
             let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
             let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
+            var accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"medium")
+            let beaconsTrackingOption = call.getBool("beacons") ?? false
+            var desiredAccuracy = call.getString("desiredAccuracy") ?? "medium"
+            desiredAccuracy = desiredAccuracy.lowercased()
+
+            if desiredAccuracy == "high" {
+                accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"high")
+            } else if desiredAccuracy == "medium" {
+                accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"medium")
+            } else if desiredAccuracy == "low" {
+                accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"low")
+            } else {
+                call.reject("invalid desiredAccuracy: " + desiredAccuracy)
+
+                return
+            }
 
             if latitude != 0.0 && longitude != 0.0 && accuracy != 0.0 {
                 Radar.trackOnce(location: location, completionHandler: completionHandler)
             } else {
-                Radar.trackOnce(completionHandler: completionHandler)
+                Radar.trackOnce(desiredAccuracy: accuracyLevel, beacons: beaconsTrackingOption, completionHandler: completionHandler)
             }
         }
     }
@@ -261,6 +365,23 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         DispatchQueue.main.async {
             Radar.stopTracking()
             call.resolve()
+        }
+    }
+
+    @objc func isTracking(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "isTracking": Radar.isTracking()
+            ]);
+        }
+    }
+
+    @objc func getTrackingOptions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let options = Radar.getTrackingOptions()
+            call.resolve([
+                "options": options.dictionaryValue()
+            ])
         }
     }
 
@@ -378,6 +499,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+     @objc func getTripOptions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let options = Radar.getTripOptions()
+            call.resolve([
+                "options": options?.dictionaryValue() ?? {}
+            ])
+        }
+    }
+
     @objc func getContext(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarContextCompletionHandler = { (status: RadarStatus, location: CLLocation?, context: RadarContext?) in
@@ -422,6 +552,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
             let radius = Int32(call.getInt("radius") ?? 1000)
             let chains = call.getArray("chains", String.self)
+            let chainMetadata = call.options["chainMetadata"] as? [String:String] ?? nil
             let categories = call.getArray("categories", String.self)
             let groups = call.getArray("groups", String.self)
             let limit = Int32(call.getInt("limit") ?? 10)
@@ -433,9 +564,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
                 
-                Radar.searchPlaces(near: near, radius: radius, chains: chains, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
+                Radar.searchPlaces(near: near, radius: radius, chains: chains, chainMetadata: chainMetadata, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
             } else {
-                Radar.searchPlaces(radius: radius, chains: chains, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
+                Radar.searchPlaces(radius: radius, chains: chains, chainMetadata: chainMetadata, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
             }
         }
     }
@@ -456,6 +587,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
             let radius = Int32(call.getInt("radius") ?? 1000)
             let tags = call.getArray("tags", String.self)
+            let metadata = call.getObject("metadata") ?? nil
             let limit = Int32(call.getInt("limit") ?? 10)
 
             let nearDict = call.options["near"] as? [String:Double] ?? nil
@@ -464,9 +596,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: metadata, limit: limit, completionHandler: completionHandler)
             } else {
-                Radar.searchGeofences(radius: radius, tags: tags, metadata: nil, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(radius: radius, tags: tags, metadata: metadata, limit: limit, completionHandler: completionHandler)
             }
         }
     }
@@ -489,8 +621,10 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
             let limit = Int32(call.getInt("limit") ?? 10)
+            let country = call.getString("country")
+            let layers = call.getArray("layers", String.self)
 
-            Radar.autocomplete(query: query, near: near, limit: limit) { (status: RadarStatus, addresses: [RadarAddress]?) in
+            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, country: country) { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
@@ -620,6 +754,102 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             } else {
                 Radar.getDistance(destination: destination, modes: modes, units: units, completionHandler: completionHandler)
             }
+        }
+    }
+
+    @objc func sendEvent(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let customType = call.getString("customType") else {
+                call.reject("customType is required")
+
+                return
+            }
+            let metadata = call.getObject("metadata")
+            let completionHandler: RadarSendEventCompletionHandler  = { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
+                if status == .success && location != nil && events != nil && user != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "events": RadarEvent.array(for: events!) ?? [],
+                        "user": user!.dictionaryValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+            Radar.sendEvent(customType: customType, metadata: metadata, completionHandler: completionHandler)
+        }
+        
+    }
+
+    @objc func getMatrix(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarRouteMatrixCompletionHandler  = { (status: RadarStatus, matrix: RadarRouteMatrix?) in
+                if status == .success && matrix != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "matrix": matrix!.arrayValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+            let originsArr = call.getArray("origins", JSObject.self) ?? []
+            let origins: [CLLocation] = originsArr.map{ (originDict) -> CLLocation in
+                let originLatitude = originDict["latitude"] as? Double ?? 0.0
+                let originLongitude = originDict["longitude"] as? Double ?? 0.0
+                let origin = CLLocation(coordinate: CLLocationCoordinate2DMake(originLatitude, originLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+                return origin
+            }
+
+            let destinationsArr = call.getArray("destinations", JSObject.self) ?? []
+            let destinations: [CLLocation] = destinationsArr.map{ (destinationDict) -> CLLocation in
+                let destinationLatitude = destinationDict["latitude"] as? Double ?? 0.0
+                let destinationLongitude = destinationDict["longitude"] as? Double ?? 0.0
+                let destination = CLLocation(coordinate: CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
+
+                return destination
+            }
+
+            guard let modeStr = call.getString("mode") else {
+                call.reject("mode is required")
+
+                return
+            }
+            var mode: RadarRouteMode = .car
+            switch modeStr.lowercased() {
+            case "foot":
+                mode = .foot
+            case "bike":
+                mode = .bike
+            case "car":
+                mode = .car
+            case "truck":
+                mode = .truck
+            case "motorbike":
+                mode = .motorbike
+            default:                
+                call.reject("invalid mode: " + modeStr)
+                return
+            }
+
+            guard let unitsStr = call.getString("units") else {
+                call.reject("units is required")
+
+                return
+            }
+            var units: RadarRouteUnits = .metric;
+            switch modeStr.lowercased() {
+                case "metric":
+                    units = .metric
+                case "imperial":
+                    units = .imperial
+                default:                
+                    call.reject("invalid units: " + unitsStr)
+                    return
+            }
+
+            Radar.getMatrix(origins: origins, destinations: destinations, mode: mode, units: units, completionHandler: completionHandler)            
         }
     }
 

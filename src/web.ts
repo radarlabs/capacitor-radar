@@ -12,7 +12,10 @@ import type {
   RadarGeocodeCallback,
   RadarIPGeocodeCallback,
   RadarRouteCallback,
-  RadarPlugin
+  RadarSendEventCallback,
+  RadarRouteMatrix,
+  RadarPlugin,
+  RadarTrackingOptions
 } from './definitions';
 
 import Radar from 'radar-sdk-js';
@@ -22,16 +25,39 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     Radar.initialize(options.publishableKey);
   }
 
+  setLogLevel(options: { level: string }): void {
+    // not implemented
+  }
   setUserId(options: { userId: string }): void {
     Radar.setUserId(options.userId);
+  }
+
+  getUserId(): Promise<object> {
+    // not implemented
   }
 
   setDescription(options: { description: string }): void {
     Radar.setDescription(options.description);
   }
 
+  getDescription(): Promise<object> {
+    // not implemented
+  }
+
   setMetadata(options: { metadata: object }): void {
     Radar.setMetadata(options.metadata);
+  }
+
+  getMetadata(): Promise<object> {
+    // not implemented
+  }
+
+  setAnonymousTrackingEnabled(options: { enabled: boolean }): void {
+    // not implemented
+  }
+
+  setAdIdEnabled(options: { enabled: boolean }): void {
+    // not implemented
   }
 
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback> {
@@ -56,7 +82,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
-  async getLocation(): Promise<RadarLocationCallback> {
+  async getLocation(options: { desiredAccuracy: string }): Promise<RadarLocationCallback> {
     return new Promise((resolve, reject) => {
       Radar.getLocation((err, { status, location, stopped }) => {
         if (err) {
@@ -72,7 +98,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number }): Promise<RadarTrackCallback> {
+  async trackOnce(options?: { latitude?: number, longitude?: number, accuracy?: number } | { desiredAccuracy: string, beacons: boolean}): Promise<RadarTrackCallback> {
     return new Promise((resolve, reject) => {
       const callback = (err, { status, location, user, events }) => {
         if (err) {
@@ -119,6 +145,15 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  isTracking(): Promise<object> {
+    // not implemented
+  }
+
+  
+  getTrackingOptions(): Promise<RadarTrackingOptions> {
+    // not implemented
+  }
+
   setForegroundServiceOptions(): void {
     // not implemented
   }
@@ -147,6 +182,14 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  getTripOptions(): Promise<object> {
+    return new Promise((resolve, reject) => {
+      resolve({
+        options: Radar.getTripOptions()
+      });
+    });
+  }
+
   async getContext(options?: { latitude?: number, longitude?: number }): Promise<RadarContextCallback> {
     return new Promise((resolve, reject) => {
       const callback = (err, { status, location, context }) => {
@@ -169,7 +212,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback> {
+  async searchPlaces(options: { near?: { latitude: number, longitude: number }, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback> {
     return new Promise((resolve, reject) => {
       Radar.searchPlaces(options, (err, { status, location, places }) => {
         if (err) {
@@ -185,7 +228,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback> {
+  async searchGeofences(options: { near?: { latitude: number, longitude: number }, radius: number, tags?: string[], metadata?: object, limit: number }): Promise<RadarSearchGeofencesCallback> {
     return new Promise((resolve, reject) => {
       Radar.searchGeofences(options, (err, { status, location, geofences }) => {
         if (err) {
@@ -201,7 +244,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, limit: number }): Promise<RadarGeocodeCallback> {
+  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string }): Promise<RadarGeocodeCallback> {
     return new Promise((resolve, reject) => {
       Radar.autocomplete(options, (err, { status, addresses }) => {
         if (err) {
@@ -276,6 +319,25 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
           resolve({
             status,
             routes,
+          });
+        }
+      });
+    });
+  }
+
+  sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback> {
+    // not implemented
+  }
+
+  getMatrix(options: { origins?: { latitude: number, longitude: number }[], destinations?: { latitude: number, longitude: number }[], mode: string, units: string }): Promise<RadarRouteMatrix> {
+    return new Promise((resolve, reject) => {
+      Radar.getMatrix(options, (err, { status, matrix }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            matrix,
           });
         }
       });
