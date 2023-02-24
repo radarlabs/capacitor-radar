@@ -255,7 +255,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
 
             let latitude = call.getDouble("latitude") ?? 0.0
-            let longitude = call.getDouble("latitude") ?? 0.0
+            let longitude = call.getDouble("longitude") ?? 0.0
             let accuracy = call.getDouble("accuracy") ?? 0.0
             let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
             let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
