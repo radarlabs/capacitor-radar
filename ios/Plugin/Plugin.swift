@@ -161,19 +161,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
-    @objc func setAdIdEnabled(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            guard let enabled = call.getBool("enabled") else {
-                call.reject("enabled is required")
-
-                return
-            };
-            Radar.setAdIdEnabled(enabled)
-            call.resolve()
-        }
-    }
-
-
     @objc func getLocationPermissionsStatus(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let authorizationStatus = CLLocationManager.authorizationStatus()
@@ -757,29 +744,31 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
-    @objc func sendEvent(_ call: CAPPluginCall) {
+    @objc func logConversion(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let customType = call.getString("customType") else {
-                call.reject("customType is required")
+            guard let name = call.getString("name") else {
+                call.reject("name is required")
 
                 return
             }
-            let metadata = call.getObject("metadata")
-            let completionHandler: RadarSendEventCompletionHandler  = { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
-                if status == .success && location != nil && events != nil && user != nil {
+            let revenue = call.getDouble("revenue")
+            let metadata = call.getObject("metadata") ?? [:]
+            let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent ) in
+                if status == .success { 
                     call.resolve([
                         "status": Radar.stringForStatus(status),
-                        "location": Radar.dictionaryForLocation(location!),
-                        "events": RadarEvent.array(for: events!) ?? [],
-                        "user": user!.dictionaryValue()
+                        "event": event.dictionaryValue() 
                     ])
                 } else {
                     call.reject(Radar.stringForStatus(status))
                 }
+            } 
+            if revenue != nil {
+                Radar.logConversion(name: name, revenue: revenue!, metadata: metadata, completionHandler: completionHandler)
+            } else {
+                Radar.logConversion(name: name, metadata: metadata, completionHandler: completionHandler)
             }
-            Radar.sendEvent(customType: customType, metadata: metadata, completionHandler: completionHandler)
         }
-        
     }
 
     @objc func getMatrix(_ call: CAPPluginCall) {

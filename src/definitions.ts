@@ -15,7 +15,6 @@ export interface RadarPlugin {
   setMetadata(options: { metadata: object }): void;
   getMetadata(): Promise<object>,
   setAnonymousTrackingEnabled(options: { enabled: boolean }): void;
-  setAdIdEnabled(options: { enabled: boolean }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
@@ -45,7 +44,7 @@ export interface RadarPlugin {
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
   getDistance(options: { origin?: Location, destination: Location, modes: string[], units: string }): Promise<RadarRouteCallback>;
   getMatrix(options: { origins?: Location[], destinations?: Location[], mode: string, units: string }): Promise<RadarRouteMatrix>;
-  sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback>;
+  logConversion(options: { name: string, revenue?: number, metadata?: object }): Promise<RadarLogConversionCallback>;
 }
 
 export interface RadarLocationCallback {
@@ -105,6 +104,11 @@ export interface RadarSendEventCallback {
   location?: Location;
   user?: RadarUser;
   events?: RadarEvent[];
+}
+
+export interface RadarLogConversionCallback {
+  status: string;
+  event: RadarEvent;
 }
 
 export interface RadarRouteMatrix {
