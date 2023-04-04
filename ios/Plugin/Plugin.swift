@@ -610,12 +610,35 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let limit = Int32(call.getInt("limit") ?? 10)
             let country = call.getString("country")
             let layers = call.getArray("layers", String.self)
+            let expandUnits = call.getBool("expandUnits") ?? false
 
-            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, country: country) { (status: RadarStatus, addresses: [RadarAddress]?) in
+            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, country: country, expandUnits: expandUnits) { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
                         "addresses": RadarAddress.array(forAddresses: addresses!) ?? []
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+        }
+    }
+
+    @objc func validateAddress(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let address = call.getObject("address") else {
+                call.reject("address is required")
+
+                return
+            }
+
+            Radar.validateAddress(address: address) { (status: RadarStatus, address: RadarAddress?, verificationStatus: RadarVerificationStatus) in
+                if status == .success && address != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "address": address.dictionaryValue,
+                        "verificationStatus": Radar.stringForVerificationStatus(verificationStatus)
                     ])
                 } else {
                     call.reject(Radar.stringForStatus(status))

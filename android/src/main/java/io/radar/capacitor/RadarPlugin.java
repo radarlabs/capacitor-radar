@@ -747,14 +747,41 @@ public class RadarPlugin extends Plugin {
         int limit = call.getInt("limit", 10);
         String country = call.getString("country");
         String[] layers = RadarPlugin.stringArrayForJSArray(call.getArray("layers"));
+        boolean expandUnits = call.getBoolean("expandUnits", false);
 
-        Radar.autocomplete(query, near, layers, limit, country, new Radar.RadarGeocodeCallback() {
+        Radar.autocomplete(query, near, layers, limit, country, expandUnits, new Radar.RadarGeocodeCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
                 if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
                     ret.put("addresses", RadarPlugin.jsArrayForJSONArray(RadarAddress.toJson(addresses)));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
+    }
+
+    @PluginMethod()
+    public void validateAddress(final PluginCall call) throws JSONException {
+        if (!call.hasOption("address")) {
+            call.reject("address is required");
+
+            return;
+        }
+        RadarAddress address = RadarAddress.fromJson(call.getObject("address"));
+
+
+        Radar.validateAddress(address, new Radar.RadarValidateAddressCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, @Nullable RadarAddressVerificationStatus verificationStatus) {
+                if (status == Radar.RadarStatus.SUCCESS && address != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("address", RadarPlugin.jsObjectForJSONObject(RadarAddress.toJson(address)));
+                    ret.put("verificationStatus", RadarPlugin.jsObjectForJSONObject(RadarAddressVerificationStatus.toJson(verificationStatus)));
                     call.resolve(ret);
                 } else {
                     call.reject(status.toString());
