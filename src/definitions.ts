@@ -38,7 +38,8 @@ export interface RadarPlugin {
   getContext(options?: Location): Promise<RadarContextCallback>;
   searchPlaces(options: { near?: Location, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: Location, radius: number, metadata?: object, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
-  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string }): Promise<RadarGeocodeCallback>;
+  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string, expandUnits?: boolean }): Promise<RadarGeocodeCallback>;
+  validateAddress(options: { address: RadarAddress }): Promise<RadarValidateAddressCallback>;
   geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
   reverseGeocode(options?: Location): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
@@ -87,6 +88,12 @@ export interface RadarSearchGeofencesCallback {
 export interface RadarGeocodeCallback {
   status: string;
   addresses?: RadarAddress[];
+}
+
+export interface RadarValidateAddressCallback {
+  status: string;
+  address?: RadarAddress;
+  verificationStatus?: RadarAddressVerificationStatus;
 }
 
 export interface RadarIPGeocodeCallback {
@@ -290,6 +297,10 @@ export interface RadarAddress {
   number?: string;
   distance?: number;
   confidence?: string;
+}
+
+export interface RadarAddressVerificationStatus {
+  status: string;
 }
 
 export interface RadarRoutes {

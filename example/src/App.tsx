@@ -177,7 +177,9 @@ class App extends React.Component<AppProps, AppState> {
       country: 'US'
     }).then((result) => {
       this.logOutput(`autocomplete: ${JSON.stringify(result)}\n`);
-      Radar.validateAddress({address: result.addresses[0]}).then((result) => {
+      const address = (result && result.addresses && result.addresses[0]) || {latitude: 40.783826, longitude: -73.975363};
+
+      Radar.validateAddress({address: address}).then((result) => {
         this.logOutput(`validateAddress: ${JSON.stringify(result)}\n`);
       }).catch((error) => {
         this.logOutput(`validateAddress: error ${JSON.stringify(error)}\n`);
