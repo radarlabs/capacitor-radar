@@ -336,6 +336,7 @@ export interface RadarFraud {
 }
 
 export type RadarTrackingOptionsReplay = 
+  | 'all'
   | 'stops'
   | 'none'
 
