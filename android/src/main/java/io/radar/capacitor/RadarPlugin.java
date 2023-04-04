@@ -42,6 +42,7 @@ import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
+import io.radar.sdk.Radar.RadarAddressVerificationStatus;
 import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
@@ -780,8 +781,8 @@ public class RadarPlugin extends Plugin {
                 if (status == Radar.RadarStatus.SUCCESS && address != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
-                    ret.put("address", RadarPlugin.jsObjectForJSONObject(RadarAddress.toJson(address)));
-                    ret.put("verificationStatus", RadarPlugin.jsObjectForJSONObject(RadarAddressVerificationStatus.toJson(verificationStatus)));
+                    ret.put("address", RadarPlugin.jsObjectForJSONObject(address.toJson()));
+                    ret.put("verificationStatus", Radar.stringForVerificationStatus(verificationStatus));
                     call.resolve(ret);
                 } else {
                     call.reject(status.toString());
