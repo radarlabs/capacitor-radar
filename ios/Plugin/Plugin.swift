@@ -627,17 +627,18 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     @objc func validateAddress(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let address = call.getObject("address") else {
+            guard let address = RadarAddress.init(object: call.getObject("address")) else {
                 call.reject("address is required")
 
                 return
             }
 
-            Radar.validateAddress(address: address) { (status: RadarStatus, address: RadarAddress?, verificationStatus: RadarVerificationStatus) in
+            Radar.validateAddress(address: address) { (status: RadarStatus, address: RadarAddress?, verificationStatus: RadarAddressVerificationStatus) in
                 if status == .success && address != nil {
+
                     call.resolve([
                         "status": Radar.stringForStatus(status),
-                        "address": address.dictionaryValue,
+                        "address": address?.dictionaryValue() ?? [:],
                         "verificationStatus": Radar.stringForVerificationStatus(verificationStatus)
                     ])
                 } else {
@@ -774,13 +775,14 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
                 return
             }
-            let revenue = call.getDouble("revenue")
-            let metadata = call.getObject("metadata") ?? [:]
-            let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent ) in
+            // get revenue and make sure it's a nsnumber
+            let revenue = call.getString("revenue") != nil ? NSNumber(value: Double(call.getString("revenue")!)!) : nil
+            let metadata = call.getObject("metadata")
+            let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent? ) in
                 if status == .success { 
                     call.resolve([
                         "status": Radar.stringForStatus(status),
-                        "event": event.dictionaryValue() 
+                        "event": event?.dictionaryValue() ?? [:]
                     ])
                 } else {
                     call.reject(Radar.stringForStatus(status))
