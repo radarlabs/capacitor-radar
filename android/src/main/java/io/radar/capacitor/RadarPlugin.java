@@ -911,6 +911,7 @@ public class RadarPlugin extends Plugin {
         JSObject metadataObj = call.getObject("metadata");
         JSONObject metadataJson = RadarPlugin.jsonObjectForJSObject(metadataObj);
 
+
         if (revenue > 0) {
             Radar.logConversion(name, revenue, metadataJson, new Radar.RadarLogConversionCallback() {
                 @Override
@@ -919,7 +920,7 @@ public class RadarPlugin extends Plugin {
                         JSObject ret = new JSObject();
                         ret.put("status", status.toString());
                         if (event != null) {
-                            ret.put("event", RadarEvent.toJson(event));
+                            ret.put("event", event.toJson());
                         }
                         call.resolve(ret);
                     } else {
@@ -935,7 +936,7 @@ public class RadarPlugin extends Plugin {
                         JSObject ret = new JSObject();
                         ret.put("status", status.toString());
                         if (event != null) {
-                            ret.put("event", RadarEvent.toJson(event));
+                            ret.put("event", event.toJson());
                         }
                         call.resolve(ret);
                     } else {
