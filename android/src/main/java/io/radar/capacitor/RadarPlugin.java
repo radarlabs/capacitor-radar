@@ -227,13 +227,6 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void setAdIdEnabled(PluginCall call) {
-        boolean enabled = call.getBoolean("enabled");
-        Radar.setAdIdEnabled(enabled);
-        call.resolve();
-    }
-
-    @PluginMethod()
     public void getLocationPermissionsStatus(PluginCall call) {
         boolean foreground = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -912,32 +905,45 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void sendEvent(final PluginCall call) throws JSONException  {
-        String customType = call.getString("customType");
+    public void logConversion(final PluginCall call) throws JSONException  {
+        String name = call.getString("name");
+        double revenue = call.getDouble("revenue");
         JSObject metadataObj = call.getObject("metadata");
         JSONObject metadataJson = RadarPlugin.jsonObjectForJSObject(metadataObj);
 
-        Radar.sendEvent(customType, metadataJson, new Radar.RadarSendEventCallback() {
-            @Override
-            public void onComplete(@NonNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
-                if (status == Radar.RadarStatus.SUCCESS) {
-                    JSObject ret = new JSObject();
-                    ret.put("status", status.toString());
-                    if (location != null) {
-                        ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+        if (revenue > 0) {
+            Radar.logConversion(name, revenue, metadataJson, new Radar.RadarLogConversionCallback() {
+                @Override
+                public void onComplete(@NonNull Radar.RadarStatus status, @Nullable RadarEvent event) {
+                    if (status == Radar.RadarStatus.SUCCESS) {
+                        JSObject ret = new JSObject();
+                        ret.put("status", status.toString());
+                        if (event != null) {
+                            ret.put("event", RadarEvent.toJson(event));
+                        }
+                        call.resolve(ret);
+                    } else {
+                        call.reject(status.toString());
                     }
-                    if (events != null) {
-                        ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
-                    }
-                    if (user != null) {
-                        ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
-                    }
-                    call.resolve(ret);
-                } else {
-                    call.reject(status.toString());
                 }
-            }
-        });
+            });
+        } else {
+            Radar.logConversion(name, metadataJson, new Radar.RadarLogConversionCallback() {
+                @Override
+                public void onComplete(@NonNull Radar.RadarStatus status, @Nullable RadarEvent event) {
+                    if (status == Radar.RadarStatus.SUCCESS) {
+                        JSObject ret = new JSObject();
+                        ret.put("status", status.toString());
+                        if (event != null) {
+                            ret.put("event", RadarEvent.toJson(event));
+                        }
+                        call.resolve(ret);
+                    } else {
+                        call.reject(status.toString());
+                    }
+                }
+            });
+        }
     }
 
     @PluginMethod

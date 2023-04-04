@@ -69,8 +69,7 @@ class App extends React.Component<AppProps, AppState> {
       foo: 'bar',
     }});
     Radar.setAnonymousTrackingEnabled({ enabled: true});
-    Radar.setAdIdEnabled({ enabled: true });
-
+    
     Radar.getLocationPermissionsStatus().then((result) => {
       this.logOutput(JSON.stringify(result));
     });
@@ -114,13 +113,22 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`getTrackingOptions: error ${JSON.stringify(error)}\n`);
     });
-    Radar.sendEvent({
-      customType: "in_app_purchase",
-      metadata: {"price": "150USD"}
+    Radar.logConversion({
+      name: "viewed_product",
+      metadata: {"sku": "tshirt"}
     }).then((result) => {
-      this.logOutput(`sendEvent: ${JSON.stringify(result)}\n`);
+      this.logOutput(`logConversion: ${JSON.stringify(result)}\n`);
     }).catch((error) => {
-      this.logOutput(`sendEvent: error ${JSON.stringify(error)}\n`);
+      this.logOutput(`logConversion: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.logConversion({
+      name: "in_app_purchase",
+      revenue: 150,
+      metadata: {"sku": "tshirt"}
+    }).then((result) => {
+      this.logOutput(`logConversion: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`logConversion: error ${JSON.stringify(error)}\n`);
     });
     Radar.getTripOptions().then((result) => {
       this.logOutput(`getTripOptions: ${JSON.stringify(result)}\n`);
