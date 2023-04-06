@@ -42,6 +42,7 @@ import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
+import io.radar.sdk.Radar.RadarAddressVerificationStatus;
 import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
@@ -223,13 +224,6 @@ public class RadarPlugin extends Plugin {
     public void setAnonymousTrackingEnabled(PluginCall call) {
         boolean enabled = call.getBoolean("enabled");
         Radar.setAnonymousTrackingEnabled(enabled);
-        call.resolve();
-    }
-
-    @PluginMethod()
-    public void setAdIdEnabled(PluginCall call) {
-        boolean enabled = call.getBoolean("enabled");
-        Radar.setAdIdEnabled(enabled);
         call.resolve();
     }
 
@@ -754,14 +748,41 @@ public class RadarPlugin extends Plugin {
         int limit = call.getInt("limit", 10);
         String country = call.getString("country");
         String[] layers = RadarPlugin.stringArrayForJSArray(call.getArray("layers"));
+        boolean expandUnits = call.getBoolean("expandUnits", false);
 
-        Radar.autocomplete(query, near, layers, limit, country, new Radar.RadarGeocodeCallback() {
+        Radar.autocomplete(query, near, layers, limit, country, expandUnits, new Radar.RadarGeocodeCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
                 if (status == Radar.RadarStatus.SUCCESS && addresses != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
                     ret.put("addresses", RadarPlugin.jsArrayForJSONArray(RadarAddress.toJson(addresses)));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
+    }
+
+    @PluginMethod()
+    public void validateAddress(final PluginCall call) throws JSONException {
+        if (!call.hasOption("address")) {
+            call.reject("address is required");
+
+            return;
+        }
+        RadarAddress address = RadarAddress.fromJson(call.getObject("address"));
+
+
+        Radar.validateAddress(address, new Radar.RadarValidateAddressCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, @Nullable RadarAddressVerificationStatus verificationStatus) {
+                if (status == Radar.RadarStatus.SUCCESS && address != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("address", RadarPlugin.jsObjectForJSONObject(address.toJson()));
+                    ret.put("verificationStatus", Radar.stringForVerificationStatus(verificationStatus));
                     call.resolve(ret);
                 } else {
                     call.reject(status.toString());
@@ -912,32 +933,51 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void sendEvent(final PluginCall call) throws JSONException  {
-        String customType = call.getString("customType");
+    public void logConversion(final PluginCall call) throws JSONException  {
+        if (!call.hasOption("name")) {
+            call.reject("name is required");
+
+            return;
+        }
+
+        String name = call.getString("name");
+        double revenue = call.getDouble("revenue");
         JSObject metadataObj = call.getObject("metadata");
         JSONObject metadataJson = RadarPlugin.jsonObjectForJSObject(metadataObj);
 
-        Radar.sendEvent(customType, metadataJson, new Radar.RadarSendEventCallback() {
-            @Override
-            public void onComplete(@NonNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
-                if (status == Radar.RadarStatus.SUCCESS) {
-                    JSObject ret = new JSObject();
-                    ret.put("status", status.toString());
-                    if (location != null) {
-                        ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+        if (revenue > 0) {
+            Radar.logConversion(name, revenue, metadataJson, new Radar.RadarLogConversionCallback() {
+                @Override
+                public void onComplete(@NonNull Radar.RadarStatus status, @Nullable RadarEvent event) {
+                    if (status == Radar.RadarStatus.SUCCESS) {
+                        JSObject ret = new JSObject();
+                        ret.put("status", status.toString());
+                        if (event != null) {
+                            ret.put("event", event.toJson());
+                        }
+                        call.resolve(ret);
+                    } else {
+                        call.reject(status.toString());
                     }
-                    if (events != null) {
-                        ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
-                    }
-                    if (user != null) {
-                        ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
-                    }
-                    call.resolve(ret);
-                } else {
-                    call.reject(status.toString());
                 }
-            }
-        });
+            });
+        } else {
+            Radar.logConversion(name, metadataJson, new Radar.RadarLogConversionCallback() {
+                @Override
+                public void onComplete(@NonNull Radar.RadarStatus status, @Nullable RadarEvent event) {
+                    if (status == Radar.RadarStatus.SUCCESS) {
+                        JSObject ret = new JSObject();
+                        ret.put("status", status.toString());
+                        if (event != null) {
+                            ret.put("event", event.toJson());
+                        }
+                        call.resolve(ret);
+                    } else {
+                        call.reject(status.toString());
+                    }
+                }
+            });
+        }
     }
 
     @PluginMethod

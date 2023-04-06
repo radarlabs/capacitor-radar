@@ -12,10 +12,12 @@ import type {
   RadarGeocodeCallback,
   RadarIPGeocodeCallback,
   RadarRouteCallback,
-  RadarSendEventCallback,
+  RadarLogConversionCallback,
   RadarRouteMatrix,
   RadarPlugin,
-  RadarTrackingOptions
+  RadarTrackingOptions,
+  RadarAddress,
+  RadarValidateAddressCallback
 } from './definitions';
 
 import Radar from 'radar-sdk-js';
@@ -244,7 +246,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string }): Promise<RadarGeocodeCallback> {
+  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string, expandUnits?: boolean }): Promise<RadarGeocodeCallback> {
     return new Promise((resolve, reject) => {
       Radar.autocomplete(options, (err, { status, addresses }) => {
         if (err) {
@@ -258,6 +260,23 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
       });
     });
   }
+
+  async validateAddress(options: { address: RadarAddress; }): Promise<RadarValidateAddressCallback> {
+    return new Promise((resolve, reject) => {
+      Radar.validateAddress(options, (err, { status, address, verificationStatus }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            address,
+            verificationStatus,
+          });
+        }
+      });
+    });
+  }
+      
 
   async geocode(options: { query: string }): Promise<RadarGeocodeCallback> {
     return new Promise((resolve, reject) => {
@@ -325,8 +344,19 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback> {
-    // not implemented
+  async logConversion(options: { name: string, revenue?: number, metadata: object }): Promise<RadarLogConversionCallback> {
+    return new Promise((resolve, reject) => {
+      Radar.logConversion(options, (err, { status, event }) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status,
+            event,
+          });
+        }
+      });
+    });
   }
 
   getMatrix(options: { origins?: { latitude: number, longitude: number }[], destinations?: { latitude: number, longitude: number }[], mode: string, units: string }): Promise<RadarRouteMatrix> {

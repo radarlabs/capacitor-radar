@@ -15,7 +15,6 @@ export interface RadarPlugin {
   setMetadata(options: { metadata: object }): void;
   getMetadata(): Promise<object>,
   setAnonymousTrackingEnabled(options: { enabled: boolean }): void;
-  setAdIdEnabled(options: { enabled: boolean }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
@@ -39,13 +38,14 @@ export interface RadarPlugin {
   getContext(options?: Location): Promise<RadarContextCallback>;
   searchPlaces(options: { near?: Location, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: Location, radius: number, metadata?: object, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
-  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string }): Promise<RadarGeocodeCallback>;
+  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string, expandUnits?: boolean }): Promise<RadarGeocodeCallback>;
+  validateAddress(options: { address: RadarAddress }): Promise<RadarValidateAddressCallback>;
   geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
   reverseGeocode(options?: Location): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
   getDistance(options: { origin?: Location, destination: Location, modes: string[], units: string }): Promise<RadarRouteCallback>;
   getMatrix(options: { origins?: Location[], destinations?: Location[], mode: string, units: string }): Promise<RadarRouteMatrix>;
-  sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback>;
+  logConversion(options: { name: string, revenue?: number, metadata?: object }): Promise<RadarLogConversionCallback>;
 }
 
 export interface RadarLocationCallback {
@@ -90,6 +90,12 @@ export interface RadarGeocodeCallback {
   addresses?: RadarAddress[];
 }
 
+export interface RadarValidateAddressCallback {
+  status: string;
+  address?: RadarAddress;
+  verificationStatus?: RadarAddressVerificationStatus;
+}
+
 export interface RadarIPGeocodeCallback {
   status: string;
   address?: RadarAddress;
@@ -100,11 +106,9 @@ export interface RadarRouteCallback {
   routes?: RadarRoutes;
 }
 
-export interface RadarSendEventCallback {
+export interface RadarLogConversionCallback {
   status: string;
-  location?: Location;
-  user?: RadarUser;
-  events?: RadarEvent[];
+  event: RadarEvent;
 }
 
 export interface RadarRouteMatrix {
@@ -288,6 +292,10 @@ export interface RadarAddress {
   confidence?: string;
 }
 
+export interface RadarAddressVerificationStatus {
+  status: string;
+}
+
 export interface RadarRoutes {
   geodesic: RadarRoute;
   foot?: RadarRoute;
@@ -321,6 +329,7 @@ export interface RadarFraud {
 }
 
 export type RadarTrackingOptionsReplay = 
+  | 'all'
   | 'stops'
   | 'none'
 
