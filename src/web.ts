@@ -325,7 +325,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  sendEvent(options: { customType: string, metadata: object }): Promise<RadarLogConversionCallback> {
+  logConversion(options: { customType: string, metadata: object }): Promise<RadarLogConversionCallback> {
     // not implemented
   }
 
