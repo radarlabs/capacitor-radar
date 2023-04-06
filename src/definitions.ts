@@ -106,13 +106,6 @@ export interface RadarRouteCallback {
   routes?: RadarRoutes;
 }
 
-export interface RadarSendEventCallback {
-  status: string;
-  location?: Location;
-  user?: RadarUser;
-  events?: RadarEvent[];
-}
-
 export interface RadarLogConversionCallback {
   status: string;
   event: RadarEvent;

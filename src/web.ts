@@ -12,7 +12,7 @@ import type {
   RadarGeocodeCallback,
   RadarIPGeocodeCallback,
   RadarRouteCallback,
-  RadarSendEventCallback,
+  RadarLogConversionCallback,
   RadarRouteMatrix,
   RadarPlugin,
   RadarTrackingOptions
@@ -325,7 +325,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  sendEvent(options: { customType: string, metadata: object }): Promise<RadarSendEventCallback> {
+  sendEvent(options: { customType: string, metadata: object }): Promise<RadarLogConversionCallback> {
     // not implemented
   }
 
