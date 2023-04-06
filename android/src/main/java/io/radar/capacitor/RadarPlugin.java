@@ -934,11 +934,16 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void logConversion(final PluginCall call) throws JSONException  {
+        if (!call.hasOption("name")) {
+            call.reject("name is required");
+
+            return;
+        }
+
         String name = call.getString("name");
         double revenue = call.getDouble("revenue");
         JSObject metadataObj = call.getObject("metadata");
         JSONObject metadataJson = RadarPlugin.jsonObjectForJSObject(metadataObj);
-
 
         if (revenue > 0) {
             Radar.logConversion(name, revenue, metadataJson, new Radar.RadarLogConversionCallback() {
