@@ -870,7 +870,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 return
             }
             var units: RadarRouteUnits = .metric;
-            switch modeStr.lowercased() {
+            switch unitsStr.lowercased() {
                 case "metric":
                     units = .metric
                 case "imperial":
