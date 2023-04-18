@@ -772,15 +772,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
                 return
             }
             var units: RadarRouteUnits = .metric;
-            switch unitsStr.lowercased() {
-                case "metric":
-                    units = .metric
-                case "imperial":
-                    units = .imperial
-                default:                
-                    call.reject("invalid units: " + unitsStr)
-                    return
-            }
+            let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
 
             if let originDict = call.options["origin"] as? [String: Double] {
                 let originLatitude = originDict["latitude"] ?? 0.0
@@ -850,16 +842,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
                 return
             }
-            var units: RadarRouteUnits = .metric;
-            switch unitsStr.lowercased() {
-                case "metric":
-                    units = .metric
-                case "imperial":
-                    units = .imperial
-                default:                
-                    call.reject("invalid units: " + unitsStr)
-                    return
-            }
+            let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
 
             Radar.getMatrix(origins: origins, destinations: destinations, mode: mode, units: units, completionHandler: completionHandler)            
         }
