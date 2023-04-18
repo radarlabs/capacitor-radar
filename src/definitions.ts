@@ -19,6 +19,7 @@ export interface RadarPlugin {
   requestLocationPermissions(options: { background: boolean }): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
+  trackVerified(): Promise<RadarTrackCallback>;
   startTrackingEfficient(): void;
   startTrackingResponsive(): void;
   startTrackingContinuous(): void;
@@ -324,8 +325,14 @@ export interface RadarTripEta {
 }
 
 export interface RadarFraud {
+  passed: boolean;
+  bypassed: boolean;
+  verified: boolean;
   proxy: boolean;
   mocked: boolean;
+  compromised: boolean;
+  jumped: boolean;
+  sharing: boolean;
 }
 
 export type RadarTrackingOptionsReplay = 

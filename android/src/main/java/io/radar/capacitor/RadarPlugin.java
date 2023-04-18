@@ -358,6 +358,25 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void trackVerified(final PluginCall call) {
+        Radar.trackVerified(new Radar.RadarTrackCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
+                if (status == Radar.RadarStatus.SUCCESS && location != null && events != null && user != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("location", RadarPlugin.jsObjectForJSONObject(Radar.jsonForLocation(location)));
+                    ret.put("events", RadarPlugin.jsArrayForJSONArray(RadarEvent.toJson(events)));
+                    ret.put("user", RadarPlugin.jsObjectForJSONObject(user.toJson()));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
+    }
+
+    @PluginMethod()
     public void startTrackingEfficient(PluginCall call) {
         Radar.startTracking(RadarTrackingOptions.EFFICIENT);
         call.resolve();
