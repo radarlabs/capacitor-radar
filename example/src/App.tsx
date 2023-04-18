@@ -68,7 +68,7 @@ class App extends React.Component<AppProps, AppState> {
     Radar.setMetadata({ metadata: {
       foo: 'bar',
     }});
-    Radar.setAnonymousTrackingEnabled({ enabled: true});
+    Radar.setAnonymousTrackingEnabled({ enabled: false});
     
     Radar.getLocationPermissionsStatus().then((result) => {
       this.logOutput(JSON.stringify(result));
