@@ -794,33 +794,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
-    @objc func logConversion(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            guard let name = call.getString("name") else {
-                call.reject("name is required")
-
-                return
-            }
-            let revenue = call.getString("revenue") != nil ? NSNumber(value: Double(call.getString("revenue")!)!) : nil
-            let metadata = call.getObject("metadata")
-            let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent? ) in
-                if status == .success { 
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "event": event?.dictionaryValue() ?? [:]
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
-                }
-            } 
-            if revenue != nil {
-                Radar.logConversion(name: name, revenue: revenue!, metadata: metadata, completionHandler: completionHandler)
-            } else {
-                Radar.logConversion(name: name, metadata: metadata, completionHandler: completionHandler)
-            }
-        }
-    }
-
     @objc func getMatrix(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarRouteMatrixCompletionHandler  = { (status: RadarStatus, matrix: RadarRouteMatrix?) in
@@ -889,6 +862,35 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             }
 
             Radar.getMatrix(origins: origins, destinations: destinations, mode: mode, units: units, completionHandler: completionHandler)            
+        }
+    }
+
+    @objc func logConversion(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent? ) in
+                if status == .success { 
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "event": event?.dictionaryValue() ?? [:]
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            } 
+            
+            guard let name = call.getString("name") else {
+                call.reject("name is required")
+
+                return
+            }
+            let revenue = call.getString("revenue") != nil ? NSNumber(value: Double(call.getString("revenue")!)!) : nil
+            let metadata = call.getObject("metadata")
+            
+            if revenue != nil {
+                Radar.logConversion(name: name, revenue: revenue!, metadata: metadata, completionHandler: completionHandler)
+            } else {
+                Radar.logConversion(name: name, metadata: metadata, completionHandler: completionHandler)
+            }
         }
     }
 
