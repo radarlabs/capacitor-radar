@@ -771,7 +771,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
                 return
             }
-            var units: RadarRouteUnits = .metric;
             let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
 
             if let originDict = call.options["origin"] as? [String: Double] {
