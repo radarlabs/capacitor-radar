@@ -123,6 +123,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
+  trackVerified(): void {
+    // not implemented
+  }
+
   startTrackingEfficient(): void {
     // not implemented
   }

@@ -271,6 +271,23 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func trackVerified(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.trackVerified { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
+                if status == .success && location != nil && events != nil && user != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "location": Radar.dictionaryForLocation(location!),
+                        "events": RadarEvent.array(for: events!) ?? [],
+                        "user": user!.dictionaryValue()
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+        }
+    }
+
     @objc func startTrackingEfficient(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.startTracking(trackingOptions: RadarTrackingOptions.presetEfficient)
@@ -768,34 +785,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
-    @objc func logConversion(_ call: CAPPluginCall) {
-        DispatchQueue.main.async {
-            guard let name = call.getString("name") else {
-                call.reject("name is required")
-
-                return
-            }
-            // get revenue and make sure it's a nsnumber
-            let revenue = call.getString("revenue") != nil ? NSNumber(value: Double(call.getString("revenue")!)!) : nil
-            let metadata = call.getObject("metadata")
-            let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent? ) in
-                if status == .success { 
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "event": event?.dictionaryValue() ?? [:]
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
-                }
-            } 
-            if revenue != nil {
-                Radar.logConversion(name: name, revenue: revenue!, metadata: metadata, completionHandler: completionHandler)
-            } else {
-                Radar.logConversion(name: name, metadata: metadata, completionHandler: completionHandler)
-            }
-        }
-    }
-
     @objc func getMatrix(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarRouteMatrixCompletionHandler  = { (status: RadarStatus, matrix: RadarRouteMatrix?) in
@@ -852,18 +841,38 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
                 return
             }
-            var units: RadarRouteUnits = .metric;
-            switch modeStr.lowercased() {
-                case "metric":
-                    units = .metric
-                case "imperial":
-                    units = .imperial
-                default:                
-                    call.reject("invalid units: " + unitsStr)
-                    return
-            }
+            let units: RadarRouteUnits = unitsStr == "METRIC" || unitsStr == "metric" ? .metric : .imperial;
 
             Radar.getMatrix(origins: origins, destinations: destinations, mode: mode, units: units, completionHandler: completionHandler)            
+        }
+    }
+
+    @objc func logConversion(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent? ) in
+                if status == .success { 
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "event": event?.dictionaryValue() ?? [:]
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            } 
+            
+            guard let name = call.getString("name") else {
+                call.reject("name is required")
+
+                return
+            }
+            let revenue = call.getString("revenue") != nil ? NSNumber(value: Double(call.getString("revenue")!)!) : nil
+            let metadata = call.getObject("metadata")
+            
+            if revenue != nil {
+                Radar.logConversion(name: name, revenue: revenue!, metadata: metadata, completionHandler: completionHandler)
+            } else {
+                Radar.logConversion(name: name, metadata: metadata, completionHandler: completionHandler)
+            }
         }
     }
 

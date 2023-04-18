@@ -68,7 +68,7 @@ class App extends React.Component<AppProps, AppState> {
     Radar.setMetadata({ metadata: {
       foo: 'bar',
     }});
-    Radar.setAnonymousTrackingEnabled({ enabled: true});
+    Radar.setAnonymousTrackingEnabled({ enabled: false});
     
     Radar.getLocationPermissionsStatus().then((result) => {
       this.logOutput(JSON.stringify(result));
@@ -216,6 +216,11 @@ class App extends React.Component<AppProps, AppState> {
       this.logOutput(`getMatrix: ${JSON.stringify(result)}\n`);
     }).catch((error) => {
       this.logOutput(`getMatrix: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.trackVerified().then((result) => {
+      this.logOutput(`trackVerified: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`trackVerified: error ${JSON.stringify(error)}\n`);
     });
     // var stopTrackingTime = new Date()
     // stopTrackingTime.setMinutes(stopTrackingTime.getMinutes() + 1)
