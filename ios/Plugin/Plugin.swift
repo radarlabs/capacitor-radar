@@ -801,7 +801,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
                 return
             }
-            // get revenue and make sure it's a nsnumber
             let revenue = call.getString("revenue") != nil ? NSNumber(value: Double(call.getString("revenue")!)!) : nil
             let metadata = call.getObject("metadata")
             let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent? ) in
