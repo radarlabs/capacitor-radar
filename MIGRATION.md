@@ -1,5 +1,9 @@
 # Migration guides
 
+## 3.7.1 to 3.7.2
+
+- `Radar.getTripOptions()` and `Radar.getTrackingOptions` return typed `RadarTripOptions` and `RadarTrackingOptions` respectively rather than nesting within an `options` key.
+
 ## 3.5.0 to 3.5.2
 
 - Exposes a new `Radar.startTrip()` function that accepts `trackingOptions` that apply while on a trip.

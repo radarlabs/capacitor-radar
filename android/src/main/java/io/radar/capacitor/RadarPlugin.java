@@ -476,9 +476,7 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void getTrackingOptions(PluginCall call) {
         RadarTrackingOptions options = Radar.getTrackingOptions();
-        JSObject ret = new JSObject();
-        ret.put("options", options != null ? options.toJson() : null);
-        call.resolve(ret);
+        call.resolve(RadarPlugin.jsObjectForJSONObject(options.toJson()));
     }
 
     @PluginMethod()
@@ -630,9 +628,7 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void getTripOptions(PluginCall call) {
         RadarTripOptions options = Radar.getTripOptions();
-        JSObject ret = new JSObject();
-        ret.put("options", options != null ? options.toJson() : null);
-        call.resolve(ret);
+        call.resolve(RadarPlugin.jsObjectForJSONObject(options.toJson()));
     }
 
     @PluginMethod()
