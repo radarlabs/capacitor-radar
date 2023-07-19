@@ -111,9 +111,7 @@ class App extends React.Component<AppProps, AppState> {
     });
     Radar.getTrackingOptions().then((result: RadarTrackingOptions) => {
       this.logOutput(`getTrackingOptions: ${JSON.stringify(result)}\n`);
-      Radar.startTrackingCustom({ options: result }).then((startTrackingResult) => {
-        this.logOutput(`startTrackingCustom: ${JSON.stringify(startTrackingResult)}\n`);
-      });
+      Radar.startTrackingCustom({ options: result });
     }).catch((error) => {
       this.logOutput(`getTrackingOptions: error ${JSON.stringify(error)}\n`);
     });
