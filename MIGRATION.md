@@ -8,21 +8,21 @@ Change
 ```
 Radar.getTripOptions().then((result) => {
   Radar.updateTrip({ options: result.options, ...})
-})
+});
 
 Radar.getTrackingOptions().then((result) => {
   Radar.starTrackingCustom({ options: result.options, ...})
-})
+});
 ```
 to 
 ```
 Radar.getTripOptions().then((result: RadarTripOptions) => {
   Radar.updateTrip({ options: result, ...})
-})
+});
 
 Radar.getTrackingOptions().then((result: RadarTrackingOptions) => {
   Radar.startTrackingCustom({ options: result, ...})
-})
+});
 ```
 
 ## 3.5.0 to 3.5.2

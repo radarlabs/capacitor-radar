@@ -4,6 +4,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 import { Radar } from 'capacitor-radar';
+import { RadarTripOptions, RadarTrackingOptions } from 'capacitor-radar/src/definitions';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -108,8 +109,11 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`isTracking: error ${JSON.stringify(error)}\n`);
     });
-    Radar.getTrackingOptions().then((result) => {
+    Radar.getTrackingOptions().then((result: RadarTrackingOptions) => {
       this.logOutput(`getTrackingOptions: ${JSON.stringify(result)}\n`);
+      Radar.startTrackingCustom({ options: result }).then((startTrackingResult) => {
+        this.logOutput(`startTrackingCustom: ${JSON.stringify(startTrackingResult)}\n`);
+      });
     }).catch((error) => {
       this.logOutput(`getTrackingOptions: error ${JSON.stringify(error)}\n`);
     });
@@ -307,6 +311,18 @@ class App extends React.Component<AppProps, AppState> {
       }
     }).then((result) => {
       this.logOutput(`trip ${JSON.stringify(result.trip)}`)
+
+      Radar.getTripOptions().then((result: RadarTripOptions) => {
+        this.logOutput(`getTripOptions: ${JSON.stringify(result)}\n`);
+
+        Radar.updateTrip({ options: result, status: "arrived"}).then((updateTripResult) => {
+          this.logOutput(`updateTrip: ${JSON.stringify(updateTripResult)}\n`);
+        }).catch((error) => {
+          this.logOutput(`updateTrip: error ${JSON.stringify(error)}\n`);
+        });
+      }).catch((error) => {
+        this.logOutput(`getTripOptions: error ${JSON.stringify(error)}\n`);
+      });
 
       if (result.status == "SUCCESS") {
 
