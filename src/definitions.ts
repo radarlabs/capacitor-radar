@@ -291,6 +291,8 @@ export interface RadarAddress {
   number?: string;
   distance?: number;
   confidence?: string;
+  layer?: string;
+  plus4?: string; 
 }
 
 export interface RadarAddressVerificationStatus {
