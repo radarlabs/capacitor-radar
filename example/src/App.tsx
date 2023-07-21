@@ -169,7 +169,7 @@ class App extends React.Component<AppProps, AppState> {
       this.logOutput(`searchGeofences: error ${JSON.stringify(error)}\n`);
     });
     Radar.autocomplete({
-      query: 'brooklyn roasting',
+      query: '841 broadway new york new york',
       near: {
         'latitude': 40.783826,
         'longitude': -73.975363,
