@@ -134,6 +134,8 @@ export interface RadarUser {
   userId?: string;
   deviceId?: string;
   description?: string;
+  stopped?: boolean;
+  segments?: RadarSegment[];
   metadata?: object;
   trip?: RadarTrip;
   geofences?: RadarGeofence[];
@@ -156,6 +158,11 @@ export interface RadarTrip {
   eta?: RadarTripEta;
   status: string;
   scheduledArrivalAt?: Date;
+}
+
+export interface RadarSegment {
+  description: string;
+  externalId: string;
 }
 
 export interface RadarContext {
@@ -232,7 +239,7 @@ export interface RadarGeofence {
 
 export interface RadarBeacon {
   _id: string;
-  // expose in toJson() in native SDKs
+  // TODO: expose in toJson() in native SDKs
   // description: string;
   // tag?: string;
   // externalId?: string;
@@ -254,6 +261,8 @@ export interface RadarPlace {
 export interface RadarChain {
   name: string;
   slug: string;
+  externalId?: string;
+  metadata?: object;
 }
 
 export interface RadarRegion {
@@ -398,6 +407,7 @@ export interface RadarTripOptions {
 }
 
 export type RadarTripStatus = 
+  | 'unknown'
   | "started"
   | "approaching"
   | "arrived"
