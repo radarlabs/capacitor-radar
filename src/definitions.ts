@@ -239,10 +239,6 @@ export interface RadarGeofence {
 
 export interface RadarBeacon {
   _id: string;
-  // TODO: expose in toJson() in native SDKs
-  // description: string;
-  // tag?: string;
-  // externalId?: string;
   metadata?: object;
   type: RadarBeaconType;
   uid?: string;
