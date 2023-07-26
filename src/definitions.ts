@@ -121,6 +121,12 @@ export interface Location {
   latitude: number;
   longitude: number;
   accuracy?: number;
+  speed?: number;
+  altitude?: number;
+  course?: number;
+  verticalAccuracy?: number;
+  speedAccuracy?: number;
+  courseAccuracy?: number;
 }
 
 export interface RadarUser {
@@ -131,13 +137,13 @@ export interface RadarUser {
   metadata?: object;
   trip?: RadarTrip;
   geofences?: RadarGeofence[];
-  insights?: RadarInsights;
   place?: RadarPlace;
   country?: RadarRegion;
   state?: RadarRegion;
   dma?: RadarRegion;
   postalCode?: RadarRegion;
   fraud?: RadarFraud;
+  beacons?: RadarBeacon[];
 }
 
 export interface RadarTrip {
@@ -182,24 +188,18 @@ export enum RadarEventConfidence {
 export type RadarEventType =
   | 'unknown'
   | 'user.entered_geofence'
-  | 'user.entered_home'
-  | 'user.entered_office'
+  | 'user.dwelled_in_geofence'
   | 'user.entered_place'
   | 'user.entered_region_country'
   | 'user.entered_region_dma'
   | 'user.entered_region_state'
+  | 'user.entered_region_postal_code'
   | 'user.exited_geofence'
-  | 'user.exited_home'
-  | 'user.exited_office'
   | 'user.exited_place'
   | 'user.exited_region_country'
   | 'user.exited_region_dma'
   | 'user.exited_region_state'
   | 'user.nearby_place_chain'
-  | 'user.started_traveling'
-  | 'user.stopped_traveling'
-  | 'user.started_commuting'
-  | 'user.stopped_commuting'
   | 'user.started_trip'
   | 'user.updated_trip'
   | 'user.approaching_trip_destination'
@@ -218,12 +218,30 @@ export enum RadarEventVerification {
   reject = -1
 }
 
+export type RadarBeaconType = 
+  | 'eddystone'
+  | 'ibeacon'
+
 export interface RadarGeofence {
   _id: string;
   description: string;
   tag?: string;
   externalId?: string;
   metadata?: object;
+}
+
+export interface RadarBeacon {
+  _id: string;
+  // expose in toJson() in native SDKs
+  // description: string;
+  // tag?: string;
+  // externalId?: string;
+  metadata?: object;
+  type: RadarBeaconType;
+  uid?: string;
+  instance?: string;
+  major?: string;
+  minor?: string;
 }
 
 export interface RadarPlace {
@@ -244,29 +262,6 @@ export interface RadarRegion {
   code: string;
   name: string;
   allowed?: boolean;
-}
-
-export interface RadarInsights {
-  homeLocation?: RadarInsightsLocation;
-  officeLocation?: RadarInsightsLocation;
-  state?: {
-    home: boolean;
-    office: boolean;
-    traveling: boolean;
-  };
-}
-
-export enum RadarInsightsConfidence {
-  none = 0,
-  low = 1,
-  medium = 2,
-  high = 3
-}
-
-export interface RadarInsightsLocation {
-  type: string;
-  location: RadarInsightsLocation;
-  confidence: RadarInsightsConfidence;
 }
 
 export interface RadarLocationPermissionsCallback {
