@@ -243,6 +243,7 @@ export interface RadarRegion {
   type: string;
   code: string;
   name: string;
+  allowed?: boolean;
 }
 
 export interface RadarInsights {
