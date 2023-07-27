@@ -385,7 +385,7 @@ export interface RadarTrackingOptionsForegroundService {
   text?: string;
   title?: string;
   icon?: number;
-  updatesOnly: boolean;
+  updatesOnly?: boolean;
   activity?: string;
   importance?: number;
   id?: number;
@@ -404,10 +404,10 @@ export interface RadarTripOptions {
 
 export type RadarTripStatus = 
   | 'unknown'
-  | "started"
-  | "approaching"
-  | "arrived"
-  | "expired"
-  | "completed"
-  | "canceled"
+  | 'started'
+  | 'approaching'
+  | 'arrived'
+  | 'expired'
+  | 'completed'
+  | 'canceled'
 
