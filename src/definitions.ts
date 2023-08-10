@@ -134,19 +134,43 @@ export interface RadarUser {
   userId?: string;
   deviceId?: string;
   description?: string;
-  stopped?: boolean;
-  segments?: RadarSegment[];
   metadata?: object;
-  trip?: RadarTrip;
+  location?: Point;
   geofences?: RadarGeofence[];
   place?: RadarPlace;
+  beacons?: RadarBeacon[];
+  stopped?: boolean;
+  foreground?: boolean;
   country?: RadarRegion;
   state?: RadarRegion;
   dma?: RadarRegion;
   postalCode?: RadarRegion;
+  nearbyPlaceChains?: RadarPlace[];
+  segments?: RadarSegment[];
+  topChains?: RadarPlace[];
+  source?: LocationSource;
+  trip?: RadarTrip;
+  debug?: boolean;
   fraud?: RadarFraud;
-  beacons?: RadarBeacon[];
 }
+
+export interface Point {
+  type: "Point";
+  coordinates: [number,number];
+}
+
+export type LocationSource =
+  | 'FOREGROUND_LOCATION'
+  | 'BACKGROUND_LOCATION'
+  | 'MANUAL_LOCATION'
+  | 'VISIT_ARRIVAL'
+  | 'VISIT_DEPARTURE'
+  | 'GEOFENCE_ENTER'
+  | 'GEOFENCE_EXIT'
+  | 'MOCK_LOCATION'
+  | 'BEACON_ENTER'
+  | 'BEACON_EXIT'
+  | 'UNKNOWN';
 
 export interface RadarTrip {
   _id: string;
@@ -180,9 +204,14 @@ export interface RadarEvent {
   type: RadarEventType;
   geofence?: RadarGeofence;
   place?: RadarPlace;
-  alternatePlaces?: RadarPlace;
   region?: RadarRegion;
   confidence: RadarEventConfidence;
+  duration?: number;
+  beacon?: RadarBeacon;
+  trip?: RadarTrip;
+  alternatePlaces?: RadarPlace[];
+  location?: Point;
+  metadata?: object;
 }
 
 export enum RadarEventConfidence {
