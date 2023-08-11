@@ -8,11 +8,11 @@ export interface RadarPlugin {
   addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string }): void;
   setLogLevel(options: { level: string }): void;
-  setUserId(options: { userId: string }): void;
+  setUserId(options: { userId?: string }): void;
   getUserId(): Promise<object>,
-  setDescription(options: { description: string }): void;
+  setDescription(options: { description?: string }): void;
   getDescription(): Promise<object>,
-  setMetadata(options: { metadata: object }): void;
+  setMetadata(options: { metadata?: object }): void;
   getMetadata(): Promise<object>,
   setAnonymousTrackingEnabled(options: { enabled: boolean }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
@@ -121,6 +121,12 @@ export interface Location {
   latitude: number;
   longitude: number;
   accuracy?: number;
+  speed?: number;
+  altitude?: number;
+  course?: number;
+  verticalAccuracy?: number;
+  speedAccuracy?: number;
+  courseAccuracy?: number;
 }
 
 export interface RadarUser {
@@ -129,16 +135,42 @@ export interface RadarUser {
   deviceId?: string;
   description?: string;
   metadata?: object;
-  trip?: RadarTrip;
+  location?: Point;
   geofences?: RadarGeofence[];
-  insights?: RadarInsights;
   place?: RadarPlace;
+  beacons?: RadarBeacon[];
+  stopped?: boolean;
+  foreground?: boolean;
   country?: RadarRegion;
   state?: RadarRegion;
   dma?: RadarRegion;
   postalCode?: RadarRegion;
+  nearbyPlaceChains?: RadarPlace[];
+  segments?: RadarSegment[];
+  topChains?: RadarPlace[];
+  source?: LocationSource;
+  trip?: RadarTrip;
+  debug?: boolean;
   fraud?: RadarFraud;
 }
+
+export interface Point {
+  type: "Point";
+  coordinates: [number,number];
+}
+
+export type LocationSource =
+  | 'FOREGROUND_LOCATION'
+  | 'BACKGROUND_LOCATION'
+  | 'MANUAL_LOCATION'
+  | 'VISIT_ARRIVAL'
+  | 'VISIT_DEPARTURE'
+  | 'GEOFENCE_ENTER'
+  | 'GEOFENCE_EXIT'
+  | 'MOCK_LOCATION'
+  | 'BEACON_ENTER'
+  | 'BEACON_EXIT'
+  | 'UNKNOWN';
 
 export interface RadarTrip {
   _id: string;
@@ -150,6 +182,11 @@ export interface RadarTrip {
   eta?: RadarTripEta;
   status: string;
   scheduledArrivalAt?: Date;
+}
+
+export interface RadarSegment {
+  description: string;
+  externalId: string;
 }
 
 export interface RadarContext {
@@ -167,9 +204,14 @@ export interface RadarEvent {
   type: RadarEventType;
   geofence?: RadarGeofence;
   place?: RadarPlace;
-  alternatePlaces?: RadarPlace;
   region?: RadarRegion;
   confidence: RadarEventConfidence;
+  duration?: number;
+  beacon?: RadarBeacon;
+  trip?: RadarTrip;
+  alternatePlaces?: RadarPlace[];
+  location?: Point;
+  metadata?: object;
 }
 
 export enum RadarEventConfidence {
@@ -182,24 +224,21 @@ export enum RadarEventConfidence {
 export type RadarEventType =
   | 'unknown'
   | 'user.entered_geofence'
-  | 'user.entered_home'
-  | 'user.entered_office'
+  | 'user.entered_beacon'
+  | 'user.dwelled_in_geofence'
   | 'user.entered_place'
   | 'user.entered_region_country'
   | 'user.entered_region_dma'
   | 'user.entered_region_state'
+  | 'user.entered_region_postal_code'
   | 'user.exited_geofence'
-  | 'user.exited_home'
-  | 'user.exited_office'
+  | 'user.exited_beacon'
   | 'user.exited_place'
   | 'user.exited_region_country'
   | 'user.exited_region_dma'
   | 'user.exited_region_state'
+  | 'user.exited_region_postal_code'
   | 'user.nearby_place_chain'
-  | 'user.started_traveling'
-  | 'user.stopped_traveling'
-  | 'user.started_commuting'
-  | 'user.stopped_commuting'
   | 'user.started_trip'
   | 'user.updated_trip'
   | 'user.approaching_trip_destination'
@@ -218,12 +257,26 @@ export enum RadarEventVerification {
   reject = -1
 }
 
+export type RadarBeaconType = 
+  | 'eddystone'
+  | 'ibeacon'
+
 export interface RadarGeofence {
   _id: string;
   description: string;
   tag?: string;
   externalId?: string;
   metadata?: object;
+}
+
+export interface RadarBeacon {
+  _id: string;
+  metadata?: object;
+  type: RadarBeaconType;
+  uid?: string;
+  instance?: string;
+  major?: string;
+  minor?: string;
 }
 
 export interface RadarPlace {
@@ -236,6 +289,8 @@ export interface RadarPlace {
 export interface RadarChain {
   name: string;
   slug: string;
+  externalId?: string;
+  metadata?: object;
 }
 
 export interface RadarRegion {
@@ -243,29 +298,7 @@ export interface RadarRegion {
   type: string;
   code: string;
   name: string;
-}
-
-export interface RadarInsights {
-  homeLocation?: RadarInsightsLocation;
-  officeLocation?: RadarInsightsLocation;
-  state?: {
-    home: boolean;
-    office: boolean;
-    traveling: boolean;
-  };
-}
-
-export enum RadarInsightsConfidence {
-  none = 0,
-  low = 1,
-  medium = 2,
-  high = 3
-}
-
-export interface RadarInsightsLocation {
-  type: string;
-  location: RadarInsightsLocation;
-  confidence: RadarInsightsConfidence;
+  allowed?: boolean;
 }
 
 export interface RadarLocationPermissionsCallback {
@@ -384,7 +417,7 @@ export interface RadarTrackingOptionsForegroundService {
   text?: string;
   title?: string;
   icon?: number;
-  updatesOnly: boolean;
+  updatesOnly?: boolean;
   activity?: string;
   importance?: number;
   id?: number;
@@ -402,10 +435,11 @@ export interface RadarTripOptions {
 }
 
 export type RadarTripStatus = 
-  | "started"
-  | "approaching"
-  | "arrived"
-  | "expired"
-  | "completed"
-  | "canceled"
+  | 'unknown'
+  | 'started'
+  | 'approaching'
+  | 'arrived'
+  | 'expired'
+  | 'completed'
+  | 'canceled'
 
