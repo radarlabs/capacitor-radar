@@ -181,6 +181,34 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void getLogLevel(PluginCall call) {
+        Radar.RadarLogLevel currentLogLevel = Radar.getLogLevel();
+        String levelString = "";
+
+        switch (currentLogLevel) {
+            case ERROR:
+                levelString = "error";
+                break;
+            case WARNING:
+                levelString = "warning";
+                break;
+            case INFO:
+                levelString = "info";
+                break;
+            case DEBUG:
+                levelString = "debug";
+                break;
+            case NONE:
+                levelString = "none";
+                break;
+        }
+
+        JSObject ret = new JSObject();
+        ret.put("level", levelString);
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
     public void setUserId(PluginCall call) {
         String userId = call.getString("userId");
         Radar.setUserId(userId);

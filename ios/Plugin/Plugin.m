@@ -4,6 +4,7 @@
 CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(initialize, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setLogLevel, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getLogLevel, CAPPluginReturnPromise); 
     CAP_PLUGIN_METHOD(setUserId, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getUserId, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setDescription, CAPPluginReturnPromise);
