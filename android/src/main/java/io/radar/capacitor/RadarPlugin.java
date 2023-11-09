@@ -761,11 +761,17 @@ public class RadarPlugin extends Plugin {
         near.setAccuracy(5);
 
         int limit = call.getInt("limit", 10);
-        String country = call.getString("country");
+        String countryCode;
+        if(call.hasOption("country")){
+            countryCode= call.getString("country");
+        }
+        if(call.hasOption("countryCode")){
+            countryCode= call.getString("countryCode");
+        }
         String[] layers = RadarPlugin.stringArrayForJSArray(call.getArray("layers"));
         boolean expandUnits = call.getBoolean("expandUnits", false);
 
-        Radar.autocomplete(query, near, layers, limit, country, expandUnits, new Radar.RadarGeocodeCallback() {
+        Radar.autocomplete(query, near, layers, limit, countryCode, expandUnits, new Radar.RadarGeocodeCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
                 if (status == Radar.RadarStatus.SUCCESS && addresses != null) {

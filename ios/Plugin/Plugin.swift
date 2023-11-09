@@ -622,11 +622,15 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
             let limit = Int32(call.getInt("limit") ?? 10)
-            let country = call.getString("country")
+            
+            guard let countryCode = call.getString("country") else {
+               countryCode = call.getString("countryCode")
+            }
+            
             let layers = call.getArray("layers", String.self)
             let expandUnits = call.getBool("expandUnits") ?? false
 
-            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, country: country, expandUnits: expandUnits) { (status: RadarStatus, addresses: [RadarAddress]?) in
+            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, countryCode: countryCode, expandUnits: expandUnits) { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
