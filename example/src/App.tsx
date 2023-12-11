@@ -219,11 +219,28 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`getMatrix: error ${JSON.stringify(error)}\n`);
     });
+    
     Radar.trackVerified().then((result) => {
       this.logOutput(`trackVerified: ${JSON.stringify(result)}\n`);
+      const { user } = result;
+      if (user?.fraud?.passed && user?.country?.allowed && user?.state?.allowed) {
+        // allow access to feature
+      } else {
+        // deny access to feature, show error message
+      }
     }).catch((error) => {
       this.logOutput(`trackVerified: error ${JSON.stringify(error)}\n`);
     });
+    Radar.trackVerifiedToken().then((result) => {
+      this.logOutput(`trackVerifiedToken: ${JSON.stringify(result)}\n`);
+      const { token } = result;
+      if (token) {
+        // send token to server
+      }
+    }).catch((error) => {
+      this.logOutput(`trackVerifiedToken: error ${JSON.stringify(error)}\n`);
+    });
+
     // var stopTrackingTime = new Date()
     // stopTrackingTime.setMinutes(stopTrackingTime.getMinutes() + 1)
     // Radar.startTrackingCustom({

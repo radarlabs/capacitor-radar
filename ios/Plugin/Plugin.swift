@@ -288,6 +288,21 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    @objc func trackVerifiedToken(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.trackVerifiedToken { (status: RadarStatus, token: String?) in
+                if status == .success && token != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "token": token
+                    ])
+                } else {
+                    call.reject(Radar.stringForStatus(status))
+                }
+            }
+        }
+    }
+
     @objc func startTrackingEfficient(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.startTracking(trackingOptions: RadarTrackingOptions.presetEfficient)
