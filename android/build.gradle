@@ -41,5 +41,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'io.radar:sdk:3.8.17'
-    implementation 'com.google.android.play:integrity:1.0.2'
 }
