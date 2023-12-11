@@ -377,6 +377,23 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void trackVerifiedToken(final PluginCall call) {
+        Radar.trackVerifiedToken(new Radar.RadarTrackTokenCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable String token) {
+                if (status == Radar.RadarStatus.SUCCESS && token != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("token", token);
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
+    }
+
+    @PluginMethod()
     public void startTrackingEfficient(PluginCall call) {
         Radar.startTracking(RadarTrackingOptions.EFFICIENT);
         call.resolve();
