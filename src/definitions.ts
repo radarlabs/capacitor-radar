@@ -20,6 +20,7 @@ export interface RadarPlugin {
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
   trackVerified(): Promise<RadarTrackCallback>;
+  trackVerifiedToken(): Promise<RadarTrackTokenCallback>;
   startTrackingEfficient(): void;
   startTrackingResponsive(): void;
   startTrackingContinuous(): void;
@@ -60,6 +61,11 @@ export interface RadarTrackCallback {
   location?: Location;
   user?: RadarUser;
   events?: RadarEvent[];
+}
+
+export interface RadarTrackTokenCallback {
+  status: string;
+  token?: String;
 }
 
 export interface RadarTripCallback {
