@@ -374,6 +374,19 @@ class App extends React.Component<AppProps, AppState> {
       Radar.stopTracking();
     }, 30000);
     */
+
+    Radar.autocomplete({
+      query: "brooklyn roasting",
+      near: {
+        latitude: 40.783826,
+        longitude: -73.975363,
+      },
+      limit: 10
+    }).then((autocompleteResult) => {
+      this.logOutput(`autocomplete: ${JSON.stringify(autocompleteResult)}\n`);
+    }).catch((error) => {
+      this.logOutput(`autocomplete: error ${JSON.stringify(error)}\n`)
+    });
   }
 
   render() {
