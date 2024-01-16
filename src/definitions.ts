@@ -8,6 +8,7 @@ export interface RadarPlugin {
   addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string }): void;
   setLogLevel(options: { level: string }): void;
+  getLogLevel():Promise<object>;
   setUserId(options: { userId?: string }): void;
   getUserId(): Promise<object>,
   setDescription(options: { description?: string }): void;
