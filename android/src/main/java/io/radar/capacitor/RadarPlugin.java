@@ -148,7 +148,7 @@ public class RadarPlugin extends Plugin {
 
         Radar.setVerifiedReceiver(new RadarVerifiedReceiver() {
             @Override
-            public void onToken(@NonNull Context context, @NonNull String token) {
+            public void onTokenUpdated(@NonNull Context context, @NonNull String token) {
                 if (sPlugin == null) {
                     return;
                 }
