@@ -6,6 +6,7 @@ export interface RadarPlugin {
   addListener(eventName: 'events', listenerFunc: (result: { events: RadarEvent[], user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'token', listenerFunc: (result: { token: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string }): void;
   setLogLevel(options: { level: string }): void;
   setUserId(options: { userId?: string }): void;
@@ -163,7 +164,7 @@ export interface RadarUser {
 
 export interface Point {
   type: "Point";
-  coordinates: [number,number];
+  coordinates: [number, number];
 }
 
 export type LocationSource =

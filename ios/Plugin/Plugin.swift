@@ -318,7 +318,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
 
     @objc func startTrackingVerified(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            let tokens = call.getBool("tokens") ?? false
+            let token = call.getBool("token") ?? false
             let interval = call.getInt("interval") ?? 300
             let beacons = call.getBool("beacons") ?? false
 
@@ -662,10 +662,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             let limit = Int32(call.getInt("limit") ?? 10)
             let country = call.getString("country")
             let layers = call.getArray("layers", String.self)
-            let expandUnits = call.getBool("expandUnits") ?? false
             let mailable = call.getBool("mailable") ?? false
 
-            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, country: country, expandUnits: expandUnits, mailable: mailable) { (status: RadarStatus, addresses: [RadarAddress]?) in
+            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, country: country, mailable: mailable) { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
