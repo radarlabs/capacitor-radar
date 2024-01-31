@@ -307,7 +307,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 if status == .success && token != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
-                        "token": token
+                        "token": token ?? ""
                     ])
                 } else {
                     call.reject(Radar.stringForStatus(status))
@@ -319,7 +319,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     @objc func startTrackingVerified(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let token = call.getBool("token") ?? false
-            let interval = call.getInt("interval") ?? 300
+            let interval = call.getDouble("interval") ?? 300.0
             let beacons = call.getBool("beacons") ?? false
 
             Radar.startTrackingVerified(token: token, interval: interval, beacons: beacons)
