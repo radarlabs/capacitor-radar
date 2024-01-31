@@ -41,6 +41,7 @@ import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
 import io.radar.sdk.RadarTripOptions;
+import io.radar.sdk.RadarVerifiedReceiver;
 import io.radar.sdk.model.RadarAddress;
 import io.radar.sdk.Radar.RadarAddressVerificationStatus;
 import io.radar.sdk.model.RadarContext;
@@ -139,6 +140,23 @@ public class RadarPlugin extends Plugin {
                     JSObject ret = new JSObject();
                     ret.put("message", message);
                     sPlugin.notifyListeners("log", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+            }
+        });
+
+        Radar.setVerifiedReceiver(new RadarVerifiedReceiver() {
+            @Override
+            public void onToken(@NonNull Context context, @NonNull String token) {
+                if (sPlugin == null) {
+                    return;
+                }
+
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("token", message);
+                    sPlugin.notifyListeners("token", ret);
                 } catch (Exception e) {
                     Log.e(TAG, "Exception", e);
                 }
@@ -359,7 +377,9 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void trackVerified(final PluginCall call) {
-        Radar.trackVerified(new Radar.RadarTrackCallback() {
+        boolean beacons = call.getBoolean("beacons", false);
+        
+        Radar.trackVerified(beacons, new Radar.RadarTrackCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
                 if (status == Radar.RadarStatus.SUCCESS && location != null && events != null && user != null) {
@@ -378,7 +398,9 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void trackVerifiedToken(final PluginCall call) {
-        Radar.trackVerifiedToken(new Radar.RadarTrackTokenCallback() {
+        boolean beacons = call.getBoolean("beacons", false);
+
+        Radar.trackVerifiedToken(beacons, new Radar.RadarTrackTokenCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable String token) {
                 if (status == Radar.RadarStatus.SUCCESS && token != null) {
@@ -391,6 +413,16 @@ public class RadarPlugin extends Plugin {
                 }
             }
         });
+    }
+
+    @PluginMethod()
+    public void startTrackingVerified(PluginCall call) {
+        boolean token = call.getBoolean("token", false);
+        int interval = call.getInt("interval", 300);
+        boolean beacons = call.getBoolean("beacons", false);
+
+        Radar.startTrackingVerified(token, interval, beacons);
+        call.resolve();
     }
 
     @PluginMethod()
