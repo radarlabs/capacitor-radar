@@ -155,7 +155,7 @@ public class RadarPlugin extends Plugin {
 
                 try {
                     JSObject ret = new JSObject();
-                    ret.put("token", message);
+                    ret.put("token", token);
                     sPlugin.notifyListeners("token", ret);
                 } catch (Exception e) {
                     Log.e(TAG, "Exception", e);
