@@ -813,8 +813,9 @@ public class RadarPlugin extends Plugin {
         String country = call.getString("country");
         String[] layers = RadarPlugin.stringArrayForJSArray(call.getArray("layers"));
         boolean expandUnits = call.getBoolean("expandUnits", false);
+        boolean mailable = call.getBoolean("mailable", false);
 
-        Radar.autocomplete(query, near, layers, limit, country, expandUnits, new Radar.RadarGeocodeCallback() {
+        Radar.autocomplete(query, near, layers, limit, country, expandUnits, mailable, new Radar.RadarGeocodeCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
                 if (status == Radar.RadarStatus.SUCCESS && addresses != null) {

@@ -21,7 +21,7 @@ export interface RadarPlugin {
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
   trackVerified(options?: { beacons?: boolean }): Promise<RadarTrackCallback>;
   trackVerifiedToken(options?: { beacons?: boolean }): Promise<RadarTrackTokenCallback>;
-  startTrackingVerified(options: { token?: boolean, interval: number, beacons?: boolean }): void;
+  startTrackingVerified(options: { token?: boolean, interval: number, beacons: boolean }): void;
   startTrackingEfficient(): void;
   startTrackingResponsive(): void;
   startTrackingContinuous(): void;
@@ -41,7 +41,7 @@ export interface RadarPlugin {
   getContext(options?: Location): Promise<RadarContextCallback>;
   searchPlaces(options: { near?: Location, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: Location, radius: number, metadata?: object, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
-  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string, expandUnits?: boolean }): Promise<RadarGeocodeCallback>;
+  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string, expandUnits?: boolean, mailable?: boolean }): Promise<RadarGeocodeCallback>;
   validateAddress(options: { address: RadarAddress }): Promise<RadarValidateAddressCallback>;
   geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
   reverseGeocode(options?: Location): Promise<RadarGeocodeCallback>;
