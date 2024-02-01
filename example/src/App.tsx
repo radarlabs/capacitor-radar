@@ -41,6 +41,10 @@ Radar.addListener('error', (result) => {
   console.log(`error: ${JSON.stringify(result)}`);
 });
 
+Radar.addListener('token', (result) => {
+  console.log(`token: ${JSON.stringify(result)}`);
+});
+
 interface AppProps {}
 
 interface AppState {

@@ -123,7 +123,15 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  trackVerified(): void {
+  trackVerified(options?: { beacons?: boolean }): void {
+    // not implemented
+  }
+
+  trackVerifiedToken(options?: { beacons?: boolean }): void {
+    // not implemented
+  }
+
+  startTrackingVerified(options: { token?: boolean, interval: number, beacons: boolean }): void {
     // not implemented
   }
 

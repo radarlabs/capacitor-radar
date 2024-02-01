@@ -4,7 +4,7 @@ import Capacitor
 import RadarSDK
 
 @objc(RadarPlugin)
-public class RadarPlugin: CAPPlugin, RadarDelegate {
+public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     
     let locationManager = CLLocationManager()
 
@@ -52,6 +52,14 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         }
     }
 
+    public func didUpdateToken(_ token: String) {
+        DispatchQueue.main.async {
+            self.notifyListeners("token", data: [
+                "token": token
+            ])
+        }
+    }
+
     // MARK: - CAPPlugin
 
     @objc func initialize(_ call: CAPPluginCall) {
@@ -75,6 +83,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
         // (https://capacitorjs.com/docs/core-apis/data-types#dates)
         shouldStringifyDatesInCalls = false
         Radar.setDelegate(self)
+        Radar.setVerifiedDelegate(self)
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
@@ -273,7 +282,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     @objc func trackVerified(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.trackVerified { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
+            let beacons = call.getBool("beacons") ?? false
+
+            Radar.trackVerified(beacons: beacons) { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
                 if status == .success && location != nil && events != nil && user != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
@@ -290,16 +301,28 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
 
     @objc func trackVerifiedToken(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.trackVerifiedToken { (status: RadarStatus, token: String?) in
+            let beacons = call.getBool("beacons") ?? false
+
+            Radar.trackVerifiedToken(beacons: beacons) { (status: RadarStatus, token: String?) in
                 if status == .success && token != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
-                        "token": token
+                        "token": token ?? ""
                     ])
                 } else {
                     call.reject(Radar.stringForStatus(status))
                 }
             }
+        }
+    }
+
+    @objc func startTrackingVerified(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let token = call.getBool("token") ?? false
+            let interval = call.getDouble("interval") ?? 300.0
+            let beacons = call.getBool("beacons") ?? false
+
+            Radar.startTrackingVerified(token: token, interval: interval, beacons: beacons)
         }
     }
 
@@ -639,9 +662,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate {
             let limit = Int32(call.getInt("limit") ?? 10)
             let country = call.getString("country")
             let layers = call.getArray("layers", String.self)
-            let expandUnits = call.getBool("expandUnits") ?? false
+            let mailable = call.getBool("mailable") ?? false
 
-            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, country: country, expandUnits: expandUnits) { (status: RadarStatus, addresses: [RadarAddress]?) in
+            Radar.autocomplete(query: query, near: near, layers: layers, limit: limit, country: country, mailable: mailable) { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
