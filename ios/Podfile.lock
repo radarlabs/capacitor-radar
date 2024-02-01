@@ -2,11 +2,11 @@ PODS:
   - Capacitor (3.2.5):
     - CapacitorCordova
   - CapacitorCordova (1.1.1)
-  - RadarSDK (3.9.4)
+  - RadarSDK (3.9.5)
 
 DEPENDENCIES:
   - "Capacitor (from `../node_modules/@capacitor/ios`)"
-  - RadarSDK (= 3.9.4)
+  - RadarSDK (~> 3.9.5)
 
 SPEC REPOS:
   trunk:
@@ -20,8 +20,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Capacitor: 32416638f82066f863d7cd85d6f738b5cc2797d2
   CapacitorCordova: 25811fd90c0ea23ea135a42a217d1918873fa566
-  RadarSDK: 6444cde8b477239011e30d622f731368526452af
+  RadarSDK: 17c3bc096b2e40aea3dcd246d50fb16fee4bf507
 
-PODFILE CHECKSUM: 5afe816f1744ed68e59017d6b9116abd203471cb
+PODFILE CHECKSUM: 1b8fa58ed49b023ddda1a71d1742d86a603bb7dc
 
 COCOAPODS: 1.12.1
