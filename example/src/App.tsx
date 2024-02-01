@@ -41,6 +41,10 @@ Radar.addListener('error', (result) => {
   console.log(`error: ${JSON.stringify(result)}`);
 });
 
+Radar.addListener('error', (result) => {
+  console.log(`token: ${JSON.stringify(result)}`);
+});
+
 interface AppProps {}
 
 interface AppState {
@@ -62,13 +66,20 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidMount() {
-    Radar.initialize({ publishableKey: 'prj_test_pk_0000000000000000000000000000000000000000' });
+    Radar.initialize({ publishableKey: 'org_test_pk_5857c63d9c1565175db8b00750808a66a002acb8' });
     Radar.setLogLevel({level: 'debug'});
     Radar.setUserId({ userId: 'capacitor' });
     Radar.setDescription({ description: 'capacitor example'});
     Radar.setMetadata({ metadata: {
       foo: 'bar',
     }});
+    Radar.startTrackingVerified({
+      token: true,
+      interval: 60,
+      beacons: false,
+    });
+
+    /*
     Radar.setAnonymousTrackingEnabled({ enabled: false});
     
     Radar.getLocationPermissionsStatus().then((result) => {
@@ -240,6 +251,7 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`trackVerifiedToken: error ${JSON.stringify(error)}\n`);
     });
+    */
 
     // var stopTrackingTime = new Date()
     // stopTrackingTime.setMinutes(stopTrackingTime.getMinutes() + 1)
@@ -293,6 +305,7 @@ class App extends React.Component<AppProps, AppState> {
       this.logOutput(`error ${JSON.stringify(error)}`);
     });*/
 
+    /*
     Radar.startTrip({
       options: {
         tripOptions: {
@@ -347,6 +360,7 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`error ${JSON.stringify(error)}`);
     });
+    */
 
     /*
     Radar.mockTracking({
