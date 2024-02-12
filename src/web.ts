@@ -386,6 +386,18 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
+  logTermination(): void {
+    // not implemented
+  }
+
+  logBackgrounding(): void {
+    // not implemented
+  }
+
+  logResigningActive(): void {
+    // not implemented
+  }
+
 }
 
 const radarPluginWeb = new RadarPluginWeb();

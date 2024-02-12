@@ -50,6 +50,9 @@ export interface RadarPlugin {
   getDistance(options: { origin?: Location, destination: Location, modes: string[], units: string }): Promise<RadarRouteCallback>;
   getMatrix(options: { origins?: Location[], destinations?: Location[], mode: string, units: string }): Promise<RadarRouteMatrix>;
   logConversion(options: { name: string, revenue?: number, metadata?: object }): Promise<RadarLogConversionCallback>;
+  logTermination(): void;
+  logBackgrounding(): void;
+  logResigningActive(): void;
 }
 
 export interface RadarLocationCallback {

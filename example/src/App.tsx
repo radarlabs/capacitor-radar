@@ -136,6 +136,9 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`logConversion: error ${JSON.stringify(error)}\n`);
     });
+    Radar.logTermination();
+    Radar.logBackgrounding();
+    Radar.logResigningActive();
     Radar.getTripOptions().then((result) => {
       this.logOutput(`getTripOptions: ${JSON.stringify(result)}\n`);
     }).catch((error) => {

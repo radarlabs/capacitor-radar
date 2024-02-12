@@ -911,4 +911,25 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func logTermination(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.logTermination()
+            call.resolve()
+        }
+    }
+
+    @objc func logBackgrounding(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.logBackgrounding()
+            call.resolve()
+        }
+    }
+
+    @objc func logResigningActive(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.logResigningActive()
+            call.resolve()
+        }
+    }
+
 }

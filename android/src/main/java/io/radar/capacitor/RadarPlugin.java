@@ -677,7 +677,11 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void getTripOptions(PluginCall call) {
         RadarTripOptions options = Radar.getTripOptions();
-        call.resolve(RadarPlugin.jsObjectForJSONObject(options.toJson()));
+        if (options != null) {
+            call.resolve(RadarPlugin.jsObjectForJSONObject(options.toJson()));
+        } else {
+            call.reject("No trip options available");
+        }
     }
 
     @PluginMethod()
@@ -1208,5 +1212,23 @@ public class RadarPlugin extends Plugin {
         } catch (JSONException j) {
             return null;
         }
+    }
+
+    @PluginMethod()
+    public void logTermination(final PluginCall call) {
+        // not implemented
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void logBackgrounding(final PluginCall call) {
+        Radar.logBackgrounding();
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void logResigningActive(final PluginCall call) {
+        Radar.logResigningActive();
+        call.resolve();
     }
 }
