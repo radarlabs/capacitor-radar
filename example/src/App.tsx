@@ -139,6 +139,9 @@ class App extends React.Component<AppProps, AppState> {
     Radar.logTermination();
     Radar.logBackgrounding();
     Radar.logResigningActive();
+    Radar.setNotificationOptions({
+      iconString: 'icon'
+    });
     Radar.getTripOptions().then((result) => {
       this.logOutput(`getTripOptions: ${JSON.stringify(result)}\n`);
     }).catch((error) => {

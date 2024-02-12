@@ -37,6 +37,7 @@ import java.util.TreeMap;
 import java.util.HashMap;
 
 import io.radar.sdk.Radar;
+import io.radar.sdk.RadarNotificationOptions;
 import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
@@ -1229,6 +1230,16 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void logResigningActive(final PluginCall call) {
         Radar.logResigningActive();
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void setNotificationOptions(final PluginCall call) {
+        JSObject notificationOptionsObj = call.getObject("options");
+
+        JSONObject notificationOptionsJson = RadarPlugin.jsonObjectForJSObject(notificationOptionsObj);
+        RadarNotificationOptions notificationOptions = RadarNotificationOptions.fromJson(notificationOptionsJson);
+        Radar.setNotificationOptions(notificationOptions);
         call.resolve();
     }
 }

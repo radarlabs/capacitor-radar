@@ -50,9 +50,10 @@ export interface RadarPlugin {
   getDistance(options: { origin?: Location, destination: Location, modes: string[], units: string }): Promise<RadarRouteCallback>;
   getMatrix(options: { origins?: Location[], destinations?: Location[], mode: string, units: string }): Promise<RadarRouteMatrix>;
   logConversion(options: { name: string, revenue?: number, metadata?: object }): Promise<RadarLogConversionCallback>;
-  logTermination(): void;
+  logTermination(): void; // iOS only
   logBackgrounding(): void;
   logResigningActive(): void;
+  setNotificationOptions(options: RadarNotificationOptions): void; // Android only
 }
 
 export interface RadarLocationCallback {
@@ -223,6 +224,9 @@ export interface RadarEvent {
   alternatePlaces?: RadarPlace[];
   location?: Point;
   metadata?: object;
+  replayed: boolean;
+  createdAt: string;
+  actualCreatedAt: string;
 }
 
 export enum RadarEventConfidence {
@@ -415,6 +419,15 @@ export interface RadarTrackingOptions {
    beacons: boolean
 }
 
+export interface RadarNotificationOptions {
+  iconString?: string;
+  iconColor?: string;
+  foregroundServiceIconString?: string;
+  foregroundServiceIconColor?: string;
+  eventIconString?: string;
+  eventIconColor?: string;
+}
+
 export type RadarRouteMode =
   | 'foot'
   | 'bike'
@@ -428,6 +441,8 @@ export interface RadarTrackingOptionsForegroundService {
   text?: string;
   title?: string;
   icon?: number;
+  iconColor?: string;
+  iconString?: string;
   updatesOnly?: boolean;
   activity?: string;
   importance?: number;

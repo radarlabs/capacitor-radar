@@ -48,4 +48,5 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(logBackgrounding, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(logResigningActive, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getMatrix, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setNotificationOptions, CAPPluginReturnPromise);
 )

@@ -932,4 +932,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func setNotificationOptions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            // Not implemented
+            call.resolve()
+        }
+    }
+
 }

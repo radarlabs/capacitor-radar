@@ -17,7 +17,8 @@ import type {
   RadarPlugin,
   RadarTrackingOptions,
   RadarAddress,
-  RadarValidateAddressCallback
+  RadarValidateAddressCallback,
+  RadarNotificationOptions
 } from './definitions';
 
 import Radar from 'radar-sdk-js';
@@ -395,6 +396,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
   }
 
   logResigningActive(): void {
+    // not implemented
+  }
+
+  setNotificationOptions(options: RadarNotificationOptions): void {
     // not implemented
   }
 
