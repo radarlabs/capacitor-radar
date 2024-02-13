@@ -950,7 +950,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     @objc func getHost(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
-                "host": RadarSettings.host())
+                "host": RadarSettings.host()
             ]);
         }
     }
@@ -958,7 +958,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     @objc func getPublishableKey(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
-                "publishableKey": RadarSettings.publishableKey())
+                "publishableKey": RadarSettings.publishableKey()
             ]);
         }
     }
