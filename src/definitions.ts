@@ -54,6 +54,9 @@ export interface RadarPlugin {
   logBackgrounding(): void;
   logResigningActive(): void;
   setNotificationOptions(options: RadarNotificationOptions): void; // Android only
+  isUsingRemoteTrackingOptions(): Promise<object>;
+  getHost(): Promise<object>;
+  getPublishableKey(): Promise<object>;
 }
 
 export interface RadarLocationCallback {

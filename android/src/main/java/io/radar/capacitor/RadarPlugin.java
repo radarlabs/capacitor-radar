@@ -1242,4 +1242,25 @@ public class RadarPlugin extends Plugin {
         Radar.setNotificationOptions(notificationOptions);
         call.resolve();
     }
+
+    @PluginMethod()
+    public void isUsingRemoteTrackingOptions(final PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("isUsingRemoteTrackingOptions", Radar.isUsingRemoteTrackingOptions());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void getHost(final PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("host", Radar.getHost());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void getPublishableKey(final PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("publishableKey", Radar.getPublishableKey());
+        call.resolve(ret);
+    }
 }

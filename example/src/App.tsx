@@ -251,6 +251,18 @@ class App extends React.Component<AppProps, AppState> {
       this.logOutput(`trackVerifiedToken: error ${JSON.stringify(error)}\n`);
     });
 
+    Radar.isUsingRemoteTrackingOptions().then((result) => {
+      this.logOutput(`isUsingRemoteTrackingOptions: ${JSON.stringify(result)}\n`);
+    });
+
+    Radar.getHost().then((result) => {
+      this.logOutput(`getHost: ${JSON.stringify(result)}\n`);
+    });
+
+    Radar.getPublishableKey().then((result) => {
+      this.logOutput(`getPublishableKey: ${JSON.stringify(result)}\n`);
+    });
+
     // var stopTrackingTime = new Date()
     // stopTrackingTime.setMinutes(stopTrackingTime.getMinutes() + 1)
     // Radar.startTrackingCustom({

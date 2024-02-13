@@ -939,4 +939,29 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func isUsingRemoteTrackingOptions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "isUsingRemoteTrackingOptions": Radar.isUsingRemoteTrackingOptions()
+            ]);
+        }
+    }
+
+    @objc func getHost(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "host": RadarSettings.host())
+            ]);
+        }
+    }
+
+    @objc func getPublishableKey(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "publishableKey": RadarSettings.publishableKey())
+            ]);
+        }
+    }
+
+
 }
