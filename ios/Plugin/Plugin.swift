@@ -69,6 +69,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
 
                 return
             }
+            UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
+            UserDefaults.standard.set("3.9.1", forKey: "radar-xPlatformSDKVersion")
             Radar.initialize(publishableKey: publishableKey)
             call.resolve()
         }

@@ -2,6 +2,7 @@ package io.radar.capacitor;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 import android.util.Log;
@@ -168,6 +169,10 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
+        SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
+        editor.putString("x_platform_sdk_type", "Capacitor");
+        editor.putString("x_platform_sdk_version", "3.9.1");
+        editor.apply();
         Radar.initialize(this.getContext(), publishableKey);
         call.resolve();
     }
