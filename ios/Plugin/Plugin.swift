@@ -69,6 +69,8 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
 
                 return
             }
+            UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
+            UserDefaults.standard.set("3.9.1", forKey: "radar-xPlatformSDKVersion")
             Radar.initialize(publishableKey: publishableKey)
             call.resolve()
         }
@@ -910,5 +912,58 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             }
         }
     }
+
+    @objc func logTermination(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.logTermination()
+            call.resolve()
+        }
+    }
+
+    @objc func logBackgrounding(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.logBackgrounding()
+            call.resolve()
+        }
+    }
+
+    @objc func logResigningActive(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.logResigningActive()
+            call.resolve()
+        }
+    }
+
+    @objc func setNotificationOptions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            // Not implemented
+            call.resolve()
+        }
+    }
+
+    @objc func isUsingRemoteTrackingOptions(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "isUsingRemoteTrackingOptions": Radar.isUsingRemoteTrackingOptions()
+            ]);
+        }
+    }
+
+    @objc func getHost(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "host": RadarSettings.host()
+            ]);
+        }
+    }
+
+    @objc func getPublishableKey(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "publishableKey": RadarSettings.publishableKey()
+            ]);
+        }
+    }
+
 
 }

@@ -17,7 +17,8 @@ import type {
   RadarPlugin,
   RadarTrackingOptions,
   RadarAddress,
-  RadarValidateAddressCallback
+  RadarValidateAddressCallback,
+  RadarNotificationOptions
 } from './definitions';
 
 import Radar from 'radar-sdk-js';
@@ -384,6 +385,22 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
         }
       });
     });
+  }
+
+  logTermination(): void {
+    // not implemented
+  }
+
+  logBackgrounding(): void {
+    // not implemented
+  }
+
+  logResigningActive(): void {
+    // not implemented
+  }
+
+  setNotificationOptions(options: RadarNotificationOptions): void {
+    // not implemented
   }
 
 }

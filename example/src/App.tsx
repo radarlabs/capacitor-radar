@@ -5,6 +5,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 import { Radar } from 'capacitor-radar';
 import { RadarTripOptions, RadarTrackingOptions } from 'capacitor-radar/src/definitions';
+import { App as CapacitorApp } from '@capacitor/app'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -44,6 +45,20 @@ Radar.addListener('error', (result) => {
 Radar.addListener('token', (result) => {
   console.log(`token: ${JSON.stringify(result)}`);
 });
+
+CapacitorApp.addListener('appStateChange', ({ isActive }) => {
+  if (!isActive) {
+    Radar.logResigningActive();
+  }
+});
+
+// Available on @capacitor/app 4.1.0
+// CapacitorApp.addListener('pause', () => {
+//   Radar.logBackgrounding();
+// })
+
+// Add this to iOS callback for termination; Android calls this automatically
+// Radar.logTermination();
 
 interface AppProps {}
 
@@ -135,6 +150,9 @@ class App extends React.Component<AppProps, AppState> {
       this.logOutput(`logConversion: ${JSON.stringify(result)}\n`);
     }).catch((error) => {
       this.logOutput(`logConversion: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.setNotificationOptions({
+      iconString: 'icon'
     });
     Radar.getTripOptions().then((result) => {
       this.logOutput(`getTripOptions: ${JSON.stringify(result)}\n`);
@@ -243,6 +261,18 @@ class App extends React.Component<AppProps, AppState> {
       }
     }).catch((error) => {
       this.logOutput(`trackVerifiedToken: error ${JSON.stringify(error)}\n`);
+    });
+
+    Radar.isUsingRemoteTrackingOptions().then((result) => {
+      this.logOutput(`isUsingRemoteTrackingOptions: ${JSON.stringify(result)}\n`);
+    });
+
+    Radar.getHost().then((result) => {
+      this.logOutput(`getHost: ${JSON.stringify(result)}\n`);
+    });
+
+    Radar.getPublishableKey().then((result) => {
+      this.logOutput(`getPublishableKey: ${JSON.stringify(result)}\n`);
     });
 
     // var stopTrackingTime = new Date()

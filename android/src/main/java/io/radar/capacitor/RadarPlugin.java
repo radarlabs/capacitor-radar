@@ -2,6 +2,7 @@ package io.radar.capacitor;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 import android.util.Log;
@@ -37,6 +38,7 @@ import java.util.TreeMap;
 import java.util.HashMap;
 
 import io.radar.sdk.Radar;
+import io.radar.sdk.RadarNotificationOptions;
 import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
@@ -167,6 +169,10 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
+        SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
+        editor.putString("x_platform_sdk_type", "Capacitor");
+        editor.putString("x_platform_sdk_version", "3.9.1");
+        editor.apply();
         Radar.initialize(this.getContext(), publishableKey);
         call.resolve();
     }
@@ -677,7 +683,11 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void getTripOptions(PluginCall call) {
         RadarTripOptions options = Radar.getTripOptions();
-        call.resolve(RadarPlugin.jsObjectForJSONObject(options.toJson()));
+        if (options != null) {
+            call.resolve(RadarPlugin.jsObjectForJSONObject(options.toJson()));
+        } else {
+            call.reject("No trip options available");
+        }
     }
 
     @PluginMethod()
@@ -1208,5 +1218,54 @@ public class RadarPlugin extends Plugin {
         } catch (JSONException j) {
             return null;
         }
+    }
+
+    @PluginMethod()
+    public void logTermination(final PluginCall call) {
+        // not implemented
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void logBackgrounding(final PluginCall call) {
+        Radar.logBackgrounding();
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void logResigningActive(final PluginCall call) {
+        Radar.logResigningActive();
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void setNotificationOptions(final PluginCall call) {
+        JSObject notificationOptionsObj = call.getObject("options");
+
+        JSONObject notificationOptionsJson = RadarPlugin.jsonObjectForJSObject(notificationOptionsObj);
+        RadarNotificationOptions notificationOptions = RadarNotificationOptions.fromJson(notificationOptionsJson);
+        Radar.setNotificationOptions(notificationOptions);
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void isUsingRemoteTrackingOptions(final PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("isUsingRemoteTrackingOptions", Radar.isUsingRemoteTrackingOptions());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void getHost(final PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("host", Radar.getHost());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void getPublishableKey(final PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("publishableKey", Radar.getPublishableKey());
+        call.resolve(ret);
     }
 }
