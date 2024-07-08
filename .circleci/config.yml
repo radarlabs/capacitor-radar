@@ -23,7 +23,13 @@ jobs:
     steps:
       - checkout:
           path: ~/capacitor-radar
-      - run: export NODE_OPTIONS=--openssl-legacy-provider
+    - run: 
+        name: Install and use Node.js 16.15.1
+        command: |
+          echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+          source ~/.nvm/nvm.sh
+          nvm install 16.15.1
+          nvm use 16.15.1
       - run: node --version
       - run: npm install
       - run: npm run build
