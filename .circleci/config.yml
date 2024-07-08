@@ -23,6 +23,14 @@ jobs:
     steps:
       - checkout:
           path: ~/capacitor-radar
+      - run:
+          name: Install nvm
+          command: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+            source ~/.nvm/nvm.sh
+            nvm install 16.15.1
+            nvm use 16.15.1
+            nvm alias default 16.15.1
       - run: node --version
       - run: npm install
       - run: npm run build
