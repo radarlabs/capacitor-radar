@@ -373,7 +373,7 @@ class App extends React.Component<AppProps, AppState> {
         this.logOutput(`getTripOptions: error ${JSON.stringify(error)}\n`);
       });
 
-      if (result.status == "SUCCESS") {
+      if (result.status === "SUCCESS") {
 
       } else {
         this.logOutput(`failed to start trip ${JSON.stringify(result)}`);
