@@ -11,6 +11,7 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
+    namespace "io.radar.capacitor"
     compileSdkVersion 31
     defaultConfig {
         minSdkVersion 21
