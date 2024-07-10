@@ -81,7 +81,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidMount() {
-    Radar.initialize({ publishableKey: 'prj_test_pk_0000000000000000000000000000000000000000' });
+    Radar.initialize({ publishableKey: 'prj_test_pk_333df0ef19f87a254f12cb1818de8443181054a7' });
     Radar.setLogLevel({level: 'debug'});
     Radar.setUserId({ userId: 'capacitor' });
     Radar.setDescription({ description: 'capacitor example'});
@@ -151,9 +151,9 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`logConversion: error ${JSON.stringify(error)}\n`);
     });
-    Radar.setNotificationOptions({
-      iconString: 'icon'
-    });
+    // Radar.setNotificationOptions({
+    //   iconString: 'icon'
+    // });
     Radar.getTripOptions().then((result) => {
       this.logOutput(`getTripOptions: ${JSON.stringify(result)}\n`);
     }).catch((error) => {
@@ -204,11 +204,11 @@ class App extends React.Component<AppProps, AppState> {
       const address = (result && result.addresses && result.addresses[0]);
 
       if (address) {
-        Radar.validateAddress({address: address}).then((result) => {
-          this.logOutput(`validateAddress: ${JSON.stringify(result)}\n`);
-        }).catch((error) => {
-          this.logOutput(`validateAddress: error ${JSON.stringify(error)}\n`);
-        });
+        // Radar.validateAddress({address: address}).then((result) => {
+        //   this.logOutput(`validateAddress: ${JSON.stringify(result)}\n`);
+        // }).catch((error) => {
+        //   this.logOutput(`validateAddress: error ${JSON.stringify(error)}\n`);
+        // });
       }
     }).catch((error) => {
       this.logOutput(`autocomplete: error ${JSON.stringify(error)}\n`);
