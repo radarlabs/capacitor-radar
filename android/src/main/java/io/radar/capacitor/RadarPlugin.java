@@ -781,6 +781,7 @@ public class RadarPlugin extends Plugin {
         String[] tags = RadarPlugin.stringArrayForJSArray(call.getArray("tags"));
         JSONObject metadata = RadarPlugin.jsonObjectForJSObject(call.getObject("metadata"));
         int limit = call.getInt("limit", 10);
+        boolean includeGeometry = call.getBoolean("includeGeometry", false);
 
         if (call.hasOption("near")) {
             JSObject nearObj = call.getObject("near");
@@ -791,9 +792,9 @@ public class RadarPlugin extends Plugin {
             near.setLongitude(longitude);
             near.setAccuracy(5);
 
-            Radar.searchGeofences(near, radius, tags, metadata, limit, callback);
+            Radar.searchGeofences(near, radius, tags, metadata, limit, includeGeometry, callback);
         } else {
-            Radar.searchGeofences(radius, tags, metadata, limit, callback);
+            Radar.searchGeofences(radius, tags, metadata, limit, includeGeometry, callback);
         }
     }
 

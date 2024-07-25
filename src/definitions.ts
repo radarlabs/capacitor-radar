@@ -41,7 +41,7 @@ export interface RadarPlugin {
   getTripOptions(): Promise<RadarTripOptions>,
   getContext(options?: Location): Promise<RadarContextCallback>;
   searchPlaces(options: { near?: Location, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
-  searchGeofences(options: { near?: Location, radius: number, metadata?: object, tags?: string[], limit: number }): Promise<RadarSearchGeofencesCallback>;
+  searchGeofences(options: { near?: Location, radius?: number, metadata?: object, tags?: string[], limit?: number, includeGeometry: boolean }): Promise<RadarSearchGeofencesCallback>;
   autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string, expandUnits?: boolean, mailable?: boolean }): Promise<RadarGeocodeCallback>;
   validateAddress(options: { address: RadarAddress }): Promise<RadarValidateAddressCallback>;
   geocode(options: { query: string }): Promise<RadarGeocodeCallback>;
@@ -56,7 +56,7 @@ export interface RadarPlugin {
   setNotificationOptions(options: RadarNotificationOptions): void; // Android only
   isUsingRemoteTrackingOptions(): Promise<object>;
   getHost(): Promise<object>;
-  getPublishableKey(): Promise<object>;
+  getPublishableKey(): Promise<string>;
 }
 
 export interface RadarLocationCallback {

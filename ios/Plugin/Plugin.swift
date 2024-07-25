@@ -630,6 +630,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             let tags = call.getArray("tags", String.self)
             let metadata = call.getObject("metadata") ?? nil
             let limit = Int32(call.getInt("limit") ?? 10)
+            let includeGeometry = call.getBool("includeGeometry") ?? false
 
             let nearDict = call.options["near"] as? [String:Double] ?? nil
             if nearDict != nil {
@@ -637,9 +638,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: metadata, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: metadata, limit: limit, includeGeometry: includeGeometry, completionHandler: completionHandler)
             } else {
-                Radar.searchGeofences(radius: radius, tags: tags, metadata: metadata, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(near: nil, radius: radius, tags: tags, metadata: metadata, limit: limit, includeGeometry: includeGeometry, completionHandler: completionHandler)
             }
         }
     }
@@ -681,7 +682,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
 
     @objc func validateAddress(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let address = RadarAddress.init(object: call.getObject("address")) else {
+            guard let address = RadarAddress.init(object: call.getObject("address") as Any) else {
                 call.reject("address is required")
 
                 return
@@ -960,7 +961,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     @objc func getPublishableKey(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
-                "publishableKey": RadarSettings.publishableKey()
+                "publishableKey": RadarSettings.publishableKey() as Any
             ]);
         }
     }

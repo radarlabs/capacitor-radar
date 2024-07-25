@@ -185,6 +185,7 @@ class App extends React.Component<AppProps, AppState> {
         "customFlag": "true"
       },
       limit: 10,
+      includeGeometry: false
     }).then((result) => {
       this.logOutput(`searchGeofences: ${JSON.stringify(result)}\n`);
     }).catch((error) => {
