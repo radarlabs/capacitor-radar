@@ -54,7 +54,6 @@ import io.radar.sdk.model.RadarRouteMatrix;
 import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarTrip;
 import io.radar.sdk.model.RadarUser;
-import io.radar.sdk.model.RadarLocationPermissionStatus;
 import io.radar.sdk.model.RadarVerifiedLocationToken;
 
 @CapacitorPlugin(name = "Radar")
@@ -147,11 +146,6 @@ public class RadarPlugin extends Plugin {
                 } catch (Exception e) {
                     Log.e(TAG, "Exception", e);
                 }
-            }
-
-            @Override
-            public void onLocationPermissionStatusUpdated(@NonNull Context context, @NonNull RadarLocationPermissionStatus status) {
-
             }
         });
 
@@ -392,36 +386,36 @@ public class RadarPlugin extends Plugin {
     public void trackVerified(final PluginCall call) {
         boolean beacons = call.getBoolean("beacons", false);
         
-        // Radar.trackVerified(beacons, new Radar.RadarTrackVerifiedCallback() {
-        //     @Override
-        //     public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarVerifiedLocationToken token) {
-        //         if (status == Radar.RadarStatus.SUCCESS && token != null) {
-        //             JSObject ret = new JSObject();
-        //             ret.put("status", status.toString());
-        //             ret.put("token", RadarPlugin.jsObjectForJSONObject(token.toJson()));
-        //             call.resolve(ret);
-        //         } else {
-        //             call.reject(status.toString());
-        //         }
-        //     }
-        // });
+        Radar.trackVerified(beacons, new Radar.RadarTrackVerifiedCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarVerifiedLocationToken token) {
+                if (status == Radar.RadarStatus.SUCCESS && token != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("token", RadarPlugin.jsObjectForJSONObject(token.toJson()));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
     }
 
     @PluginMethod()
     public void getVerifiedLocationToken(final PluginCall call) {
-        // Radar.getVerifiedLocationToken(new Radar.RadarTrackVerifiedCallback() {
-        //     @Override
-        //     public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarVerifiedLocationToken token) {
-        //         if (status == Radar.RadarStatus.SUCCESS && token != null) {
-        //             JSObject ret = new JSObject();
-        //             ret.put("status", status.toString());
-        //             ret.put("token", RadarPlugin.jsObjectForJSONObject(token.toJson()));
-        //             call.resolve(ret);
-        //         } else {
-        //             call.reject(status.toString());
-        //         }
-        //     }
-        // });
+        Radar.getVerifiedLocationToken(new Radar.RadarTrackVerifiedCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarVerifiedLocationToken token) {
+                if (status == Radar.RadarStatus.SUCCESS && token != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("token", RadarPlugin.jsObjectForJSONObject(token.toJson()));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
     }
 
     @PluginMethod()
@@ -429,7 +423,7 @@ public class RadarPlugin extends Plugin {
         int interval = call.getInt("interval", 1200);
         boolean beacons = call.getBoolean("beacons", false);
 
-        // Radar.startTrackingVerified(interval, beacons);
+        Radar.startTrackingVerified(interval, beacons);
         call.resolve();
     }
 

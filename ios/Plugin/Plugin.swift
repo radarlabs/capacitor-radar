@@ -60,10 +60,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
-    public func didUpdateLocationPermissionStatus(status: RadarLocationPermissionStatus) {
-
-    }
-
     // MARK: - CAPPlugin
 
     @objc func initialize(_ call: CAPPluginCall) {
