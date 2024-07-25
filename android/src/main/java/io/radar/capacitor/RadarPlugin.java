@@ -253,7 +253,7 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void getLocationPermissionsStatus(PluginCall call) {
-        boolean foreground = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        boolean foreground = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) || hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
 
         String status;
         if (Build.VERSION.SDK_INT >= 29) {
