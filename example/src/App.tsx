@@ -3,7 +3,7 @@ import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
-import { Radar } from 'capacitor-radar';
+import { Radar, RadarGeocodeCallback } from 'capacitor-radar';
 import { RadarTripOptions, RadarTrackingOptions } from 'capacitor-radar/src/definitions';
 import { App as CapacitorApp } from '@capacitor/app'
 
@@ -81,7 +81,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidMount() {
-    Radar.initialize({ publishableKey: 'prj_test_pk_333df0ef19f87a254f12cb1818de8443181054a7' });
+    Radar.initialize({ publishableKey: 'prj_test_pk_0000000000000000000000000000000000000000' });
     Radar.setLogLevel({level: 'debug'});
     Radar.setUserId({ userId: 'capacitor' });
     Radar.setDescription({ description: 'capacitor example'});
@@ -185,6 +185,7 @@ class App extends React.Component<AppProps, AppState> {
         "customFlag": "true"
       },
       limit: 10,
+      includeGeometry: false
     }).then((result) => {
       this.logOutput(`searchGeofences: ${JSON.stringify(result)}\n`);
     }).catch((error) => {
@@ -253,14 +254,14 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`trackVerified: error ${JSON.stringify(error)}\n`);
     });
-    Radar.trackVerifiedToken().then((result) => {
-      this.logOutput(`trackVerifiedToken: ${JSON.stringify(result)}\n`);
+    Radar.getVerifiedLocationToken().then((result) => {
+      this.logOutput(`getVerifiedLocationToken: ${JSON.stringify(result)}\n`);
       const { token } = result;
       if (token) {
         // send token to server
       }
     }).catch((error) => {
-      this.logOutput(`trackVerifiedToken: error ${JSON.stringify(error)}\n`);
+      this.logOutput(`getVerifiedLocationToken: error ${JSON.stringify(error)}\n`);
     });
 
     Radar.isUsingRemoteTrackingOptions().then((result) => {
@@ -381,6 +382,20 @@ class App extends React.Component<AppProps, AppState> {
     }).catch((error) => {
       this.logOutput(`error ${JSON.stringify(error)}`);
     });
+
+    Radar.geocode({ query: "20 jay st brooklyn" }).then((result: RadarGeocodeCallback) => {
+      this.logOutput(`geocode: ${JSON.stringify(result.addresses)}`);
+    }).catch((error) => {
+      this.logOutput(`geocode: error ${error}`);
+    });
+    Radar.reverseGeocode({ location: {
+      latitude: 40.783826,
+      longitude: -73.975363,
+    } }).then((result: RadarGeocodeCallback) => {
+      this.logOutput(`geocode: ${JSON.stringify(result.addresses)}`);
+    }).catch((error) => {
+      this.logOutput(`geocode: error ${error}`);
+    })
 
     /*
     Radar.mockTracking({

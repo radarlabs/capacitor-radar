@@ -16,7 +16,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(getLocation, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(trackOnce, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(trackVerified, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(trackVerifiedToken, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getVerifiedLocationToken, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingVerified, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingEfficient, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingResponsive, CAPPluginReturnPromise);
@@ -24,6 +24,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(startTrackingCustom, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(mockTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(stopTracking, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(stopTrackingVerified, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(isTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getTrackingOptions, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setForegroundServiceOptions, CAPPluginReturnPromise);

@@ -128,7 +128,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
-  trackVerifiedToken(options?: { beacons?: boolean }): void {
+  getVerifiedLocationToken(): void {
     // not implemented
   }
 
@@ -158,6 +158,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
 
   stopTracking(): void {
     // not implemented
+  }
+
+  stopTrackingVerified(): void {
+    // not implmented
   }
 
   isTracking(): Promise<object> {

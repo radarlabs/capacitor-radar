@@ -52,10 +52,10 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
-    public func didUpdateToken(_ token: String) {
+    public func didUpdateToken(_ token: RadarVerifiedLocationToken) {
         DispatchQueue.main.async {
             self.notifyListeners("token", data: [
-                "token": token
+                "token": token.dictionaryValue()
             ])
         }
     }
@@ -70,7 +70,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 return
             }
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
-            UserDefaults.standard.set("3.11.0", forKey: "radar-xPlatformSDKVersion")
+            UserDefaults.standard.set("3.12.0", forKey: "radar-xPlatformSDKVersion")
             Radar.initialize(publishableKey: publishableKey)
             call.resolve()
         }
@@ -286,13 +286,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         DispatchQueue.main.async {
             let beacons = call.getBool("beacons") ?? false
 
-            Radar.trackVerified(beacons: beacons) { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
-                if status == .success && location != nil && events != nil && user != nil {
+            Radar.trackVerified(beacons: beacons) { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
+                if status == .success && token != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
-                        "location": Radar.dictionaryForLocation(location!),
-                        "events": RadarEvent.array(for: events!) ?? [],
-                        "user": user!.dictionaryValue()
+                        "token": token!.dictionaryValue()
                     ])
                 } else {
                     call.reject(Radar.stringForStatus(status))
@@ -301,15 +299,13 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
-    @objc func trackVerifiedToken(_ call: CAPPluginCall) {
+    @objc func getVerifiedLocationToken(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            let beacons = call.getBool("beacons") ?? false
-
-            Radar.trackVerifiedToken(beacons: beacons) { (status: RadarStatus, token: String?) in
+            Radar.getVerifiedLocationToken() { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
                 if status == .success && token != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
-                        "token": token ?? ""
+                        "token": token!.dictionaryValue()
                     ])
                 } else {
                     call.reject(Radar.stringForStatus(status))
@@ -320,11 +316,10 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
 
     @objc func startTrackingVerified(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            let token = call.getBool("token") ?? false
-            let interval = call.getDouble("interval") ?? 300.0
+            let interval = call.getDouble("interval") ?? 1200.0
             let beacons = call.getBool("beacons") ?? false
 
-            Radar.startTrackingVerified(token: token, interval: interval, beacons: beacons)
+            Radar.startTrackingVerified(interval: interval, beacons: beacons)
         }
     }
 
@@ -408,6 +403,13 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     @objc func stopTracking(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.stopTracking()
+            call.resolve()
+        }
+    }
+
+    @objc func stopTrackingVerified(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.stopTrackingVerified()
             call.resolve()
         }
     }
@@ -630,6 +632,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             let tags = call.getArray("tags", String.self)
             let metadata = call.getObject("metadata") ?? nil
             let limit = Int32(call.getInt("limit") ?? 10)
+            let includeGeometry = call.getBool("includeGeometry") ?? false
 
             let nearDict = call.options["near"] as? [String:Double] ?? nil
             if nearDict != nil {
@@ -637,9 +640,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: metadata, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(near: near, radius: radius, tags: tags, metadata: metadata, limit: limit, includeGeometry: includeGeometry, completionHandler: completionHandler)
             } else {
-                Radar.searchGeofences(radius: radius, tags: tags, metadata: metadata, limit: limit, completionHandler: completionHandler)
+                Radar.searchGeofences(near: nil, radius: radius, tags: tags, metadata: metadata, limit: limit, includeGeometry: includeGeometry, completionHandler: completionHandler)
             }
         }
     }
@@ -681,7 +684,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
 
     @objc func validateAddress(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let address = RadarAddress.init(object: call.getObject("address")) else {
+            guard let address = RadarAddress.init(object: call.getObject("address") as Any) else {
                 call.reject("address is required")
 
                 return
@@ -706,11 +709,13 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         DispatchQueue.main.async {
             guard let query = call.getString("query") else {
                 call.reject("query is required")
-
                 return
             }
 
-            Radar.geocode(address: query) { (status: RadarStatus, addresses: [RadarAddress]?) in
+            let layers = call.getArray("layers", String.self)
+            let countries = call.getArray("countries", String.self)
+
+            Radar.geocode(address: query, layers: layers, countries: countries) { (status: RadarStatus, addresses: [RadarAddress]?) in
                 if status == .success && addresses != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
@@ -736,16 +741,19 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 }
             }
 
-            let latitude = call.getDouble("latitude") ?? 0.0
-            let longitude = call.getDouble("longitude") ?? 0.0
+            let location = call.getObject("location")
+            let layers = call.getArray("layers", String.self)
             
-            if latitude != 0.0 && longitude != 0.0 {
+            if location != nil {
+                let latitude = location?["latitude"] as? Double ?? 0.0
+                let longitude = location?["longitude"] as? Double ?? 0.0
+
                 let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
                 let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
 
-                Radar.reverseGeocode(location: location, completionHandler: completionHandler)
+                Radar.reverseGeocode(location: location, layers: layers, completionHandler: completionHandler)
             } else {
-                Radar.reverseGeocode(completionHandler: completionHandler)
+                Radar.reverseGeocode(layers: layers, completionHandler: completionHandler)
             }
         }
     }
@@ -960,7 +968,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     @objc func getPublishableKey(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
-                "publishableKey": RadarSettings.publishableKey()
+                "publishableKey": RadarSettings.publishableKey() as Any
             ]);
         }
     }
