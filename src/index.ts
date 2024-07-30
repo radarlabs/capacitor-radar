@@ -7,4 +7,5 @@ const Radar = registerPlugin<RadarPlugin>('Radar', {
 });
 
 export * from './definitions';
+export * from './types';
 export { Radar };
