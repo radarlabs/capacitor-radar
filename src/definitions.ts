@@ -106,3 +106,5 @@ export interface RadarLocationPermissionsCallback {
 export interface RadarTrackingStatus {
   isTracking: string;
 }
+
+export type RadarGeocodeCallback = RadarAddressCallback;
