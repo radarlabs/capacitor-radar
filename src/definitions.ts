@@ -38,7 +38,7 @@ import {
 } from "./types"
 
 export interface RadarPlugin {
-  initialize(options: { publishableKey: string, fraud?: boolean }): void; // TODO: impl add fraud
+  initialize(options: { publishableKey: string, fraud?: boolean }): void;
   setLogLevel(options: { level: string }): void;
   setUserId(options: { userId?: string }): void;
   getUserId(): Promise<object>,
@@ -50,7 +50,7 @@ export interface RadarPlugin {
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
-  trackOnce(options?: Location | RadarTrackOnceOptions): Promise<RadarTrackCallback>; // TODO: maybe impl add location
+  trackOnce(options?: Location | RadarTrackOnceOptions): Promise<RadarTrackCallback>; // TODO: impl add location field for RadarTrackOnceOptions
   trackVerified(options?: RadarTrackVerifiedOptions): Promise<RadarTrackVerifiedCallback>;
   getVerifiedLocationToken(): Promise<RadarTrackVerifiedCallback>;
   startTrackingEfficient(): void;
@@ -60,9 +60,9 @@ export interface RadarPlugin {
   startTrackingVerified(options: RadarVerifiedTrackingOptions): void;
   mockTracking(options: RadarMockTrackingOptions): void;
   stopTracking(): void;
-  stopTrackingVerified(): void; // TODO: implement
+  stopTrackingVerified(): void;
   getTrackingOptions(): Promise<RadarTrackingOptions>;
-  isUsingRemoteTrackingOptions(): Promise<boolean>; // TODO: implement
+  isUsingRemoteTrackingOptions(): Promise<boolean>;
   isTracking(): Promise<RadarTrackingStatus>;
   setForegroundServiceOptions(options: { options: RadarTrackingOptionsForegroundService }): void;
   setNotificationOptions(options: RadarNotificationOptions): void; // Android only

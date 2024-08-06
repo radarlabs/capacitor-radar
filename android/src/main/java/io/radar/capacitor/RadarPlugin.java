@@ -170,11 +170,12 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
+        Boolean fraud = call.getBoolean("fraud", false);
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
         editor.putString("x_platform_sdk_version", "3.12.0");
         editor.apply();
-        Radar.initialize(this.getContext(), publishableKey);
+        Radar.initialize(this.getContext(), publishableKey, null, RadarLocationServicesProvider.GOOGLE, fraud);
         call.resolve();
     }
 
