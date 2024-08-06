@@ -346,7 +346,18 @@ public class RadarPlugin extends Plugin {
             }
         };
 
-        if (call.hasOption("latitude") && call.hasOption("longitude") && call.hasOption("accuracy")) {
+        if (call.hadOption("location")) {
+            JSObject locationObj = call.getObject("location");
+            double latitude = locationObj.getDouble("latitude");
+            double longitude = locationObj.getDouble("longitude");
+            float accuracy = locationObj.getDouble("accuracy").floatValue();
+            Location location = new Location("RadarSDK");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            location.setAccuracy(accuracy);
+
+            Radar.trackOnce(location, callback);
+        } else if (call.hasOption("latitude") && call.hasOption("longitude") && call.hasOption("accuracy")) {
             double latitude = call.getDouble("latitude");
             double longitude = call.getDouble("longitude");
             float accuracy = call.getDouble("accuracy").floatValue();

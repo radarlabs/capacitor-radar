@@ -50,7 +50,7 @@ export interface RadarPlugin {
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
-  trackOnce(options?: Location | RadarTrackOnceOptions): Promise<RadarTrackCallback>; // TODO: impl add location field for RadarTrackOnceOptions
+  trackOnce(options?: Location | RadarTrackOnceOptions): Promise<RadarTrackCallback>;
   trackVerified(options?: RadarTrackVerifiedOptions): Promise<RadarTrackVerifiedCallback>;
   getVerifiedLocationToken(): Promise<RadarTrackVerifiedCallback>;
   startTrackingEfficient(): void;
