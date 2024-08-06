@@ -175,7 +175,7 @@ public class RadarPlugin extends Plugin {
         editor.putString("x_platform_sdk_type", "Capacitor");
         editor.putString("x_platform_sdk_version", "3.12.0");
         editor.apply();
-        Radar.initialize(this.getContext(), publishableKey, null, RadarLocationServicesProvider.GOOGLE, fraud);
+        Radar.initialize(this.getContext(), publishableKey, null, Radar.RadarLocationServicesProvider.GOOGLE, fraud);
         call.resolve();
     }
 
