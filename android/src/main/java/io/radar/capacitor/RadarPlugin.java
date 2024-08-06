@@ -329,7 +329,7 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void trackOnce(final PluginCall call) {
+    public void trackOnce(final PluginCall call) throws JSONException {
         Radar.RadarTrackCallback callback = new Radar.RadarTrackCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
@@ -346,11 +346,16 @@ public class RadarPlugin extends Plugin {
             }
         };
 
-        if (call.hadOption("location")) {
+        if (call.hasOption("location")) {
             JSObject locationObj = call.getObject("location");
+
             double latitude = locationObj.getDouble("latitude");
             double longitude = locationObj.getDouble("longitude");
-            float accuracy = locationObj.getDouble("accuracy").floatValue();
+            if (!locationObj.has("accuracy")) {
+                call.reject("location accuracy is required");
+                return;
+            }
+            float accuracy = (float)locationObj.getDouble("accuracy");
             Location location = new Location("RadarSDK");
             location.setLatitude(latitude);
             location.setLongitude(longitude);
