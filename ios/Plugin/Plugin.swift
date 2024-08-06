@@ -252,9 +252,17 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 }
             }
 
-            let latitude = call.getDouble("latitude") ?? 0.0
-            let longitude = call.getDouble("longitude") ?? 0.0
-            let accuracy = call.getDouble("accuracy") ?? 0.0
+            var latitude = call.getDouble("latitude") ?? 0.0
+            var longitude = call.getDouble("longitude") ?? 0.0
+            var accuracy = call.getDouble("accuracy") ?? 0.0
+            
+            let locationDict = call.getObject("location") as? [String:Double] ?? nil
+            if (locationDict != nil) {
+                latitude = locationDict?["latitude"] ?? 0.0
+                longitude = locationDict?["longitude"] ?? 0.0
+                accuracy = locationDict?["accuracy"] ?? 0.0 
+            }
+
             let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
             let location = CLLocation(coordinate: coordinate, altitude: -1, horizontalAccuracy: accuracy, verticalAccuracy: -1, timestamp: Date())
             var accuracyLevel = RadarTrackingOptions.desiredAccuracy(for:"medium")

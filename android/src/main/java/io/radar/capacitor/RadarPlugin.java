@@ -170,11 +170,12 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
+        Boolean fraud = call.getBoolean("fraud", false);
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
         editor.putString("x_platform_sdk_version", "3.12.0");
         editor.apply();
-        Radar.initialize(this.getContext(), publishableKey);
+        Radar.initialize(this.getContext(), publishableKey, null, Radar.RadarLocationServicesProvider.GOOGLE, fraud);
         call.resolve();
     }
 
@@ -328,7 +329,7 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void trackOnce(final PluginCall call) {
+    public void trackOnce(final PluginCall call) throws JSONException {
         Radar.RadarTrackCallback callback = new Radar.RadarTrackCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable Location location, @Nullable RadarEvent[] events, @Nullable RadarUser user) {
@@ -345,7 +346,23 @@ public class RadarPlugin extends Plugin {
             }
         };
 
-        if (call.hasOption("latitude") && call.hasOption("longitude") && call.hasOption("accuracy")) {
+        if (call.hasOption("location")) {
+            JSObject locationObj = call.getObject("location");
+
+            double latitude = locationObj.getDouble("latitude");
+            double longitude = locationObj.getDouble("longitude");
+            if (!locationObj.has("accuracy")) {
+                call.reject("location accuracy is required");
+                return;
+            }
+            float accuracy = (float)locationObj.getDouble("accuracy");
+            Location location = new Location("RadarSDK");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            location.setAccuracy(accuracy);
+
+            Radar.trackOnce(location, callback);
+        } else if (call.hasOption("latitude") && call.hasOption("longitude") && call.hasOption("accuracy")) {
             double latitude = call.getDouble("latitude");
             double longitude = call.getDouble("longitude");
             float accuracy = call.getDouble("accuracy").floatValue();

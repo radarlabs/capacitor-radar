@@ -81,7 +81,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidMount() {
-    Radar.initialize({ publishableKey: 'prj_test_pk_0000000000000000000000000000000000000000' });
+    Radar.initialize({ publishableKey: 'prj_test_pk_26da2abbdc9c6ffc86afcbc3df0bbde4f8d4e1f8' });
     Radar.setLogLevel({level: 'debug'});
     Radar.setUserId({ userId: 'capacitor' });
     Radar.setDescription({ description: 'capacitor example'});
@@ -122,6 +122,17 @@ class App extends React.Component<AppProps, AppState> {
       this.logOutput(`trackOnce: ${JSON.stringify(result)}\n`);
     }).catch((error) => {
       this.logOutput(`trackOnce: error ${JSON.stringify(error)}\n`);
+    });
+    Radar.trackOnce({
+      location: {
+        latitude: 40,
+        longitude: -73,
+        accuracy: 0,
+      }
+    }).then((result) => {
+      this.logOutput(`trackOnce with location: ${JSON.stringify(result)}\n`);
+    }).catch((error) => {
+      this.logOutput(`trackOnce with location: error ${JSON.stringify(error)}\n`);
     });
     Radar.isTracking().then((result) => {
       this.logOutput(`isTracking: ${JSON.stringify(result)}\n`);
@@ -245,8 +256,8 @@ class App extends React.Component<AppProps, AppState> {
     
     Radar.trackVerified().then((result) => {
       this.logOutput(`trackVerified: ${JSON.stringify(result)}\n`);
-      const { user } = result;
-      if (user?.fraud?.passed && user?.country?.allowed && user?.state?.allowed) {
+      const { token } = result;
+      if (token?.passed) {
         // allow access to feature
       } else {
         // deny access to feature, show error message
@@ -335,7 +346,7 @@ class App extends React.Component<AppProps, AppState> {
           destinationGeofenceTag: "store",
           destinationGeofenceExternalId: "123",
           mode: "car",
-          scheduledArrivalAt: scheduledArrivalAt
+          scheduledArrivalAt: scheduledArrivalAt.toISOString(),
         },
         trackingOptions: {
           "desiredStoppedUpdateInterval": 30,
