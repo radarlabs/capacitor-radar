@@ -132,6 +132,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  setExpectedJurisdiction(options?: { countryCode: string; stateCode: string; }): void {
+    // not implemented
+  }
+
   startTrackingVerified(options: { token?: boolean, interval: number, beacons: boolean }): void {
     // not implemented
   }

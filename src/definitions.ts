@@ -22,6 +22,8 @@ export interface RadarPlugin {
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
   trackVerified(options?: { beacons?: boolean }): Promise<RadarTrackCallback>;
   getVerifiedLocationToken(): Promise<RadarTrackTokenCallback>;
+  // TODO: when Android Sdk fixes this method to be static, uncomment
+  // setExpectedJurisdiction(options?: { countryCode: string, stateCode: string }): void;
   startTrackingVerified(options: { token?: boolean, interval: number, beacons: boolean }): void;
   startTrackingEfficient(): void;
   startTrackingResponsive(): void;
@@ -286,6 +288,7 @@ export interface RadarGeofence {
   tag?: string;
   externalId?: string;
   metadata?: object;
+  operatingHours?: object;
 }
 
 export interface RadarBeacon {
@@ -464,13 +467,13 @@ export interface RadarTrackingOptionsForegroundService {
 }
 
 export interface RadarTripOptions {
-   externalId: string;
-   metadata?: object;
-   destinationGeofenceTag?: string;
-   destinationGeofenceExternalId?: string;
-   mode?: RadarRouteMode;
-   scheduledArrivalAt?: Date;
-   approachingThreshold?: number
+  externalId: string;
+  metadata?: object;
+  destinationGeofenceTag?: string;
+  destinationGeofenceExternalId?: string;
+  mode?: RadarRouteMode;
+  scheduledArrivalAt?: Date;
+  approachingThreshold?: number
 }
 
 export type RadarTripStatus = 

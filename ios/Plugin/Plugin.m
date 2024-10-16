@@ -17,6 +17,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(trackOnce, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(trackVerified, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getVerifiedLocationToken, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setExpectedJurisdiction, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingVerified, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingEfficient, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingResponsive, CAPPluginReturnPromise);

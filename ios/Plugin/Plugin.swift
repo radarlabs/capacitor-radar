@@ -70,7 +70,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 return
             }
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
-            UserDefaults.standard.set("3.12.0", forKey: "radar-xPlatformSDKVersion")
+            UserDefaults.standard.set("3.13.0", forKey: "radar-xPlatformSDKVersion")
             Radar.initialize(publishableKey: publishableKey)
             call.resolve()
         }
@@ -311,6 +311,16 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                     call.reject(Radar.stringForStatus(status))
                 }
             }
+        }
+    }
+
+    @objc func setExpectedJurisdiction(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let countryCode = call.getString("countryCode")
+            let stateCode = call.getString("stateCode")
+
+            Radar.setExpectedJurisdiction(countryCode: countryCode, stateCode: stateCode)
+            call.resolve()
         }
     }
 
