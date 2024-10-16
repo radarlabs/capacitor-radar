@@ -86,6 +86,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         shouldStringifyDatesInCalls = false
         Radar.setDelegate(self)
         Radar.setVerifiedDelegate(self)
+        
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
@@ -330,6 +331,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             let beacons = call.getBool("beacons") ?? false
 
             Radar.startTrackingVerified(interval: interval, beacons: beacons)
+            call.resolve()
         }
     }
 

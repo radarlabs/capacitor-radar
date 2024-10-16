@@ -484,4 +484,3 @@ export type RadarTripStatus =
   | 'expired'
   | 'completed'
   | 'canceled'
-
