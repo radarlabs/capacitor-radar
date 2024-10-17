@@ -70,7 +70,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 return
             }
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
-            UserDefaults.standard.set("3.12.0", forKey: "radar-xPlatformSDKVersion")
+            UserDefaults.standard.set("3.13.0", forKey: "radar-xPlatformSDKVersion")
             Radar.initialize(publishableKey: publishableKey)
             call.resolve()
         }
@@ -86,6 +86,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         shouldStringifyDatesInCalls = false
         Radar.setDelegate(self)
         Radar.setVerifiedDelegate(self)
+        
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
@@ -314,12 +315,23 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func setExpectedJurisdiction(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let countryCode = call.getString("countryCode")
+            let stateCode = call.getString("stateCode")
+
+            Radar.setExpectedJurisdiction(countryCode: countryCode, stateCode: stateCode)
+            call.resolve()
+        }
+    }
+
     @objc func startTrackingVerified(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let interval = call.getDouble("interval") ?? 1200.0
             let beacons = call.getBool("beacons") ?? false
 
             Radar.startTrackingVerified(interval: interval, beacons: beacons)
+            call.resolve()
         }
     }
 

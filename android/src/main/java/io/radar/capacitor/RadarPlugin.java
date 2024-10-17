@@ -172,7 +172,7 @@ public class RadarPlugin extends Plugin {
         String publishableKey = call.getString("publishableKey");
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
-        editor.putString("x_platform_sdk_version", "3.12.0");
+        editor.putString("x_platform_sdk_version", "3.13.0");
         editor.apply();
         Radar.initialize(this.getContext(), publishableKey);
         call.resolve();
@@ -416,6 +416,16 @@ public class RadarPlugin extends Plugin {
                 }
             }
         });
+    }
+
+    @PluginMethod()
+    public void setExpectedJurisdiction(final PluginCall call) {
+        String countryCode = call.getString("countryCode");
+        String stateCode = call.getString("stateCode");
+
+        // TODO: when Android Sdk fixes this method to be static, uncomment
+        // Radar.setExpectedJurisdiction(countryCode, stateCode);
+        call.resolve();
     }
 
     @PluginMethod()
