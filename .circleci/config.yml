@@ -39,7 +39,7 @@ jobs:
       - run: cd example && npm install
       - run: cd example && ionic build
       - run: cd example && npx cap sync
-      - run: cd example && ionic capacitor run ios --target $(ionic capacitor run ios --list | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
+      - run: cd example && ionic capacitor run ios --target $(ionic capacitor run ios --list | grep iPhone | grep -o -m 1 '[A-F0-9]\{8\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{4\}-[A-F0-9]\{12\}')
 workflows:
   version: 2
   android-ios:

@@ -1,6 +1,6 @@
 {
   "name": "capacitor-radar",
-  "version": "3.13.0",
+  "version": "3.14.0",
   "description": "Capacitor plugin for Radar, the leading geofencing and location tracking platform",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
