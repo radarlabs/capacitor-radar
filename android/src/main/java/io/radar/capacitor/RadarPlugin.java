@@ -172,7 +172,7 @@ public class RadarPlugin extends Plugin {
         String publishableKey = call.getString("publishableKey");
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
-        editor.putString("x_platform_sdk_version", "3.14.0");
+        editor.putString("x_platform_sdk_version", "3.14.2-beta.1");
         editor.apply();
         Radar.initialize(this.getContext(), publishableKey);
         call.resolve();
