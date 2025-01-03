@@ -423,8 +423,7 @@ public class RadarPlugin extends Plugin {
         String countryCode = call.getString("countryCode");
         String stateCode = call.getString("stateCode");
 
-        // TODO: when Android Sdk fixes this method to be static, uncomment
-        // Radar.setExpectedJurisdiction(countryCode, stateCode);
+        Radar.setExpectedJurisdiction(countryCode, stateCode);
         call.resolve();
     }
 
