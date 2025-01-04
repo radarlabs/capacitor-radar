@@ -20,11 +20,10 @@ export interface RadarPlugin {
   requestLocationPermissions(options: { background: boolean }): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
-  trackVerified(options?: { beacons?: boolean }): Promise<RadarTrackCallback>;
-  getVerifiedLocationToken(): Promise<RadarTrackTokenCallback>;
-  // TODO: when Android Sdk fixes this method to be static, uncomment
-  // setExpectedJurisdiction(options?: { countryCode: string, stateCode: string }): void;
-  startTrackingVerified(options: { token?: boolean, interval: number, beacons: boolean }): void;
+  trackVerified(options?: { beacons?: boolean }): Promise<RadarTrackVerifiedCallback>;
+  getVerifiedLocationToken(): Promise<RadarTrackVerifiedCallback>;
+  setExpectedJurisdiction(options?: { countryCode: string, stateCode: string }): void;
+  startTrackingVerified(options: { interval: number, beacons: boolean }): void;
   startTrackingEfficient(): void;
   startTrackingResponsive(): void;
   startTrackingContinuous(): void;
@@ -75,7 +74,7 @@ export interface RadarTrackCallback {
   events?: RadarEvent[];
 }
 
-export interface RadarTrackTokenCallback {
+export interface RadarTrackVerifiedCallback {
   status: string;
   token?: RadarVerifiedLocationToken;
 }

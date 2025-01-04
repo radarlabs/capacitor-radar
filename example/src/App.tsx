@@ -245,8 +245,8 @@ class App extends React.Component<AppProps, AppState> {
     
     Radar.trackVerified().then((result) => {
       this.logOutput(`trackVerified: ${JSON.stringify(result)}\n`);
-      const { user } = result;
-      if (user?.fraud?.passed && user?.country?.allowed && user?.state?.allowed) {
+      const { token } = result;
+      if (token?.passed) {
         // allow access to feature
       } else {
         // deny access to feature, show error message
