@@ -751,7 +751,7 @@ public class RadarPlugin extends Plugin {
         }
     }
 
-        @PluginMethod()
+    @PluginMethod()
     public void searchPlaces(final PluginCall call) throws JSONException {
         Radar.RadarSearchPlacesCallback callback = new Radar.RadarSearchPlacesCallback() {
             @Override
