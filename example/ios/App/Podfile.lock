@@ -8,12 +8,12 @@ PODS:
     - Capacitor
   - CapacitorKeyboard (6.0.1):
     - Capacitor
-  - CapacitorRadar (3.14.1):
+  - CapacitorRadar (3.15.0):
     - Capacitor
-    - RadarSDK (~> 3.19.3)
+    - RadarSDK (~> 3.23.2)
   - CapacitorStatusBar (6.0.0):
     - Capacitor
-  - RadarSDK (3.19.3)
+  - RadarSDK (3.23.2)
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
@@ -45,15 +45,15 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/status-bar"
 
 SPEC CHECKSUMS:
-  Capacitor: 187bd7847b6f71467015a20200a1a071be3e5f14
-  CapacitorApp: 9d53aec7101f7b030a950c5bdc4df8612576b279
+  Capacitor: 3aff4dee0552f6badcd04f47ab3174387d71f47d
+  CapacitorApp: 30145f2ea2311e4f3744472119ec87d2ddf4c0a7
   CapacitorCordova: be703980ca797f847c3356f78fa175d21c8330c2
-  CapacitorHaptics: 9ebc9363f0e9b8eb4295088a0b474530acf1859b
-  CapacitorKeyboard: 5f32a712adf41e07a61caafb82cf29fb6d8ba123
-  CapacitorRadar: 0e2d8e0db2a58b1b6b034e56d059af804a3504c6
-  CapacitorStatusBar: 2e4369f99166125435641b1908d05f561eaba6f6
-  RadarSDK: 18bc5a0708713379fcfb3d5fd7f9912cdd3da358
+  CapacitorHaptics: 0cea833e6a8bf489dd6acaaebf6d953b90086c59
+  CapacitorKeyboard: f38d730356be5569d72eb87ad9c8166947728c36
+  CapacitorRadar: 081b38ea73393a58f37fc3e7303365e306df5cb2
+  CapacitorStatusBar: 129c68650d3f950e080e8e7e03d69c3b361dbe52
+  RadarSDK: 70ba7e006c61afd2291056852b2f93caa7c8472d
 
 PODFILE CHECKSUM: 508e95281399d4582fa695426a6beddb6f655471
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
