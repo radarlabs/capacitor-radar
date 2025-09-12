@@ -773,7 +773,7 @@ public class RadarPlugin extends Plugin {
         Map<String, String> chainMetadata = RadarPlugin.stringMapForJSObject(call.getObject("chainMetadata"));
         String[] categories = RadarPlugin.stringArrayForJSArray(call.getArray("categories"));
         String[] groups = RadarPlugin.stringArrayForJSArray(call.getArray("groups"));
-        String[] countryCodes = RadarPlugin.stringArrayForJSArray(call.getArray("countryCodes")); 
+        String[] countryCodes = RadarPlugin.stringArrayForJSArray(call.getArray("countryCodes"));
         int limit = call.getInt("limit", 10);
 
         if (call.hasOption("near")) {
