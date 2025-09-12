@@ -305,12 +305,11 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             let transactionId = call.getString("transactionId")
 
             Radar.trackVerified(beacons: beacons, desiredAccuracy: desiredAccuracy, reason: reason, transactionId: transactionId) { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
-                if status == .success {
-                    var dict: [String: Any] = ["status": Radar.stringForStatus(status)]
-                    if let token = token {
-                        dict["token"] = token.dictionaryValue()
-                    }
-                    call.resolve(dict)
+                if status == .success && token != nil {
+                    call.resolve([
+                        "status": Radar.stringForStatus(status),
+                        "token": token!.dictionaryValue()
+                    ])
                 } else {
                     call.reject(Radar.stringForStatus(status))
                 }
