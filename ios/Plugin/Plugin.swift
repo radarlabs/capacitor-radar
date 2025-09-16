@@ -70,7 +70,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 return
             }
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
-            UserDefaults.standard.set("3.15.0", forKey: "radar-xPlatformSDKVersion")
+            UserDefaults.standard.set("3.15.1", forKey: "radar-xPlatformSDKVersion")
             Radar.initialize(publishableKey: publishableKey)
             call.resolve()
         }
@@ -286,8 +286,25 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     @objc func trackVerified(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let beacons = call.getBool("beacons") ?? false
+            
+            var desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.medium
+            if let accuracyStr = call.getString("desiredAccuracy") {
+                switch accuracyStr.lowercased() {
+                case "high":
+                    desiredAccuracy = .high
+                case "medium":
+                    desiredAccuracy = .medium
+                case "low":
+                    desiredAccuracy = .low
+                default:
+                    desiredAccuracy = .medium
+                }
+            }
+            
+            let reason = call.getString("reason")
+            let transactionId = call.getString("transactionId")
 
-            Radar.trackVerified(beacons: beacons) { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
+            Radar.trackVerified(beacons: beacons, desiredAccuracy: desiredAccuracy, reason: reason, transactionId: transactionId) { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
                 if status == .success && token != nil {
                     call.resolve([
                         "status": Radar.stringForStatus(status),
@@ -611,6 +628,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             let categories = call.getArray("categories", String.self)
             let groups = call.getArray("groups", String.self)
             let limit = Int32(call.getInt("limit") ?? 10)
+            let countryCodes = call.getArray("countryCodes", String.self)
 
             let nearDict = call.options["near"] as? [String:Double] ?? nil
             
@@ -619,9 +637,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 let longitude = nearDict?["longitude"] ?? 0.0
                 let near = CLLocation(coordinate: CLLocationCoordinate2DMake(latitude, longitude), altitude: -1, horizontalAccuracy: 5, verticalAccuracy: -1, timestamp: Date())
                 
-                Radar.searchPlaces(near: near, radius: radius, chains: chains, chainMetadata: chainMetadata, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
+                Radar.searchPlaces(near: near, radius: radius, chains: chains, chainMetadata: chainMetadata, categories: categories, groups: groups, countryCodes: countryCodes, limit: limit, completionHandler: completionHandler)
             } else {
-                Radar.searchPlaces(radius: radius, chains: chains, chainMetadata: chainMetadata, categories: categories, groups: groups, limit: limit, completionHandler: completionHandler)
+                Radar.searchPlaces(radius: radius, chains: chains, chainMetadata: chainMetadata, categories: categories, groups: groups, countryCodes: countryCodes, limit: limit, completionHandler: completionHandler)
             }
         }
     }

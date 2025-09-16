@@ -172,7 +172,7 @@ public class RadarPlugin extends Plugin {
         String publishableKey = call.getString("publishableKey");
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
-        editor.putString("x_platform_sdk_version", "3.15.0");
+        editor.putString("x_platform_sdk_version", "3.15.1");
         editor.apply();
         Radar.initialize(this.getContext(), publishableKey);
         call.resolve();
@@ -385,8 +385,27 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void trackVerified(final PluginCall call) {
         boolean beacons = call.getBoolean("beacons", false);
-        
-        Radar.trackVerified(beacons, new Radar.RadarTrackVerifiedCallback() {
+    
+        String accuracyStr = call.getString("desiredAccuracy", "medium");
+        RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+    
+        switch (accuracyStr.toLowerCase()) {
+            case "high":
+                desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
+                break;
+            case "low":
+                desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.LOW;
+                break;
+            case "medium":
+            default:
+                desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+                break;
+        }
+    
+        String reason = call.getString("reason");
+        String transactionId = call.getString("transactionId");
+    
+        Radar.trackVerified(beacons, desiredAccuracy, reason, transactionId, new Radar.RadarTrackVerifiedCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarVerifiedLocationToken token) {
                 if (status == Radar.RadarStatus.SUCCESS && token != null) {
@@ -754,6 +773,7 @@ public class RadarPlugin extends Plugin {
         Map<String, String> chainMetadata = RadarPlugin.stringMapForJSObject(call.getObject("chainMetadata"));
         String[] categories = RadarPlugin.stringArrayForJSArray(call.getArray("categories"));
         String[] groups = RadarPlugin.stringArrayForJSArray(call.getArray("groups"));
+        String[] countryCodes = RadarPlugin.stringArrayForJSArray(call.getArray("countryCodes"));
         int limit = call.getInt("limit", 10);
 
         if (call.hasOption("near")) {
@@ -765,9 +785,9 @@ public class RadarPlugin extends Plugin {
             near.setLongitude(longitude);
             near.setAccuracy(5);
 
-            Radar.searchPlaces(near, radius, chains, chainMetadata, categories, groups, limit, callback);
+            Radar.searchPlaces(near, radius, chains, chainMetadata, categories, groups, countryCodes, limit, callback);
         } else {
-            Radar.searchPlaces(radius, chains, chainMetadata, categories, groups, limit, callback);
+            Radar.searchPlaces(radius, chains, chainMetadata, categories, groups, countryCodes, limit, callback);
         }
     }
 
