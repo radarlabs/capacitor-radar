@@ -123,6 +123,28 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func getLogLevel(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let currentLogLevel = Radar.getLogLevel()
+            var levelString = ""
+
+            switch currentLogLevel {
+                case .error:
+                    levelString = "error"
+                case .warning:
+                    levelString = "warning"
+                case .info:
+                levelString = "info"
+                case .debug:
+                    levelString = "debug"
+                case .none:
+                    levelString = "none"
+            }
+
+            call.resolve(["level": levelString])
+        }
+    } 
+
     @objc func getUserId(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
