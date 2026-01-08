@@ -7,6 +7,9 @@ export interface RadarPlugin {
   addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   addListener(eventName: 'token', listenerFunc: (result: { token: RadarVerifiedLocationToken }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'inAppMessage', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'inAppMessageDismissed', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string, options?: RadarInitializeOptions }): void;
   setLogLevel(options: { level: string }): void;
   setUserId(options: { userId?: string }): void;
@@ -24,6 +27,7 @@ export interface RadarPlugin {
   setAnonymousTrackingEnabled(options: { enabled: boolean }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
+  requestMotionActivityPermission(): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
   trackVerified(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy, reason?: string, transactionId?: string }): Promise<RadarTrackVerifiedCallback>;
@@ -64,6 +68,8 @@ export interface RadarPlugin {
   logBackgrounding(): void;
   logResigningActive(): void;
   setNotificationOptions(options: RadarNotificationOptions): void; // Android only
+  showInAppMessage(options: { message: RadarInAppMessage }): void;
+  loadImage(options: { url: string }): Promise<{ image: string }>;
   isUsingRemoteTrackingOptions(): Promise<object>;
   getHost(): Promise<object>;
   getPublishableKey(): Promise<string>;
@@ -212,6 +218,10 @@ export interface RadarTrip {
 export interface RadarSegment {
   description: string;
   externalId: string;
+}
+
+export interface RadarInAppMessage {
+  [key: string]: any;
 }
 
 export interface RadarContext {

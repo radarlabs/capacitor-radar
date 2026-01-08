@@ -267,6 +267,13 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func requestMotionActivityPermission(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.requestMotionActivityPermission()
+            call.resolve()
+        }
+    }
+
     @objc func getLocation(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let desiredAccuracy = call.getString("desiredAccuracy") ?? "medium";
@@ -1096,6 +1103,48 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             call.resolve([
                 "host": RadarSettings.host()
             ]);
+        }
+    }
+
+    @objc func showInAppMessage(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let messageDict = call.getObject("message") else {
+                call.reject("message is required")
+                return
+            }
+            
+            guard let message = RadarInAppMessage.fromDictionary(messageDict) else {
+                call.reject("invalid message format")
+                return
+            }
+            
+            Radar.showInAppMessage(message)
+            call.resolve()
+        }
+    }
+
+    @objc func loadImage(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let url = call.getString("url") else {
+                call.reject("url is required")
+                return
+            }
+            
+            Radar.loadImage(url) { image in
+                if let image = image {
+                    // Convert UIImage to base64 string for cross-platform compatibility
+                    if let imageData = image.pngData() {
+                        let base64String = imageData.base64EncodedString()
+                        call.resolve([
+                            "image": base64String
+                        ])
+                    } else {
+                        call.reject("Failed to convert image")
+                    }
+                } else {
+                    call.reject("Failed to load image")
+                }
+            }
         }
     }
 

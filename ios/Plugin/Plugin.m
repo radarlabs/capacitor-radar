@@ -19,6 +19,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(setAnonymousTrackingEnabled, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocationPermissionsStatus, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(requestLocationPermissions, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(requestMotionActivityPermission, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocation, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(trackOnce, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(trackVerified, CAPPluginReturnPromise);
@@ -59,4 +60,6 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(logResigningActive, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getMatrix, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setNotificationOptions, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(showInAppMessage, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(loadImage, CAPPluginReturnPromise);
 )
