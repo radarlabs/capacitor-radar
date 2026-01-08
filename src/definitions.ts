@@ -7,7 +7,7 @@ export interface RadarPlugin {
   addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   addListener(eventName: 'token', listenerFunc: (result: { token: RadarVerifiedLocationToken }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  initialize(options: { publishableKey: string }): void;
+  initialize(options: { publishableKey: string, options?: RadarInitializeOptions }): void;
   setLogLevel(options: { level: string }): void;
   setUserId(options: { userId?: string }): void;
   getUserId(): Promise<object>,
@@ -15,6 +15,10 @@ export interface RadarPlugin {
   getDescription(): Promise<object>,
   setMetadata(options: { metadata?: object }): void;
   getMetadata(): Promise<object>,
+  getTags(): Promise<{ tags: string[] }>;
+  setTags(options: { tags?: string[] }): void;
+  addTags(options: { tags: string[] }): void;
+  removeTags(options: { tags: string[] }): void;
   setAnonymousTrackingEnabled(options: { enabled: boolean }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
@@ -463,6 +467,12 @@ export interface RadarTrackingOptionsForegroundService {
   importance?: number;
   id?: number;
   channelName?: string;
+}
+
+export interface RadarInitializeOptions {
+  autoLogNotificationConversions?: boolean;
+  autoHandleNotificationDeepLinks?: boolean;
+  silentPush?: boolean;
 }
 
 export interface RadarTripOptions {

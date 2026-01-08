@@ -71,7 +71,13 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             }
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
             UserDefaults.standard.set("3.15.1", forKey: "radar-xPlatformSDKVersion")
-            Radar.initialize(publishableKey: publishableKey)
+            
+            if let optionsDict = call.getObject("options") {
+                let options = RadarInitializeOptions(dict: optionsDict)
+                Radar.initialize(publishableKey: publishableKey, options: options)
+            } else {
+                Radar.initialize(publishableKey: publishableKey)
+            }
             call.resolve()
         }
     }
@@ -158,6 +164,44 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
     @objc func getMetadata(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve(Radar.getMetadata() as? [String:String] ?? [:]);
+        }
+    }
+
+    @objc func getTags(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "tags": Radar.getTags() ?? []
+            ]);
+        }
+    }
+
+    @objc func setTags(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let tags = call.getArray("tags", String.self)
+            Radar.setTags(tags)
+            call.resolve()
+        }
+    }
+
+    @objc func addTags(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let tags = call.getArray("tags", String.self) else {
+                call.reject("tags is required")
+                return
+            }
+            Radar.addTags(tags)
+            call.resolve()
+        }
+    }
+
+    @objc func removeTags(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let tags = call.getArray("tags", String.self) else {
+                call.reject("tags is required")
+                return
+            }
+            Radar.removeTags(tags)
+            call.resolve()
         }
     }
 

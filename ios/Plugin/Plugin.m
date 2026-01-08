@@ -10,6 +10,10 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(getDescription, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setMetadata, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getMetadata, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getTags, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setTags, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(addTags, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(removeTags, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setAnonymousTrackingEnabled, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocationPermissionsStatus, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(requestLocationPermissions, CAPPluginReturnPromise);

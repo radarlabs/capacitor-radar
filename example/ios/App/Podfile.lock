@@ -10,10 +10,10 @@ PODS:
     - Capacitor
   - CapacitorRadar (3.15.1):
     - Capacitor
-    - RadarSDK (~> 3.21.3)
+    - RadarSDK (~> 3.25.1)
   - CapacitorStatusBar (6.0.0):
     - Capacitor
-  - RadarSDK (3.21.12)
+  - RadarSDK (3.25.1)
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
@@ -50,9 +50,9 @@ SPEC CHECKSUMS:
   CapacitorCordova: be703980ca797f847c3356f78fa175d21c8330c2
   CapacitorHaptics: 0cea833e6a8bf489dd6acaaebf6d953b90086c59
   CapacitorKeyboard: f38d730356be5569d72eb87ad9c8166947728c36
-  CapacitorRadar: 75aa1f83e4021b1dfd0898b7d6c4992a7e5ffaa1
+  CapacitorRadar: fcaf8fcac8f154b740210d6d9484f55897af4971
   CapacitorStatusBar: 129c68650d3f950e080e8e7e03d69c3b361dbe52
-  RadarSDK: c9b5f76764d3bdb45b127429298cd37e360722ee
+  RadarSDK: c4e910a0df1d67ace7bcfdaa6b44f48f3b2c55ce
 
 PODFILE CHECKSUM: 508e95281399d4582fa695426a6beddb6f655471
 
