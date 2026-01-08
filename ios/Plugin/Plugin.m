@@ -3,6 +3,7 @@
 
 CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(initialize, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(initializeWithAppGroup, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setLogLevel, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setUserId, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getUserId, CAPPluginReturnPromise);
@@ -17,6 +18,9 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(addTags, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(removeTags, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setAnonymousTrackingEnabled, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setAppGroup, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setPushNotificationToken, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setLocationExtensionToken, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getLocationPermissionsStatus, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(requestLocationPermissions, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(requestMotionActivityPermission, CAPPluginReturnPromise);
@@ -54,7 +58,8 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(reverseGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(ipGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getDistance, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(logConversion, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(logConversion, CAPPluginReturnPromise);    
+    CAP_PLUGIN_METHOD(didReceivePushNotificationPayload, CAPPluginReturnPromise);    
     CAP_PLUGIN_METHOD(logTermination, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(logBackgrounding, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(logResigningActive, CAPPluginReturnPromise);

@@ -11,6 +11,7 @@ export interface RadarPlugin {
   addListener(eventName: 'inAppMessageDismissed', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string, options?: RadarInitializeOptions }): void;
+  initializeWithAppGroup(options: { appGroup: string }): void;
   setLogLevel(options: { level: string }): void;
   setUserId(options: { userId?: string }): void;
   getUserId(): Promise<object>,
@@ -25,6 +26,9 @@ export interface RadarPlugin {
   addTags(options: { tags: string[] }): void;
   removeTags(options: { tags: string[] }): void;
   setAnonymousTrackingEnabled(options: { enabled: boolean }): void;
+  setAppGroup(options: { appGroup?: string }): void;
+  setPushNotificationToken(options: { token?: string }): void;
+  setLocationExtensionToken(options: { token?: string }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
   requestMotionActivityPermission(): void;
@@ -64,6 +68,7 @@ export interface RadarPlugin {
   getDistance(options: { origin?: Location, destination: Location, modes: string[], units: string }): Promise<RadarRouteCallback>;
   getMatrix(options: { origins?: Location[], destinations?: Location[], mode: string, units: string }): Promise<RadarRouteMatrix>;
   logConversion(options: { name: string, revenue?: number, metadata?: object }): Promise<RadarLogConversionCallback>;
+  didReceivePushNotificationPayload(options: { payload: object }): void;
   logTermination(): void; // iOS only
   logBackgrounding(): void;
   logResigningActive(): void;

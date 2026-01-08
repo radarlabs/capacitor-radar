@@ -82,6 +82,17 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func initializeWithAppGroup(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let appGroup = call.getString("appGroup") else {
+                call.reject("appGroup is required")
+                return
+            }
+            Radar.initialize(appGroup: appGroup)
+            call.resolve()
+        }
+    }
+
     override public func load() {
         // By default, Capacitor passes JavaScript Dates to native code as
         // ISO8601 strings. Setting this to false keeps them as Date objects,
@@ -229,6 +240,30 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 return
             };
             Radar.setAnonymousTrackingEnabled(enabled)
+            call.resolve()
+        }
+    }
+
+    @objc func setAppGroup(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let appGroup = call.getString("appGroup")
+            Radar.setAppGroup(appGroup)
+            call.resolve()
+        }
+    }
+
+    @objc func setPushNotificationToken(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let token = call.getString("token")
+            Radar.setPushNotificationToken(token)
+            call.resolve()
+        }
+    }
+
+    @objc func setLocationExtensionToken(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let token = call.getString("token")
+            Radar.setLocationExtensionToken(token)
             call.resolve()
         }
     }
@@ -1058,6 +1093,19 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 Radar.logConversion(name: name, revenue: revenue!, metadata: metadata, completionHandler: completionHandler)
             } else {
                 Radar.logConversion(name: name, metadata: metadata, completionHandler: completionHandler)
+            }
+        }
+    }
+
+    @objc func didReceivePushNotificationPayload(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let payload = call.getObject("payload") else {
+                call.reject("payload is required")
+                return
+            }
+            
+            Radar.didReceivePushNotificationPayload(payload) {
+                call.resolve()
             }
         }
     }
