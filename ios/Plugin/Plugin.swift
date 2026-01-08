@@ -4,7 +4,7 @@ import Capacitor
 import RadarSDK
 
 @objc(RadarPlugin)
-public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
+public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, RadarInAppMessageProtocol {
     
     let locationManager = CLLocationManager()
 
@@ -103,7 +103,9 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         shouldStringifyDatesInCalls = false
         Radar.setDelegate(self)
         Radar.setVerifiedDelegate(self)
-        
+        if #available(iOS 13.0, *) {
+            Radar.setInAppMessageDelegate(self)
+        }
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
@@ -1204,5 +1206,38 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    // MARK: - RadarInAppMessageProtocol
 
+    @available(iOS 13.0, *)
+    public func onNewInAppMessage(_ message: RadarInAppMessage) {
+        DispatchQueue.main.async {
+            self.notifyListeners("inAppMessage", data: [
+                "message": Radar.dictionaryForInAppMessage(message)
+            ])
+        }
+    }
+
+    @available(iOS 13.0, *)
+    public func onInAppMessageDismissed(_ message: RadarInAppMessage) {
+        DispatchQueue.main.async {
+            self.notifyListeners("inAppMessageDismissed", data: [
+                "message": Radar.dictionaryForInAppMessage(message)
+            ])
+        }
+    }
+
+    @available(iOS 13.0, *)
+    public func onInAppMessageButtonClicked(_ message: RadarInAppMessage) {
+        DispatchQueue.main.async {
+            self.notifyListeners("inAppMessageButtonClicked", data: [
+                "message": Radar.dictionaryForInAppMessage(message)
+            ])
+        }
+    }
+
+    @available(iOS 13.0, *)
+    public func createInAppMessageView(_ message: RadarInAppMessage, onDismiss: @escaping () -> Void, onInAppMessageClicked: @escaping () -> Void, completionHandler: @escaping (UIViewController) -> Void) {
+        // Default implementation - use Radar's default in-app message view
+        // Custom implementations can be added here if needed
+    }
 }
