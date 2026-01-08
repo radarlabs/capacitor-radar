@@ -13,6 +13,8 @@ export interface RadarPlugin {
   getUserId(): Promise<object>,
   setDescription(options: { description?: string }): void;
   getDescription(): Promise<object>,
+  setProduct(options: { product?: string }): void;
+  getProduct(): Promise<{ product: string }>,
   setMetadata(options: { metadata?: object }): void;
   getMetadata(): Promise<object>,
   getTags(): Promise<{ tags: string[] }>;
@@ -25,7 +27,9 @@ export interface RadarPlugin {
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
   trackVerified(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy, reason?: string, transactionId?: string }): Promise<RadarTrackVerifiedCallback>;
-  getVerifiedLocationToken(): Promise<RadarTrackVerifiedCallback>;
+  getVerifiedLocationToken(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarTrackVerifiedCallback>;
+  isTrackingVerified(): Promise<{ isTrackingVerified: boolean }>;
+  clearVerifiedLocationToken(): void;
   setExpectedJurisdiction(options?: { countryCode: string, stateCode: string }): void;
   startTrackingVerified(options: { interval: number, beacons: boolean }): void;
   startTrackingEfficient(): void;

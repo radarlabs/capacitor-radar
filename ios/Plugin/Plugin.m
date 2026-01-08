@@ -8,6 +8,8 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(getUserId, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setDescription, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getDescription, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(setProduct, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getProduct, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setMetadata, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getMetadata, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getTags, CAPPluginReturnPromise);
@@ -21,6 +23,8 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(trackOnce, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(trackVerified, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getVerifiedLocationToken, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(isTrackingVerified, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(clearVerifiedLocationToken, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setExpectedJurisdiction, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingVerified, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(startTrackingEfficient, CAPPluginReturnPromise);

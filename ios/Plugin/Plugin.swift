@@ -153,6 +153,22 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func setProduct(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let product = call.getString("product")
+            Radar.setProduct(product)
+            call.resolve()
+        }
+    }
+
+    @objc func getProduct(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "product": Radar.getProduct() ?? ""
+            ]);
+        }
+    }
+
     @objc func setMetadata(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let metadata = call.getObject("metadata")
@@ -363,16 +379,60 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
 
     @objc func getVerifiedLocationToken(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.getVerifiedLocationToken() { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
-                if status == .success && token != nil {
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "token": token!.dictionaryValue()
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
+            let beacons = call.getBool("beacons") ?? false
+            
+            var desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.medium
+            if let accuracyStr = call.getString("desiredAccuracy") {
+                switch accuracyStr.lowercased() {
+                case "high":
+                    desiredAccuracy = .high
+                case "medium":
+                    desiredAccuracy = .medium
+                case "low":
+                    desiredAccuracy = .low
+                default:
+                    desiredAccuracy = .medium
                 }
             }
+            
+            if call.hasOption("beacons") || call.hasOption("desiredAccuracy") {
+                Radar.getVerifiedLocationToken(beacons: beacons, desiredAccuracy: desiredAccuracy) { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
+                    if status == .success && token != nil {
+                        call.resolve([
+                            "status": Radar.stringForStatus(status),
+                            "token": token!.dictionaryValue()
+                        ])
+                    } else {
+                        call.reject(Radar.stringForStatus(status))
+                    }
+                }
+            } else {
+                Radar.getVerifiedLocationToken() { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
+                    if status == .success && token != nil {
+                        call.resolve([
+                            "status": Radar.stringForStatus(status),
+                            "token": token!.dictionaryValue()
+                        ])
+                    } else {
+                        call.reject(Radar.stringForStatus(status))
+                    }
+                }
+            }
+        }
+    }
+
+    @objc func isTrackingVerified(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "isTrackingVerified": Radar.isTrackingVerified()
+            ]);
+        }
+    }
+
+    @objc func clearVerifiedLocationToken(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.clearVerifiedLocationToken()
+            call.resolve()
         }
     }
 
