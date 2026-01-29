@@ -80,7 +80,7 @@ export interface RadarPlugin {
   stringForActivityType(options: { type: string }): Promise<{ activityType: string }>;
   isUsingRemoteTrackingOptions(): Promise<object>;
   getHost(): Promise<object>;
-  getPublishableKey(): Promise<string>;
+  getPublishableKey(): Promise<{ publishableKey: string }>;
 }
 
 export interface RadarLocationCallback {

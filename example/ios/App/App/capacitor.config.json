@@ -8,11 +8,6 @@
 		"HapticsPlugin",
 		"KeyboardPlugin",
 		"StatusBarPlugin",
-		"RadarPlugin",
-		"RadarInAppMessage_Swift",
-		"RadarInAppMessageDelegate_Swift",
-		"RadarLogger_Swift",
-		"RadarSettings",
-		"RadarSwift"
+		"RadarPlugin"
 	]
 }

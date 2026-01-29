@@ -60,8 +60,8 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(reverseGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(ipGeocode, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getDistance, CAPPluginReturnPromise);
-    CAP_PLUGIN_METHOD(logConversion, CAPPluginReturnPromise);    
-    CAP_PLUGIN_METHOD(didReceivePushNotificationPayload, CAPPluginReturnPromise);    
+    CAP_PLUGIN_METHOD(logConversion, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(didReceivePushNotificationPayload, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(logTermination, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(logBackgrounding, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(logResigningActive, CAPPluginReturnPromise);
@@ -70,4 +70,5 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(showInAppMessage, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(loadImage, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(stringForActivityType, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(getPublishableKey, CAPPluginReturnPromise);
 )
