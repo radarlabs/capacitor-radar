@@ -12,7 +12,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
         DispatchQueue.main.async {
             self.notifyListeners("events", data: [
                 "events": RadarEvent.array(for: events) ?? [],
-                "user": user?.dictionaryValue() ?? {}
+                "user": user?.dictionaryValue() ?? [:]
             ])
         }
     }
@@ -88,7 +88,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
                 call.reject("appGroup is required")
                 return
             }
-            Radar.initialize(appGroup: appGroup)
+            Radar.initialize(withAppGroup: appGroup)
             call.resolve()
         }
     }
@@ -669,7 +669,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
             Radar.startTrip(options: options, trackingOptions: trackingOptions) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -701,7 +701,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
             Radar.updateTrip(options: options, status: status) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -713,7 +713,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
             Radar.completeTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -725,7 +725,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
             Radar.cancelTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
