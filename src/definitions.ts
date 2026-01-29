@@ -294,6 +294,7 @@ export interface RadarBeacon {
   _id: string;
   metadata?: object;
   type: RadarBeaconType;
+  uuid?: string; 
   uid?: string;
   instance?: string;
   major?: string;
