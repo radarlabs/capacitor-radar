@@ -591,6 +591,28 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
         }
     }
 
+    @objc func startIndoorScan(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let geofenceId = call.getString("geofenceId") else {
+                call.reject("geofenceId is required")
+                return
+            }
+            
+            let scanLengthSeconds = call.getInt("scanLengthSeconds") ?? 10
+            
+            Radar.startIndoorScan(geofenceId, forLength: Int32(scanLengthSeconds)) { (result: String?, locationAtStartOfScan: CLLocation?) in
+                if let result = result, let location = locationAtStartOfScan {
+                    call.resolve([
+                        "result": result,
+                        "location": Radar.dictionaryForLocation(location)
+                    ])
+                } else {
+                    call.reject("Indoor scan failed")
+                }
+            }
+        }
+    }
+
     @objc func isTracking(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([

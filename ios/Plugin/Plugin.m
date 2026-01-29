@@ -39,6 +39,7 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(mockTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(stopTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(stopTrackingVerified, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(startIndoorScan, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(isTracking, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getTrackingOptions, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setForegroundServiceOptions, CAPPluginReturnPromise);

@@ -47,6 +47,7 @@ export interface RadarPlugin {
   mockTracking(options: { origin: Location, destination: Location, mode: RadarRouteMode, steps: number, interval: number }): void;
   stopTracking(): void;
   stopTrackingVerified(): void;
+  startIndoorScan(options: { geofenceId: string, scanLengthSeconds?: number }): Promise<RadarIndoorScanCallback>;
   isTracking(): Promise<RadarTrackingStatus>;
   getTrackingOptions(): Promise<RadarTrackingOptions>,
   setForegroundServiceOptions(options: { options: RadarTrackingOptionsForegroundService }): void;
@@ -146,6 +147,11 @@ export interface RadarRouteCallback {
 export interface RadarLogConversionCallback {
   status: string;
   event: RadarEvent;
+}
+
+export interface RadarIndoorScanCallback {
+  result: string;
+  location: Location;
 }
 
 export interface RadarRouteMatrix {
