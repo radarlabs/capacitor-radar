@@ -4,6 +4,7 @@
 CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(initialize, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(initializeWithAppGroup, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(nativeSetup, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setLogLevel, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setUserId, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getUserId, CAPPluginReturnPromise);
@@ -68,4 +69,5 @@ CAP_PLUGIN(RadarPlugin, "Radar",
     CAP_PLUGIN_METHOD(setNotificationOptions, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(showInAppMessage, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(loadImage, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(stringForActivityType, CAPPluginReturnPromise);
 )

@@ -93,6 +93,20 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
         }
     }
 
+    @objc func nativeSetup(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            if let optionsDict = call.getObject("options") {
+                let options = RadarInitializeOptions(dict: optionsDict)
+                Radar.nativeSetup(options)
+            } else {
+                // Use default options if none provided
+                let options = RadarInitializeOptions(dict: [:])
+                Radar.nativeSetup(options)
+            }
+            call.resolve()
+        }
+    }
+
     override public func load() {
         // By default, Capacitor passes JavaScript Dates to native code as
         // ISO8601 strings. Setting this to false keeps them as Date objects,
@@ -1175,6 +1189,37 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
             call.resolve([
                 "host": RadarSettings.host()
             ]);
+        }
+    }
+
+    @objc func stringForActivityType(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let typeStr = call.getString("type") else {
+                call.reject("type is required")
+                return
+            }
+            
+            var activityType = RadarActivityType.unknown
+            switch typeStr.lowercased() {
+            case "unknown":
+                activityType = .unknown
+            case "stationary":
+                activityType = .stationary
+            case "foot", "walking":
+                activityType = .foot
+            case "run", "running":
+                activityType = .run
+            case "bike", "biking":
+                activityType = .bike
+            case "car", "driving":
+                activityType = .car
+            default:
+                activityType = .unknown
+            }
+            
+            call.resolve([
+                "activityType": Radar.stringForActivityType(activityType)
+            ])
         }
     }
 

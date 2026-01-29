@@ -12,6 +12,7 @@ export interface RadarPlugin {
   addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
   initialize(options: { publishableKey: string, options?: RadarInitializeOptions }): void;
   initializeWithAppGroup(options: { appGroup: string }): void;
+  nativeSetup(options?: { options?: RadarInitializeOptions }): void;
   setLogLevel(options: { level: string }): void;
   setUserId(options: { userId?: string }): void;
   getUserId(): Promise<object>,
@@ -76,6 +77,7 @@ export interface RadarPlugin {
   setNotificationOptions(options: RadarNotificationOptions): void; // Android only
   showInAppMessage(options: { message: RadarInAppMessage }): void;
   loadImage(options: { url: string }): Promise<{ image: string }>;
+  stringForActivityType(options: { type: string }): Promise<{ activityType: string }>;
   isUsingRemoteTrackingOptions(): Promise<object>;
   getHost(): Promise<object>;
   getPublishableKey(): Promise<string>;
