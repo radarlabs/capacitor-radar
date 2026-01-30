@@ -41,6 +41,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'io.radar:sdk:3.21.3'
+    api 'io.radar:sdk:3.24.2'
+
+    implementation 'androidx.annotation:annotation:1.7.1'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
 }
 

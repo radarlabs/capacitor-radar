@@ -37,7 +37,15 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.HashMap;
 
+import android.view.View;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+
 import io.radar.sdk.Radar;
+import io.radar.sdk.RadarInAppMessageReceiver;
+import io.radar.sdk.RadarInAppMessageView;
 import io.radar.sdk.RadarNotificationOptions;
 import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
@@ -45,6 +53,7 @@ import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.RadarVerifiedReceiver;
 import io.radar.sdk.model.RadarAddress;
+import io.radar.sdk.model.RadarInAppMessage;
 import io.radar.sdk.Radar.RadarAddressVerificationStatus;
 import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
@@ -165,6 +174,62 @@ public class RadarPlugin extends Plugin {
                 }
             }
         });
+
+        Radar.setInAppMessageReceiver(new RadarInAppMessageReceiver() {
+            @Override
+            public void onNewInAppMessage(@NonNull RadarInAppMessage inAppMessage) {
+                if (sPlugin == null) {
+                    return;
+                }
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("message", RadarPlugin.jsObjectForJSONObject(new JSONObject(inAppMessage.toJson())));
+                    sPlugin.notifyListeners("inAppMessage", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+                Radar.showInAppMessage(inAppMessage);
+            }
+
+            @Override
+            public void onInAppMessageDismissed(@NonNull RadarInAppMessage inAppMessage) {
+                if (sPlugin == null) {
+                    return;
+                }
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("message", RadarPlugin.jsObjectForJSONObject(new JSONObject(inAppMessage.toJson())));
+                    sPlugin.notifyListeners("inAppMessageDismissed", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+            }
+
+            @Override
+            public void onInAppMessageButtonClicked(@NonNull RadarInAppMessage inAppMessage) {
+                if (sPlugin == null) {
+                    return;
+                }
+                try {
+                    JSObject ret = new JSObject();
+                    ret.put("message", RadarPlugin.jsObjectForJSONObject(new JSONObject(inAppMessage.toJson())));
+                    sPlugin.notifyListeners("inAppMessageButtonClicked", ret);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                }
+            }
+
+            @Override
+            public void createInAppMessageView(
+                    @NonNull Context context,
+                    @NonNull RadarInAppMessage inAppMessage,
+                    @Nullable Function0<Unit> onDismissListener,
+                    @Nullable Function0<Unit> onButtonClickedListener,
+                    @NonNull Function1<? super View, Unit> onViewReady) {
+                RadarInAppMessageView inAppMessageView = new RadarInAppMessageView(context);
+                inAppMessageView.initialize(inAppMessage, onDismissListener, onButtonClickedListener, onViewReady);
+            }
+        });
     }
 
     @PluginMethod()
@@ -244,6 +309,95 @@ public class RadarPlugin extends Plugin {
     public void getMetadata(PluginCall call) {
         call.resolve(RadarPlugin.jsObjectForJSONObject(Radar.getMetadata()));
     }
+
+    @PluginMethod()
+    public void getTags(PluginCall call) {
+        JSObject ret = new JSObject();
+        String[] tags = Radar.getTags();
+        if (tags != null) {
+            ret.put("tags", new JSArray(Arrays.asList(tags)));
+        } else {
+            ret.put("tags", new JSArray());
+        }
+        call.resolve(ret);
+    }
+    
+    @PluginMethod()
+    public void setTags(PluginCall call) {
+        JSArray tagsArray = call.getArray("tags");
+        if (tagsArray != null) {
+            try {
+                List<Object> tagsList = tagsArray.toList();
+                String[] tags = new String[tagsList.size()];
+                for (int i = 0; i < tagsList.size(); i++) {
+                    tags[i] = (String) tagsList.get(i);
+                }
+                Radar.setTags(tags);
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
+            }
+        } else {
+            Radar.setTags(null);
+        }
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void addTags(PluginCall call) {
+        JSArray tagsArray = call.getArray("tags");
+        if (tagsArray == null) {
+            call.reject("tags is required");
+            return;
+        }
+        try {
+            List<Object> tagsList = tagsArray.toList();
+            String[] tags = new String[tagsList.size()];
+            for (int i = 0; i < tagsList.size(); i++) {
+                tags[i] = (String) tagsList.get(i);
+            }
+            Radar.addTags(tags);
+            call.resolve();
+        } catch (Exception e) {
+            Log.e(TAG, "Exception", e);
+            call.reject("Failed to add tags");
+        }
+    }
+
+    @PluginMethod()
+    public void removeTags(PluginCall call) {
+        JSArray tagsArray = call.getArray("tags");
+        if (tagsArray == null) {
+            call.reject("tags is required");
+            return;
+        }
+        try {
+            List<Object> tagsList = tagsArray.toList();
+            String[] tags = new String[tagsList.size()];
+            for (int i = 0; i < tagsList.size(); i++) {
+                tags[i] = (String) tagsList.get(i);
+            }
+            Radar.removeTags(tags);
+            call.resolve();
+        } catch (Exception e) {
+            Log.e(TAG, "Exception", e);
+            call.reject("Failed to remove tags");
+        }
+    }
+
+    @PluginMethod()
+    public void setProduct(PluginCall call) {
+        String product = call.getString("product");
+        Radar.setProduct(product);
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void getProduct(PluginCall call) {
+        JSObject ret = new JSObject();
+        String product = Radar.getProduct();
+        ret.put("product", product != null ? product : "");
+        call.resolve(ret);
+    }    
 
     @PluginMethod()
     public void setAnonymousTrackingEnabled(PluginCall call) {
@@ -555,6 +709,13 @@ public class RadarPlugin extends Plugin {
     public void isTracking(PluginCall call) {
         JSObject ret = new JSObject();
         ret.put("isTracking", Radar.isTracking());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void isTrackingVerified(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("isTrackingVerified", Radar.isTrackingVerified());
         call.resolve(ret);
     }
 
@@ -1304,5 +1465,123 @@ public class RadarPlugin extends Plugin {
         JSObject ret = new JSObject();
         ret.put("publishableKey", Radar.getPublishableKey());
         call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void initializeWithAppGroup(PluginCall call) {
+        // App groups are iOS-specific, not applicable on Android
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void nativeSetup(PluginCall call) {
+        // Native setup is iOS-specific, not applicable on Android
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void requestMotionActivityPermission(PluginCall call) {
+        // Motion activity permissions are iOS-specific, not applicable on Android
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void setAppGroup(PluginCall call) {
+        // App groups are iOS-specific, not applicable on Android
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void setPushNotificationToken(PluginCall call) {
+        String token = call.getString("token");
+        Radar.setPushNotificationToken(token);
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void setLocationExtensionToken(PluginCall call) {
+        // Not implemented on Android - extension tokens are iOS-specific
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void didReceivePushNotificationPayload(PluginCall call) {
+        // Not implemented on Android - handled through Firebase
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void clearVerifiedLocationToken(PluginCall call) {
+        Radar.clearVerifiedLocationToken();
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void startIndoorScan(PluginCall call) {
+        // Indoor scanning not available on Android yet
+        call.reject("Indoor scanning not supported on Android");
+    }
+
+    @PluginMethod()
+    public void stringForActivityType(PluginCall call) {
+        // Activity type string conversion not needed on Android
+        call.resolve(new JSObject().put("activityType", "unknown"));
+    }
+
+    @PluginMethod()
+    public void showInAppMessage(PluginCall call) {
+        JSObject messageObj = call.getObject("message");
+        if (messageObj == null) {
+            call.reject("message is required");
+            return;
+        }
+
+        try {
+            JSONObject messageJson = RadarPlugin.jsonObjectForJSObject(messageObj);
+            RadarInAppMessage inAppMessage = RadarInAppMessage.fromJson(messageJson.toString());
+            if (inAppMessage == null) {
+                call.reject("Invalid in-app message format");
+                return;
+            }
+            Radar.showInAppMessage(inAppMessage);
+            call.resolve();
+        } catch (Exception e) {
+            Log.e(TAG, "Exception showing in-app message", e);
+            call.reject("Failed to show in-app message");
+        }
+    }
+
+    @PluginMethod()
+    public void loadImage(PluginCall call) {
+        String url = call.getString("url");
+        if (url == null) {
+            call.reject("url is required");
+            return;
+        }
+
+        Radar.loadImage(url, new Function1<android.graphics.Bitmap, Unit>() {
+            @Override
+            public Unit invoke(android.graphics.Bitmap bitmap) {
+                if (bitmap != null) {
+                    try {
+                        // Convert bitmap to base64 for consistency with iOS
+                        java.io.ByteArrayOutputStream byteArrayOutputStream = new java.io.ByteArrayOutputStream();
+                        bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                        byte[] byteArray = byteArrayOutputStream.toByteArray();
+                        String base64Image = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
+
+                        JSObject ret = new JSObject();
+                        ret.put("image", base64Image);
+                        call.resolve(ret);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Exception converting image", e);
+                        call.reject("Failed to convert image");
+                    }
+                } else {
+                    call.reject("Failed to load image");
+                }
+                return Unit.INSTANCE;
+            }
+        });
     }
 }
