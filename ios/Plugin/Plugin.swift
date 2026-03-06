@@ -1,5 +1,6 @@
 import Foundation
 import CoreLocation
+import SwiftUI
 import Capacitor
 import RadarSDK
 
@@ -1281,6 +1282,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
             self.notifyListeners("inAppMessage", data: [
                 "message": Radar.dictionaryForInAppMessage(message)
             ])
+            Radar.showInAppMessage(message)
         }
     }
 
@@ -1304,7 +1306,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
 
     @available(iOS 13.0, *)
     public func createInAppMessageView(_ message: RadarInAppMessage, onDismiss: @escaping () -> Void, onInAppMessageClicked: @escaping () -> Void, completionHandler: @escaping (UIViewController) -> Void) {
-        // Default implementation - use Radar's default in-app message view
-        // Custom implementations can be added here if needed
+        let defaultDelegate = RadarInAppMessageDelegate()
+        defaultDelegate.createInAppMessageView(message, onDismiss: onDismiss, onInAppMessageClicked: onInAppMessageClicked, completionHandler: completionHandler)
     }
 }
