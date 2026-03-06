@@ -46,4 +46,3 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.7.1'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
 }
-
