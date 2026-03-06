@@ -70,7 +70,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
                 return
             }
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
-            UserDefaults.standard.set("3.15.1", forKey: "radar-xPlatformSDKVersion")
+            UserDefaults.standard.set("4.0.0", forKey: "radar-xPlatformSDKVersion")
             
             if let optionsDict = call.getObject("options") {
                 let options = RadarInitializeOptions(dict: optionsDict)
