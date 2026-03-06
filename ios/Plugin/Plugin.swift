@@ -1,6 +1,5 @@
 import Foundation
 import CoreLocation
-import SwiftUI
 import Capacitor
 import RadarSDK
 

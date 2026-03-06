@@ -1,15 +1,15 @@
 import type { PluginListenerHandle } from '@capacitor/core';
 
 export interface RadarPlugin {
-  addListener(eventName: 'clientLocation', listenerFunc: (result: { location: Location, stopped: boolean, source: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'location', listenerFunc: (result: { location: Location, user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'events', listenerFunc: (result: { events: RadarEvent[], user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'token', listenerFunc: (result: { token: RadarVerifiedLocationToken }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'inAppMessage', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'inAppMessageDismissed', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
+  addListener(eventName: 'clientLocation', listenerFunc: (result: { location: Location, stopped: boolean, source: string }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'location', listenerFunc: (result: { location: Location, user: RadarUser }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'events', listenerFunc: (result: { events: RadarEvent[], user: RadarUser }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'token', listenerFunc: (result: { token: RadarVerifiedLocationToken }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'inAppMessage', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'inAppMessageDismissed', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
   initialize(options: { publishableKey: string, options?: RadarInitializeOptions }): void;
   initializeWithAppGroup(options: { appGroup: string }): void;
   nativeSetup(options?: { options?: RadarInitializeOptions }): void;
