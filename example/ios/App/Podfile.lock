@@ -8,7 +8,7 @@ PODS:
     - Capacitor
   - CapacitorKeyboard (8.0.1):
     - Capacitor
-  - CapacitorRadar (3.15.2):
+  - CapacitorRadar (4.0.0):
     - Capacitor
     - RadarSDK (~> 3.25.1)
   - CapacitorStatusBar (8.0.1):
@@ -50,7 +50,7 @@ SPEC CHECKSUMS:
   CapacitorCordova: a9ac88d84a1f5280f33b349fe50fce1902683ac0
   CapacitorHaptics: 4df2c625445cef39b67ea635a21802bc92df3b82
   CapacitorKeyboard: 867eb4b3c901d9bb5c3d0c93b546185d52484e19
-  CapacitorRadar: 52348796606ec5415837a6e2acb94e089a27c85c
+  CapacitorRadar: eae3d4b4b5962c14d8eb9563580b6a4fdf7762c9
   CapacitorStatusBar: 32206abd53b14f339763da26f71286deaa891e16
   RadarSDK: c4e910a0df1d67ace7bcfdaa6b44f48f3b2c55ce
 
