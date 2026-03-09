@@ -5,6 +5,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 import { Radar } from 'capacitor-radar';
 import { App as CapacitorApp } from '@capacitor/app'
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -25,6 +26,8 @@ const App: React.FC = () => {
   const [displayText, setDisplayText] = useState<string>('');
 
   useEffect(() => {
+    StatusBar.setOverlaysWebView({ overlay: false });
+    
     Radar.initialize({'publishableKey': 'prj_test_pk_000000000000000000000000000000000000'});
     Radar.setLogLevel({ level: 'debug' });
     Radar.setUserId({ userId: 'capacitor_test'});

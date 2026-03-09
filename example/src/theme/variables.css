@@ -243,3 +243,7 @@ ion-list-header ion-label {
   font-size: 18px !important;
   font-weight: 600 !important;
 }
+
+ion-title {
+  text-align: center !important;
+}
