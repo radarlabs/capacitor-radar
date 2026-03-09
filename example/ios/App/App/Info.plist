@@ -53,5 +53,7 @@
 	<string>Your foreground location usage description goes here.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSMotionUsageDescription</key>
+	<string>This app uses motion activity to improve location tracking.</string>
 </dict>
 </plist>

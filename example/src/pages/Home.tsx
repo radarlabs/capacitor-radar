@@ -619,6 +619,34 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
     }
   };
 
+const showTestInAppMessage = () => {
+  Radar.showInAppMessage({
+    message: {
+      title: {
+        text: 'This is the title',
+        color: '#ff0000',
+      },
+      body: {
+        text: 'This is a demo message.',
+        color: '#00ff00',
+      },
+      button: {
+        text: 'Buy it',
+        color: '#0000ff',
+        backgroundColor: '#EB0083',
+      },
+      image: {
+        url: 'https://images.pexels.com/photos/949587/pexels-photo-949587.jpeg',
+        name: 'image.jpeg',
+      },
+      metadata: {
+        campaignId: '1234',
+      },
+    },
+  });
+  setDisplayText('showInAppMessage called');
+};
+
 
   const runAll = async () => {
     const fns = [
@@ -634,7 +662,7 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
       autocomplete, geocode, reverseGeocode, ipGeocode,
       validateAddress, getDistance, getMatrix,
       logConversion, logConversionWithRevenue,
-      getHost, getPublishableKey,
+      getHost, getPublishableKey
     ];
     for (const fn of fns) {
       try {
@@ -769,6 +797,7 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
           <IonListHeader>
             <IonLabel>Misc</IonLabel>
           </IonListHeader>
+          <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={showTestInAppMessage}>showInAppMessage (test)</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={getHost}>getHost</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={getPublishableKey}>getPublishableKey</IonButton>
         </IonList>
