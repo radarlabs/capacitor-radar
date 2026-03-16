@@ -4,7 +4,7 @@ import Capacitor
 import RadarSDK
 
 @objc(RadarPlugin)
-public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
+public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, RadarInAppMessageProtocol {
     
     let locationManager = CLLocationManager()
 
@@ -12,7 +12,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         DispatchQueue.main.async {
             self.notifyListeners("events", data: [
                 "events": RadarEvent.array(for: events) ?? [],
-                "user": user?.dictionaryValue() ?? {}
+                "user": user?.dictionaryValue() ?? [:]
             ])
         }
     }
@@ -70,8 +70,39 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 return
             }
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
-            UserDefaults.standard.set("3.15.2", forKey: "radar-xPlatformSDKVersion")
-            Radar.initialize(publishableKey: publishableKey)
+            UserDefaults.standard.set("4.0.0", forKey: "radar-xPlatformSDKVersion")
+            
+            if let optionsDict = call.getObject("options") {
+                let options = RadarInitializeOptions(dict: optionsDict)
+                Radar.initialize(publishableKey: publishableKey, options: options)
+            } else {
+                Radar.initialize(publishableKey: publishableKey)
+            }
+            call.resolve()
+        }
+    }
+
+    @objc func initializeWithAppGroup(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let appGroup = call.getString("appGroup") else {
+                call.reject("appGroup is required")
+                return
+            }
+            Radar.initialize(withAppGroup: appGroup)
+            call.resolve()
+        }
+    }
+
+    @objc func nativeSetup(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            if let optionsDict = call.getObject("options") {
+                let options = RadarInitializeOptions(dict: optionsDict)
+                Radar.nativeSetup(options)
+            } else {
+                // Use default options if none provided
+                let options = RadarInitializeOptions(dict: [:])
+                Radar.nativeSetup(options)
+            }
             call.resolve()
         }
     }
@@ -86,7 +117,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         shouldStringifyDatesInCalls = false
         Radar.setDelegate(self)
         Radar.setVerifiedDelegate(self)
-        
+            Radar.setInAppMessageDelegate(self)
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
@@ -147,6 +178,22 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func setProduct(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let product = call.getString("product")
+            Radar.setProduct(product)
+            call.resolve()
+        }
+    }
+
+    @objc func getProduct(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "product": Radar.getProduct() ?? ""
+            ]);
+        }
+    }
+
     @objc func setMetadata(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let metadata = call.getObject("metadata")
@@ -161,6 +208,44 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func getTags(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "tags": Radar.getTags() ?? []
+            ]);
+        }
+    }
+
+    @objc func setTags(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let tags = call.getArray("tags", String.self)
+            Radar.setTags(tags)
+            call.resolve()
+        }
+    }
+
+    @objc func addTags(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let tags = call.getArray("tags", String.self) else {
+                call.reject("tags is required")
+                return
+            }
+            Radar.addTags(tags)
+            call.resolve()
+        }
+    }
+
+    @objc func removeTags(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let tags = call.getArray("tags", String.self) else {
+                call.reject("tags is required")
+                return
+            }
+            Radar.removeTags(tags)
+            call.resolve()
+        }
+    }
+
     @objc func setAnonymousTrackingEnabled(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             guard let enabled = call.getBool("enabled") else {
@@ -169,6 +254,30 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
                 return
             };
             Radar.setAnonymousTrackingEnabled(enabled)
+            call.resolve()
+        }
+    }
+
+    @objc func setAppGroup(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let appGroup = call.getString("appGroup")
+            Radar.setAppGroup(appGroup)
+            call.resolve()
+        }
+    }
+
+    @objc func setPushNotificationToken(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let token = call.getString("token")
+            Radar.setPushNotificationToken(token)
+            call.resolve()
+        }
+    }
+
+    @objc func setLocationExtensionToken(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let token = call.getString("token")
+            Radar.setLocationExtensionToken(token)
             call.resolve()
         }
     }
@@ -203,6 +312,13 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             } else {
                 self.locationManager.requestWhenInUseAuthorization()
             }
+            call.resolve()
+        }
+    }
+
+    @objc func requestMotionActivityPermission(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.requestMotionActivityPermission()
             call.resolve()
         }
     }
@@ -319,16 +435,60 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
 
     @objc func getVerifiedLocationToken(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            Radar.getVerifiedLocationToken() { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
-                if status == .success && token != nil {
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "token": token!.dictionaryValue()
-                    ])
-                } else {
-                    call.reject(Radar.stringForStatus(status))
+            let beacons = call.getBool("beacons") ?? false
+            
+            var desiredAccuracy = RadarTrackingOptionsDesiredAccuracy.medium
+            if let accuracyStr = call.getString("desiredAccuracy") {
+                switch accuracyStr.lowercased() {
+                case "high":
+                    desiredAccuracy = .high
+                case "medium":
+                    desiredAccuracy = .medium
+                case "low":
+                    desiredAccuracy = .low
+                default:
+                    desiredAccuracy = .medium
                 }
             }
+            
+            if call.hasOption("beacons") || call.hasOption("desiredAccuracy") {
+                Radar.getVerifiedLocationToken(beacons: beacons, desiredAccuracy: desiredAccuracy) { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
+                    if status == .success && token != nil {
+                        call.resolve([
+                            "status": Radar.stringForStatus(status),
+                            "token": token!.dictionaryValue()
+                        ])
+                    } else {
+                        call.reject(Radar.stringForStatus(status))
+                    }
+                }
+            } else {
+                Radar.getVerifiedLocationToken() { (status: RadarStatus, token: RadarVerifiedLocationToken?) in
+                    if status == .success && token != nil {
+                        call.resolve([
+                            "status": Radar.stringForStatus(status),
+                            "token": token!.dictionaryValue()
+                        ])
+                    } else {
+                        call.reject(Radar.stringForStatus(status))
+                    }
+                }
+            }
+        }
+    }
+
+    @objc func isTrackingVerified(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "isTrackingVerified": Radar.isTrackingVerified()
+            ]);
+        }
+    }
+
+    @objc func clearVerifiedLocationToken(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.clearVerifiedLocationToken()
+            call.resolve()
         }
     }
 
@@ -443,6 +603,28 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func startIndoorScan(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let geofenceId = call.getString("geofenceId") else {
+                call.reject("geofenceId is required")
+                return
+            }
+            
+            let scanLengthSeconds = call.getInt("scanLengthSeconds") ?? 10
+            
+            Radar.startIndoorScan(geofenceId, forLength: Int32(scanLengthSeconds)) { (result: String?, locationAtStartOfScan: CLLocation?) in
+                if let result = result, let location = locationAtStartOfScan {
+                    call.resolve([
+                        "result": result,
+                        "location": Radar.dictionaryForLocation(location)
+                    ])
+                } else {
+                    call.reject("Indoor scan failed")
+                }
+            }
+        }
+    }
+
     @objc func isTracking(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
@@ -485,7 +667,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             Radar.startTrip(options: options, trackingOptions: trackingOptions) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -517,7 +699,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             Radar.updateTrip(options: options, status: status) { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -529,7 +711,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             Radar.completeTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -541,7 +723,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
             Radar.cancelTrip() { (status: RadarStatus, trip: RadarTrip?, events: [RadarEvent]?) in
                 call.resolve([
                     "status": Radar.stringForStatus(status),
-                    "trip": trip?.dictionaryValue() ?? {},
+                    "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
             }
@@ -951,6 +1133,19 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func didReceivePushNotificationPayload(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let payload = call.getObject("payload") else {
+                call.reject("payload is required")
+                return
+            }
+            
+            Radar.didReceivePushNotificationPayload(payload) {
+                call.resolve()
+            }
+        }
+    }
+
     @objc func logTermination(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             Radar.logTermination()
@@ -995,6 +1190,79 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    @objc func stringForActivityType(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let typeStr = call.getString("type") else {
+                call.reject("type is required")
+                return
+            }
+            
+            var activityType = RadarActivityType.unknown
+            switch typeStr.lowercased() {
+            case "unknown":
+                activityType = .unknown
+            case "stationary":
+                activityType = .stationary
+            case "foot", "walking":
+                activityType = .foot
+            case "run", "running":
+                activityType = .run
+            case "bike", "biking":
+                activityType = .bike
+            case "car", "driving":
+                activityType = .car
+            default:
+                activityType = .unknown
+            }
+            
+            call.resolve([
+                "activityType": Radar.stringForActivityType(activityType)
+            ])
+        }
+    }
+
+    @objc func showInAppMessage(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let messageDict = call.getObject("message") else {
+                call.reject("message is required")
+                return
+            }
+            
+            guard let message = RadarInAppMessage.fromDictionary(messageDict) else {
+                call.reject("invalid message format")
+                return
+            }
+            
+            Radar.showInAppMessage(message)
+            call.resolve()
+        }
+    }
+
+    @objc func loadImage(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let url = call.getString("url") else {
+                call.reject("url is required")
+                return
+            }
+            
+            Radar.loadImage(url) { image in
+                if let image = image {
+                    // Convert UIImage to base64 string for cross-platform compatibility
+                    if let imageData = image.pngData() {
+                        let base64String = imageData.base64EncodedString()
+                        call.resolve([
+                            "image": base64String
+                        ])
+                    } else {
+                        call.reject("Failed to convert image")
+                    }
+                } else {
+                    call.reject("Failed to load image")
+                }
+            }
+        }
+    }
+
     @objc func getPublishableKey(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             call.resolve([
@@ -1003,5 +1271,35 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate {
         }
     }
 
+    // MARK: - RadarInAppMessageProtocol
 
+    public func onNewInAppMessage(_ message: RadarInAppMessage) {
+        DispatchQueue.main.async {
+            self.notifyListeners("inAppMessage", data: [
+                "message": Radar.dictionaryForInAppMessage(message)
+            ])
+            Radar.showInAppMessage(message)
+        }
+    }
+
+    public func onInAppMessageDismissed(_ message: RadarInAppMessage) {
+        DispatchQueue.main.async {
+            self.notifyListeners("inAppMessageDismissed", data: [
+                "message": Radar.dictionaryForInAppMessage(message)
+            ])
+        }
+    }
+
+    public func onInAppMessageButtonClicked(_ message: RadarInAppMessage) {
+        DispatchQueue.main.async {
+            self.notifyListeners("inAppMessageButtonClicked", data: [
+                "message": Radar.dictionaryForInAppMessage(message)
+            ])
+        }
+    }
+
+    public func createInAppMessageView(_ message: RadarInAppMessage, onDismiss: @escaping () -> Void, onInAppMessageClicked: @escaping () -> Void, completionHandler: @escaping (UIViewController) -> Void) {
+        let defaultDelegate = RadarInAppMessageDelegate()
+        defaultDelegate.createInAppMessageView(message, onDismiss: onDismiss, onInAppMessageClicked: onInAppMessageClicked, completionHandler: completionHandler)
+    }
 }

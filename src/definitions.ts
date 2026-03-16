@@ -1,27 +1,44 @@
 import type { PluginListenerHandle } from '@capacitor/core';
 
 export interface RadarPlugin {
-  addListener(eventName: 'clientLocation', listenerFunc: (result: { location: Location, stopped: boolean, source: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'location', listenerFunc: (result: { location: Location, user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'events', listenerFunc: (result: { events: RadarEvent[], user: RadarUser }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  addListener(eventName: 'token', listenerFunc: (result: { token: RadarVerifiedLocationToken }) => void): Promise<PluginListenerHandle> & PluginListenerHandle;
-  initialize(options: { publishableKey: string }): void;
+  addListener(eventName: 'clientLocation', listenerFunc: (result: { location: Location, stopped: boolean, source: string }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'location', listenerFunc: (result: { location: Location, user: RadarUser }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'events', listenerFunc: (result: { events: RadarEvent[], user: RadarUser }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'token', listenerFunc: (result: { token: RadarVerifiedLocationToken }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'inAppMessage', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'inAppMessageDismissed', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
+  initialize(options: { publishableKey: string, options?: RadarInitializeOptions }): void;
+  initializeWithAppGroup(options: { appGroup: string }): void;
+  nativeSetup(options?: { options?: RadarInitializeOptions }): void;
   setLogLevel(options: { level: string }): void;
   setUserId(options: { userId?: string }): void;
   getUserId(): Promise<object>,
   setDescription(options: { description?: string }): void;
   getDescription(): Promise<object>,
+  setProduct(options: { product?: string }): void;
+  getProduct(): Promise<{ product: string }>,
   setMetadata(options: { metadata?: object }): void;
   getMetadata(): Promise<object>,
+  getTags(): Promise<{ tags: string[] }>;
+  setTags(options: { tags?: string[] }): void;
+  addTags(options: { tags: string[] }): void;
+  removeTags(options: { tags: string[] }): void;
   setAnonymousTrackingEnabled(options: { enabled: boolean }): void;
+  setAppGroup(options: { appGroup?: string }): void;
+  setPushNotificationToken(options: { token?: string }): void;
+  setLocationExtensionToken(options: { token?: string }): void;
   getLocationPermissionsStatus(): Promise<RadarLocationPermissionsCallback>;
   requestLocationPermissions(options: { background: boolean }): void;
+  requestMotionActivityPermission(): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
   trackVerified(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy, reason?: string, transactionId?: string }): Promise<RadarTrackVerifiedCallback>;
-  getVerifiedLocationToken(): Promise<RadarTrackVerifiedCallback>;
+  getVerifiedLocationToken(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarTrackVerifiedCallback>;
+  isTrackingVerified(): Promise<{ isTrackingVerified: boolean }>;
+  clearVerifiedLocationToken(): void;
   setExpectedJurisdiction(options?: { countryCode: string, stateCode: string }): void;
   startTrackingVerified(options: { interval: number, beacons: boolean }): void;
   startTrackingEfficient(): void;
@@ -31,6 +48,7 @@ export interface RadarPlugin {
   mockTracking(options: { origin: Location, destination: Location, mode: RadarRouteMode, steps: number, interval: number }): void;
   stopTracking(): void;
   stopTrackingVerified(): void;
+  startIndoorScan(options: { geofenceId: string, scanLengthSeconds?: number }): Promise<RadarIndoorScanCallback>;
   isTracking(): Promise<RadarTrackingStatus>;
   getTrackingOptions(): Promise<RadarTrackingOptions>,
   setForegroundServiceOptions(options: { options: RadarTrackingOptionsForegroundService }): void;
@@ -52,13 +70,17 @@ export interface RadarPlugin {
   getDistance(options: { origin?: Location, destination: Location, modes: string[], units: string }): Promise<RadarRouteCallback>;
   getMatrix(options: { origins?: Location[], destinations?: Location[], mode: string, units: string }): Promise<RadarRouteMatrix>;
   logConversion(options: { name: string, revenue?: number, metadata?: object }): Promise<RadarLogConversionCallback>;
+  didReceivePushNotificationPayload(options: { payload: object }): void;
   logTermination(): void; // iOS only
   logBackgrounding(): void;
   logResigningActive(): void;
   setNotificationOptions(options: RadarNotificationOptions): void; // Android only
+  showInAppMessage(options: { message: RadarInAppMessage }): void;
+  loadImage(options: { url: string }): Promise<{ image: string }>;
+  stringForActivityType(options: { type: string }): Promise<{ activityType: string }>;
   isUsingRemoteTrackingOptions(): Promise<object>;
   getHost(): Promise<object>;
-  getPublishableKey(): Promise<string>;
+  getPublishableKey(): Promise<{ publishableKey: string }>;
 }
 
 export interface RadarLocationCallback {
@@ -127,6 +149,11 @@ export interface RadarRouteCallback {
 export interface RadarLogConversionCallback {
   status: string;
   event: RadarEvent;
+}
+
+export interface RadarIndoorScanCallback {
+  result: string;
+  location: Location;
 }
 
 export interface RadarRouteMatrix {
@@ -204,6 +231,10 @@ export interface RadarTrip {
 export interface RadarSegment {
   description: string;
   externalId: string;
+}
+
+export interface RadarInAppMessage {
+  [key: string]: any;
 }
 
 export interface RadarContext {
@@ -464,6 +495,12 @@ export interface RadarTrackingOptionsForegroundService {
   importance?: number;
   id?: number;
   channelName?: string;
+}
+
+export interface RadarInitializeOptions {
+  autoLogNotificationConversions?: boolean;
+  autoHandleNotificationDeepLinks?: boolean;
+  silentPush?: boolean;
 }
 
 export interface RadarTripOptions {

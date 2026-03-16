@@ -1,5 +1,53 @@
 # Migration guides
 
+## 3.x to 4.0.0
+
+### Breaking changes
+
+**Capacitor 8 required.** This release upgrades from Capacitor 6 to Capacitor 8. You must upgrade your app to Capacitor 8 before using this version. See the [Capacitor 8 upgrade guide](https://capacitorjs.com/docs/updating/8-0).
+
+**Node.js >=22 required.** The Capacitor 8 CLI requires Node.js 22 or later.
+
+**Java 21 required.** Android builds now require JDK 21 (previously JDK 17).
+
+**iOS minimum deployment target raised to 15.0** (previously 12.0).
+
+**Android minSdkVersion raised to 24** (previously 21).
+
+**`addListener` return type changed.** All `addListener` methods now return `Promise<PluginListenerHandle>` instead of `Promise<PluginListenerHandle> & PluginListenerHandle`. If you were using the synchronous handle pattern, switch to awaiting the promise:
+
+Change:
+```javascript
+const handle = Radar.addListener('events', callback);
+handle.remove(); // synchronous — no longer works
+```
+to:
+```javascript
+const handle = await Radar.addListener('events', callback);
+handle.remove();
+```
+
+### New features
+
+- **Tags management:** `setTags()`, `getTags()`, `addTags()`, `removeTags()`
+- **Product:** `setProduct()`, `getProduct()`
+- **In-app messaging:** `showInAppMessage()`, `loadImage()`, and listeners for `inAppMessage`, `inAppMessageDismissed`, `inAppMessageButtonClicked`
+- **Initialize options:** `nativeSetup()`, `initialize()` now accepts an `options` parameter with `silentPush`, `autoLogNotificationConversions`, `autoHandleNotificationDeepLinks`
+- **Motion permissions:** `requestMotionActivityPermission()`
+- **Verified location extras:** `isTrackingVerified()`, `clearVerifiedLocationToken()`, `setExpectedJurisdiction()`, `startTrackingVerified()`, `stopTrackingVerified()`
+- **Push notifications:** `setPushNotificationToken()`, `didReceivePushNotificationPayload()`
+- **Other:** `initializeWithAppGroup()`, `setAppGroup()`, `setLocationExtensionToken()`, `stringForActivityType()`
+
+### Android note
+
+If you encounter a `desugar_jdk_libs` version error, ensure your app-level `build.gradle` uses version 2.1.5 or later:
+
+```gradle
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+}
+```
+
 ## 3.7.1 to 3.7.2
 
 - `Radar.getTripOptions()` and `Radar.getTrackingOptions` return typed `RadarTripOptions` and `RadarTrackingOptions` respectively rather than nesting within an `options` key.

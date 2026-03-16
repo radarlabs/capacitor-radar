@@ -234,3 +234,16 @@ http://ionicframework.com/docs/theming/ */
     --ion-card-background: #1e1e1e;
   }
 }
+
+ion-button {
+  text-transform: none !important;
+}
+
+ion-list-header ion-label {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+ion-title {
+  text-align: center !important;
+}

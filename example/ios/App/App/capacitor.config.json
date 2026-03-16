@@ -2,12 +2,16 @@
 	"appId": "io.ionic.starter",
 	"appName": "example",
 	"webDir": "build",
-	"bundledWebRuntime": false,
 	"packageClassList": [
 		"AppPlugin",
 		"HapticsPlugin",
 		"KeyboardPlugin",
 		"StatusBarPlugin",
+		"RadarInAppMessage_Swift",
+		"RadarInAppMessageDelegate_Swift",
+		"RadarLogger_Swift",
+		"RadarSettings",
+		"RadarSwift",
 		"RadarPlugin"
 	]
 }
