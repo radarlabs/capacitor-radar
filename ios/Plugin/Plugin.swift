@@ -117,9 +117,7 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
         shouldStringifyDatesInCalls = false
         Radar.setDelegate(self)
         Radar.setVerifiedDelegate(self)
-        if #available(iOS 13.0, *) {
             Radar.setInAppMessageDelegate(self)
-        }
     }
 
     @objc func setUserId(_ call: CAPPluginCall) {
@@ -1275,7 +1273,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
 
     // MARK: - RadarInAppMessageProtocol
 
-    @available(iOS 13.0, *)
     public func onNewInAppMessage(_ message: RadarInAppMessage) {
         DispatchQueue.main.async {
             self.notifyListeners("inAppMessage", data: [
@@ -1285,7 +1282,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
         }
     }
 
-    @available(iOS 13.0, *)
     public func onInAppMessageDismissed(_ message: RadarInAppMessage) {
         DispatchQueue.main.async {
             self.notifyListeners("inAppMessageDismissed", data: [
@@ -1294,7 +1290,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
         }
     }
 
-    @available(iOS 13.0, *)
     public func onInAppMessageButtonClicked(_ message: RadarInAppMessage) {
         DispatchQueue.main.async {
             self.notifyListeners("inAppMessageButtonClicked", data: [
@@ -1303,7 +1298,6 @@ public class RadarPlugin: CAPPlugin, RadarDelegate, RadarVerifiedDelegate, Radar
         }
     }
 
-    @available(iOS 13.0, *)
     public func createInAppMessageView(_ message: RadarInAppMessage, onDismiss: @escaping () -> Void, onInAppMessageClicked: @escaping () -> Void, completionHandler: @escaping (UIViewController) -> Void) {
         let defaultDelegate = RadarInAppMessageDelegate()
         defaultDelegate.createInAppMessageView(message, onDismiss: onDismiss, onInAppMessageClicked: onInAppMessageClicked, completionHandler: completionHandler)
