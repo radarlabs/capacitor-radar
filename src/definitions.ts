@@ -14,6 +14,7 @@ export interface RadarPlugin {
   initializeWithAppGroup(options: { appGroup: string }): void;
   nativeSetup(options?: { options?: RadarInitializeOptions }): void;
   setLogLevel(options: { level: string }): void;
+  getLogLevel():Promise<object>;
   setUserId(options: { userId?: string }): void;
   getUserId(): Promise<object>,
   setDescription(options: { description?: string }): void;
