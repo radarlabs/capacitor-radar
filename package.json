@@ -27,7 +27,10 @@
     "android/src/main/",
     "android/build.gradle",
     "dist/",
-    "ios/Plugin/",
+    "ios/Sources/",
+    "ios/Tests/",
+    "ios/Frameworks/",
+    "Package.swift",
     "CapacitorRadar.podspec"
   ],
   "keywords": [

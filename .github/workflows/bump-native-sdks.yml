@@ -59,46 +59,36 @@ jobs:
     if: github.event.client_payload.platform == 'ios'
     steps:
       - name: Event Information
-        run: echo ${{ github.event.client_payload.release }}
+        run: echo "iOS SDK release ${{ github.event.client_payload.release }}"
 
-      # checkout the repo
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      # copy the podfile template to its final destination
-      - name: Copy ios/Cartfile.resolved template
-        uses: canastro/copy-action@master
-        with:
-          source: 'ios/Podfile.template'
-          target: 'ios/Podfile'
+      # Download the new core xcframework zip and compute its sha256
+      # (SPM binaryTarget checksum == sha256 of the zip, so this matches the script's expectation)
+      - name: Compute new RadarSDK version + checksum
+        id: sdk
+        run: |
+          VERSION="${{ github.event.client_payload.release }}"
+          URL="https://github.com/radarlabs/radar-sdk-ios/releases/download/${VERSION}/RadarSDK.xcframework.zip"
+          curl -fsSL -o /tmp/RadarSDK.zip "$URL"
+          SHA=$(sha256sum /tmp/RadarSDK.zip | awk '{print $1}')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
 
-      # render the podfile template with the sdk version
-      - name: Render radar-sdk-ios release version onto Cartfile template
-        uses: jayamanikharyono/jinja-action@v0.1
-        with:
-          data: version=${{ github.event.client_payload.release }}
-          path: 'ios/Podfile'
+      - name: Update download script (version + checksum)
+        run: |
+          sed -i "s|^SDK_VERSION=.*|SDK_VERSION=\"\${1:-${{ steps.sdk.outputs.version }}}\"|" scripts/download-xcframeworks.sh
+          sed -i "s|^SDK_SHA256=.*|SDK_SHA256=\"${{ steps.sdk.outputs.sha }}\"|" scripts/download-xcframeworks.sh
 
-      # copy the podspec template to its final destination
-      - name: Copy the podspec template
-        uses: canastro/copy-action@master
-        with:
-          source: 'CapacitorRadar.podspec.template'
-          target: 'CapacitorRadar.podspec'
+      - name: Refresh vendored xcframeworks
+        run: bash scripts/download-xcframeworks.sh
 
-      # render the podspec template with the sdk version
-      - name: Render radar-sdk-ios release version onto podspec template
-        uses: jayamanikharyono/jinja-action@v0.1
-        with:
-          data: version=${{ github.event.client_payload.release }}
-          path: 'CapacitorRadar.podspec'
+      - name: Bump RadarSDK SPM constraint in Package.swift
+        run: |
+          sed -i "s|radar-sdk-ios-spm.git\", .upToNextMinor(from: \"[0-9.]*\")|radar-sdk-ios-spm.git\", .upToNextMinor(from: \"${{ steps.sdk.outputs.version }}\")|" Package.swift
 
-      # Update package.json to latest version
-      - name: Update package.json to latest
-        run: npm version ${{ github.event.client_payload.release }} --commit-hooks false --git-tag-version false
-
-      # open a pull request with the new sdk version
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v6
         with:
           title: Automated radar-sdk-ios version bump to ${{ github.event.client_payload.release }}
           reviewers: radarlabs/eng
