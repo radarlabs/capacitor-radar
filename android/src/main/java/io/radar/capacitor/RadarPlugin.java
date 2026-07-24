@@ -64,6 +64,7 @@ import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarTrip;
 import io.radar.sdk.model.RadarUser;
 import io.radar.sdk.model.RadarVerifiedLocationToken;
+import io.radar.sdk.model.RadarRevealRiskToken;
 
 @CapacitorPlugin(name = "Radar")
 public class RadarPlugin extends Plugin {
@@ -557,7 +558,19 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void revealRisk(final PluginCall call) {
-        call.reject("revealRisk requires a newer Radar Android SDK and is not yet supported.");
+        Radar.revealRisk(new Radar.RadarRevealRiskCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarRevealRiskToken token) {
+                if (status == Radar.RadarStatus.SUCCESS && token != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("token", RadarPlugin.jsObjectForJSONObject(token.toJson()));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
     }
 
     @PluginMethod()
@@ -1155,11 +1168,17 @@ public class RadarPlugin extends Plugin {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @PluginMethod()
     public void ipGeocode(final PluginCall call) throws JSONException {
         Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy) {
+                this.onComplete(status, address, proxy, null);
+            }
+
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy, @Nullable Throwable throwable) {
                 if (status == Radar.RadarStatus.SUCCESS && address != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());
