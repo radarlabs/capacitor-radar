@@ -205,6 +205,10 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  revealRisk(): Promise<{ status: string; token: object }> {
+    throw this.unimplemented('revealRisk is not implemented on web.');
+  }
+
   getTripOptions(): Promise<object> {
     return new Promise((resolve, reject) => {
       resolve({

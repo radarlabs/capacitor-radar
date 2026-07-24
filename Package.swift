@@ -16,12 +16,19 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "RadarRevealRiskBridge",
+            dependencies: [
+                .product(name: "RadarSDK", package: "radar-sdk-ios-spm")
+            ],
+            path: "ios/Sources/RadarRevealRiskBridge"),
+        .target(
             name: "RadarPlugin",
             dependencies: [
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
                 .product(name: "Cordova", package: "capacitor-swift-pm"),
                 .product(name: "RadarSDK", package: "radar-sdk-ios-spm"),
-                .product(name: "RadarSDKFraud", package: "radar-sdk-ios-fraud-spm")
+                .product(name: "RadarSDKFraud", package: "radar-sdk-ios-fraud-spm"),
+                "RadarRevealRiskBridge"
             ],
             path: "ios/Sources/RadarPlugin"),
         .testTarget(

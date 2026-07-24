@@ -174,6 +174,15 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
     }
   };
 
+  const revealRisk = async () => {
+    try {
+      const result = await Radar.revealRisk();
+      setDisplayText('revealRisk: ' + stringify(result));
+    } catch (err) {
+      setDisplayText('revealRisk error: ' + err);
+    }
+  };
+
   const clearVerifiedLocationToken = () => {
     Radar.clearVerifiedLocationToken();
     setDisplayText('clearVerifiedLocationToken called');
@@ -654,7 +663,7 @@ const showTestInAppMessage = () => {
       setTags, getTags, addTags, removeTags, getProduct,
       getLocationPermissionsStatus,
       getLocation, trackOnce,
-      trackVerified, getVerifiedLocationToken, isTrackingVerified,
+      trackVerified, revealRisk, getVerifiedLocationToken, isTrackingVerified,
       startTrackingCustom, isTracking, getTrackingOptions,
       isUsingRemoteTrackingOptions, stopTracking,
       startTrip, getTripOptions, updateTrip, completeTrip, cancelTrip,
@@ -735,6 +744,7 @@ const showTestInAppMessage = () => {
             <IonLabel>Verified Location</IonLabel>
           </IonListHeader>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={trackVerified}>trackVerified</IonButton>
+          <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={revealRisk}>revealRisk</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={getVerifiedLocationToken}>getVerifiedLocationToken</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={clearVerifiedLocationToken}>clearVerifiedLocationToken</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={startTrackingVerified}>startTrackingVerified</IonButton>

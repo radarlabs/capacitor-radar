@@ -556,6 +556,11 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void revealRisk(final PluginCall call) {
+        call.reject("revealRisk requires a newer Radar Android SDK and is not yet supported.");
+    }
+
+    @PluginMethod()
     public void trackVerified(final PluginCall call) {
         boolean beacons = call.getBoolean("beacons", false);
         String accuracyStr = call.getString("desiredAccuracy", "medium");

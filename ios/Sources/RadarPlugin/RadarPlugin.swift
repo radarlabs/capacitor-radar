@@ -2,6 +2,9 @@ import Foundation
 import CoreLocation
 import Capacitor
 import RadarSDK
+#if canImport(RadarRevealRiskBridge)
+import RadarRevealRiskBridge
+#endif
 
 @objc(RadarPlugin)
 public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerifiedDelegate, RadarInAppMessageProtocol {
@@ -78,7 +81,10 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
         CAPPluginMethod(name: "showInAppMessage", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "loadImage", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "stringForActivityType", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "getPublishableKey", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "getPublishableKey", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getHost", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "isUsingRemoteTrackingOptions", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "revealRisk", returnType: CAPPluginReturnPromise),
     ]
 
     let locationManager = CLLocationManager()
@@ -483,6 +489,21 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
                 Radar.trackOnce(location: location, completionHandler: completionHandler)
             } else {
                 Radar.trackOnce(desiredAccuracy: accuracyLevel, beacons: beaconsTrackingOption, completionHandler: completionHandler)
+            }
+        }
+    }
+
+    @objc func revealRisk(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            RadarRevealRiskBridge.revealRisk { status, token in
+                if let token = token {
+                    call.resolve([
+                        "status": status,
+                        "token": token
+                    ])
+                } else {
+                    call.reject(status)
+                }
             }
         }
     }

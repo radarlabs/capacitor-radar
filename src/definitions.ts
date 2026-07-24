@@ -35,6 +35,7 @@ export interface RadarPlugin {
   requestMotionActivityPermission(): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
+  revealRisk(): Promise<RadarRevealRiskCallback>;
   trackVerified(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy, reason?: string, transactionId?: string }): Promise<RadarTrackVerifiedCallback>;
   getVerifiedLocationToken(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarTrackVerifiedCallback>;
   isTrackingVerified(): Promise<{ isTrackingVerified: boolean }>;
@@ -521,3 +522,18 @@ export type RadarTripStatus =
   | 'expired'
   | 'completed'
   | 'canceled'
+
+export interface RadarRevealRiskCallback {
+  status: string;
+  token: RadarRevealRiskToken;
+}
+
+export interface RadarRevealRiskToken {
+  _id: string;
+  token?: string;
+  expiresAt?: string;
+  expiresIn?: number;
+  risk: { level: 'None' | 'Low' | 'Medium' | 'High'; reasons: string[] };
+  network: object;
+  device: object;
+}
