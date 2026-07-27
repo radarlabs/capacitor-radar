@@ -281,7 +281,7 @@ public class RadarPlugin extends Plugin {
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE)
             .edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
-        editor.putString("x_platform_sdk_version", "4.0.0");
+        editor.putString("x_platform_sdk_version", "4.1.0");
         editor.apply();
 
         RadarInitializeOptions.Builder builder = RadarInitializeOptions.builder();
