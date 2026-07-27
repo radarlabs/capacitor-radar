@@ -199,6 +199,18 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  updateTripLeg(options: { tripId?: string, legId: string, status: string }): Promise<any> {
+    // not implemented
+  }
+
+  updateCurrentTripLeg(options: { status: string }): Promise<any> {
+    // not implemented
+  }
+
+  reorderTripLegs(options: { tripId?: string, legIds: string[] }): Promise<any> {
+    // not implemented
+  }
+
   acceptEvent(): void {
     // not implemented
   }

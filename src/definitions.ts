@@ -63,6 +63,9 @@ export interface RadarPlugin {
   updateTrip(options: {options: RadarTripOptions, status?: RadarTripStatus}): Promise<RadarTripCallback>;
   completeTrip(): Promise<RadarTripCallback>;
   cancelTrip(): Promise<RadarTripCallback>;
+  updateTripLeg(options: { tripId?: string, legId: string, status: RadarTripLegStatus }): Promise<RadarTripLegCallback>;
+  updateCurrentTripLeg(options: { status: RadarTripLegStatus }): Promise<RadarTripLegCallback>;
+  reorderTripLegs(options: { tripId?: string, legIds: string[] }): Promise<RadarTripCallback>;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
   getTripOptions(): Promise<RadarTripOptions>,
@@ -111,6 +114,13 @@ export interface RadarTrackVerifiedCallback {
 export interface RadarTripCallback {
   status: string;
   trip?: RadarTrip;
+  events?: RadarEvent[];
+}
+
+export interface RadarTripLegCallback {
+  status: string;
+  trip?: RadarTrip;
+  leg?: RadarTripLeg;
   events?: RadarEvent[];
 }
 
@@ -529,6 +539,34 @@ export type RadarTripStatus =
   | 'expired'
   | 'completed'
   | 'canceled'
+
+export type RadarTripLegStatus =
+  | 'unknown'
+  | 'pending'
+  | 'started'
+  | 'approaching'
+  | 'arrived'
+  | 'completed'
+  | 'canceled'
+  | 'expired'
+
+export interface RadarTripLeg {
+  _id?: string;
+  status?: RadarTripLegStatus;
+  destinationType?: 'unknown' | 'geofence' | 'address' | 'coordinates';
+  createdAt?: string;
+  updatedAt?: string;
+  etaDuration?: number;
+  etaDistance?: number;
+  destinationGeofenceTag?: string;
+  destinationGeofenceExternalId?: string;
+  destinationGeofenceId?: string;
+  address?: string;
+  coordinates?: { latitude: number; longitude: number };
+  arrivalRadius?: number;
+  stopDuration?: number;
+  metadata?: object;
+}
 
 export interface RadarRevealRiskCallback {
   status: string;

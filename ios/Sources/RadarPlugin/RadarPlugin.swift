@@ -63,6 +63,9 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
         CAPPluginMethod(name: "updateTrip", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "completeTrip", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "cancelTrip", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "updateTripLeg", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "updateCurrentTripLeg", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "reorderTripLegs", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "acceptEvent", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "rejectEvent", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getTripOptions", returnType: CAPPluginReturnPromise),
@@ -898,6 +901,65 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
                     "trip": trip?.dictionaryValue() ?? [:],
                     "events": RadarEvent.array(for: events) ?? []
                 ])
+            }
+        }
+    }
+
+    @objc func updateTripLeg(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let legId = call.getString("legId") else {
+                call.reject("legId is required")
+                return
+            }
+            let status = RadarTripLeg.status(for: (call.getString("status") ?? "unknown").lowercased())
+            let completion: (RadarStatus, RadarTrip?, RadarTripLeg?, [RadarEvent]?) -> Void = { (status, trip, leg, events) in
+                call.resolve([
+                    "status": Radar.stringForStatus(status),
+                    "trip": trip?.dictionaryValue() ?? [:],
+                    "leg": leg?.dictionaryValue() ?? [:],
+                    "events": RadarEvent.array(for: events) ?? []
+                ])
+            }
+            if let tripId = call.getString("tripId") {
+                Radar.updateTripLeg(tripId: tripId, legId: legId, status: status, completionHandler: completion)
+            } else {
+                Radar.updateTripLeg(legId: legId, status: status, completionHandler: completion)
+            }
+        }
+    }
+
+    @objc func updateCurrentTripLeg(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let status = RadarTripLeg.status(for: (call.getString("status") ?? "unknown").lowercased())
+            Radar.updateCurrentTripLeg(status: status) { (status, trip, leg, events) in
+                call.resolve([
+                    "status": Radar.stringForStatus(status),
+                    "trip": trip?.dictionaryValue() ?? [:],
+                    "leg": leg?.dictionaryValue() ?? [:],
+                    "events": RadarEvent.array(for: events) ?? []
+                ])
+            }
+        }
+    }
+
+    @objc func reorderTripLegs(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let legIdsRaw = call.getArray("legIds") else {
+                call.reject("legIds is required")
+                return
+            }
+            let legIds = legIdsRaw.compactMap { $0 as? String }
+            let completion: (RadarStatus, RadarTrip?, [RadarEvent]?) -> Void = { (status, trip, events) in
+                call.resolve([
+                    "status": Radar.stringForStatus(status),
+                    "trip": trip?.dictionaryValue() ?? [:],
+                    "events": RadarEvent.array(for: events) ?? []
+                ])
+            }
+            if let tripId = call.getString("tripId") {
+                Radar.reorderTripLegs(tripId: tripId, legIds: legIds, completionHandler: completion)
+            } else {
+                Radar.reorderTripLegs(legIds: legIds, completionHandler: completion)
             }
         }
     }
