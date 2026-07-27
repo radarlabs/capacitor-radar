@@ -26,6 +26,8 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
         CAPPluginMethod(name: "setUserLanguage", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getUserLanguage", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setMetadata", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "isSharing", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "clearSharing", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getMetadata", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getTags", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setTags", returnType: CAPPluginReturnPromise),
@@ -139,6 +141,20 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
         DispatchQueue.main.async {
             self.notifyListeners("token", data: [
                 "token": token.dictionaryValue()
+            ])
+        }
+    }
+
+    public func didChangeIP() {
+        DispatchQueue.main.async {
+            self.notifyListeners("ipChanged", data: [:])
+        }
+    }
+
+    public func didChangeSharing(_ sharing: Bool) {
+        DispatchQueue.main.async {
+            self.notifyListeners("sharingChanged", data: [
+                "sharing": sharing
             ])
         }
     }
@@ -317,6 +333,21 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
             call.resolve([
                 "userLanguage": Radar.getUserLanguage() ?? ""
             ])
+        }
+    }
+
+    @objc func isSharing(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "isSharing": Radar.isSharing()
+            ])
+        }
+    }
+
+    @objc func clearSharing(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Radar.clearSharing()
+            call.resolve()
         }
     }
 

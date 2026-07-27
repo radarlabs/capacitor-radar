@@ -215,6 +215,14 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  isSharing(): Promise<{ isSharing: boolean }> {
+    // not implemented
+  }
+
+  clearSharing(): void {
+    // not implemented
+  }
+
   revealRisk(): Promise<{ status: string; token: object }> {
     throw this.unimplemented('revealRisk is not implemented on web.');
   }

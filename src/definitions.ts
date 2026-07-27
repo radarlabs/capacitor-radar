@@ -7,6 +7,8 @@ export interface RadarPlugin {
   addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'token', listenerFunc: (result: { token: RadarVerifiedLocationToken }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'ipChanged', listenerFunc: () => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'sharingChanged', listenerFunc: (result: { sharing: boolean }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'inAppMessage', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'inAppMessageDismissed', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
@@ -22,6 +24,8 @@ export interface RadarPlugin {
   getProduct(): Promise<{ product: string }>,
   setUserLanguage(options: { userLanguage?: string }): void;
   getUserLanguage(): Promise<{ userLanguage: string }>,
+  isSharing(): Promise<{ isSharing: boolean }>;
+  clearSharing(): void;
   setMetadata(options: { metadata?: object }): void;
   getMetadata(): Promise<object>,
   getTags(): Promise<{ tags: string[] }>;

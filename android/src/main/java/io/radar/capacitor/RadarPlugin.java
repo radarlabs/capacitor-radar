@@ -178,6 +178,24 @@ public class RadarPlugin extends Plugin {
                     Log.e(TAG, "Exception", e);
                 }
             }
+
+            @Override
+            public void onIpChanged(@NonNull Context context) {
+                if (sPlugin == null) {
+                    return;
+                }
+                sPlugin.notifyListeners("ipChanged", new JSObject());
+            }
+            
+            @Override
+            public void onSharingChanged(@NonNull Context context, boolean sharing) {
+                if (sPlugin == null) {
+                    return;
+                }
+                JSObject ret = new JSObject();
+                ret.put("sharing", sharing);
+                sPlugin.notifyListeners("sharingChanged", ret);
+            }
         });
 
         Radar.setInAppMessageReceiver(new io.radar.sdk.RadarInAppMessageReceiver() {
@@ -448,6 +466,19 @@ public class RadarPlugin extends Plugin {
         String userLanguage = Radar.getUserLanguage();
         ret.put("userLanguage", userLanguage != null ? userLanguage : "");
         call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void isSharing(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("isSharing", Radar.isSharing());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void clearSharing(PluginCall call) {
+        Radar.clearSharing();
+        call.resolve();
     }
 
     @PluginMethod()
