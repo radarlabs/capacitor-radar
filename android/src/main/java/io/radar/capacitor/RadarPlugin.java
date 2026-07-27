@@ -436,6 +436,21 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void setUserLanguage(PluginCall call) {
+        String userLanguage = call.getString("userLanguage");
+        Radar.setUserLanguage(userLanguage);
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void getUserLanguage(PluginCall call) {
+        JSObject ret = new JSObject();
+        String userLanguage = Radar.getUserLanguage();
+        ret.put("userLanguage", userLanguage != null ? userLanguage : "");
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
     public void setAnonymousTrackingEnabled(PluginCall call) {
         boolean enabled = call.getBoolean("enabled");
         Radar.setAnonymousTrackingEnabled(enabled);

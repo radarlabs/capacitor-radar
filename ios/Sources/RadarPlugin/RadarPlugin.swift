@@ -23,6 +23,8 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
         CAPPluginMethod(name: "getDescription", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setProduct", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getProduct", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setUserLanguage", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getUserLanguage", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setMetadata", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getMetadata", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getTags", returnType: CAPPluginReturnPromise),
@@ -299,6 +301,22 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
             call.resolve([
                 "product": Radar.getProduct() ?? ""
             ]);
+        }
+    }
+
+    @objc func setUserLanguage(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let userLanguage = call.getString("userLanguage")
+            Radar.setUserLanguage(userLanguage)
+            call.resolve()
+        }
+    }
+
+    @objc func getUserLanguage(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            call.resolve([
+                "userLanguage": Radar.getUserLanguage() ?? ""
+            ])
         }
     }
 

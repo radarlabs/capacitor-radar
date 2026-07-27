@@ -20,6 +20,8 @@ export interface RadarPlugin {
   getDescription(): Promise<object>,
   setProduct(options: { product?: string }): void;
   getProduct(): Promise<{ product: string }>,
+  setUserLanguage(options: { userLanguage?: string }): void;
+  getUserLanguage(): Promise<{ userLanguage: string }>,
   setMetadata(options: { metadata?: object }): void;
   getMetadata(): Promise<object>,
   getTags(): Promise<{ tags: string[] }>;

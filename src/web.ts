@@ -207,6 +207,14 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  setUserLanguage(options: { userLanguage?: string }): void {
+    // not implemented
+  }
+
+  getUserLanguage(): Promise<{ userLanguage: string }> {
+    // not implemented
+  }
+
   revealRisk(): Promise<{ status: string; token: object }> {
     throw this.unimplemented('revealRisk is not implemented on web.');
   }
