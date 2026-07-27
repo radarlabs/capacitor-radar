@@ -28,7 +28,7 @@ const App: React.FC = () => {
   useEffect(() => {
     StatusBar.setOverlaysWebView({ overlay: false });
 
-    Radar.initialize({'publishableKey': 'prj_test_pk_7b46891aa0a8278b5acc6bbc9f227aa5c3319483'});
+    Radar.initialize({'publishableKey': 'prj_test_pk_000000000000000000000000000000000000'});
     Radar.setLogLevel({ level: 'debug' });
     Radar.setUserId({ userId: 'capacitor_test'});
     Radar.setDescription({ description: 'capacitor example' });
