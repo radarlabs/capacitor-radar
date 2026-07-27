@@ -24,8 +24,10 @@ import type {
 import Radar from 'radar-sdk-js';
 
 export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
-  initialize(options: { publishableKey: string }): void {
-    Radar.initialize(options.publishableKey);
+  initialize(options: { publishableKey?: string }): void {
+    if (options.publishableKey) {
+      Radar.initialize(options.publishableKey);
+    }
   }
 
   setLogLevel(options: { level: string }): void {

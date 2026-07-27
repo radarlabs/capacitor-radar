@@ -65,6 +65,7 @@ import io.radar.sdk.model.RadarTrip;
 import io.radar.sdk.model.RadarUser;
 import io.radar.sdk.model.RadarVerifiedLocationToken;
 import io.radar.sdk.model.RadarRevealRiskToken;
+import io.radar.sdk.RadarInitializeOptions;
 
 @CapacitorPlugin(name = "Radar")
 public class RadarPlugin extends Plugin {
@@ -246,12 +247,35 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
+        JSObject optionsObj = call.getObject("options");
+
+        String authToken = null;
+        if (optionsObj != null) {
+            authToken = optionsObj.has("authToken") ? optionsObj.optString("authToken", null) : null;
+        }
+
+        if (publishableKey == null && authToken == null) {
+            call.reject("publishableKey or authToken is required");
+            return;
+        }
+
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE)
-        .edit();
+            .edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
         editor.putString("x_platform_sdk_version", "4.0.0");
         editor.apply();
-        Radar.initialize(this.getContext(), publishableKey);
+
+        RadarInitializeOptions.Builder builder = RadarInitializeOptions.builder();
+        if (authToken != null) {
+            builder.authToken(authToken);
+        }
+        if (optionsObj != null && optionsObj.has("silentPush")) {
+            builder.silentPush(optionsObj.optBoolean("silentPush", false));
+        }
+
+        // initialize(context, publishableKey, options) copies publishableKey into
+        // options, then falls back to options.authToken when publishableKey is null.
+        Radar.initialize(this.getContext(), publishableKey, builder.build());
         call.resolve();
     }
 

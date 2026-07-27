@@ -145,21 +145,35 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
 
     @objc func initialize(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let publishableKey = call.getString("publishableKey") else {
-                call.reject("publishableKey is required")
+            let publishableKey = call.getString("publishableKey")
+            let optionsDict = call.getObject("options")
+            let authToken = optionsDict?["authToken"] as? String
 
+            guard publishableKey != nil || authToken != nil else {
+                call.reject("publishableKey or authToken is required")
                 return
             }
-            RadarPlugin.storedPublishableKey = publishableKey
+
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
             UserDefaults.standard.set("4.0.0", forKey: "radar-xPlatformSDKVersion")
-            
-            if let optionsDict = call.getObject("options") {
-                let options = RadarInitializeOptions(dict: optionsDict)
-                Radar.initialize(publishableKey: publishableKey, options: options)
-            } else {
-                Radar.initialize(publishableKey: publishableKey)
+
+            let options = optionsDict != nil ? RadarInitializeOptions(dict: optionsDict!) : nil
+
+            if let authToken = authToken {
+                if let options = options {
+                    Radar.initialize(authToken: authToken, options: options)
+                } else {
+                    Radar.initialize(authToken: authToken)
+                }
+            } else if let publishableKey = publishableKey {
+                RadarPlugin.storedPublishableKey = publishableKey
+                if let options = options {
+                    Radar.initialize(publishableKey: publishableKey, options: options)
+                } else {
+                    Radar.initialize(publishableKey: publishableKey)
+                }
             }
+
             call.resolve()
         }
     }

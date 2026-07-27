@@ -10,7 +10,7 @@ export interface RadarPlugin {
   addListener(eventName: 'inAppMessage', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'inAppMessageDismissed', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
-  initialize(options: { publishableKey: string, options?: RadarInitializeOptions }): void;
+  initialize(options: { publishableKey?: string, options?: RadarInitializeOptions }): void;
   initializeWithAppGroup(options: { appGroup: string }): void;
   nativeSetup(options?: { options?: RadarInitializeOptions }): void;
   setLogLevel(options: { level: string }): void;
@@ -499,6 +499,7 @@ export interface RadarTrackingOptionsForegroundService {
 }
 
 export interface RadarInitializeOptions {
+  authToken?: string;
   autoLogNotificationConversions?: boolean;
   autoHandleNotificationDeepLinks?: boolean;
   silentPush?: boolean;
