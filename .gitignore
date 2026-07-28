@@ -61,3 +61,10 @@ captures/
 
 # Capacitor generated files
 ios/capacitor-cordova-ios-plugins/
+
+# AI semantic search index
+.ai-index/
+
+# Swift Package Manager
+.build/
+Package.resolved

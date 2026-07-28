@@ -8,9 +8,9 @@
     s.homepage = 'radarlabs/capacitor-radar'
     s.author = 'Radar Labs, Inc.'
     s.source = { :git => 'radarlabs/capacitor-radar', :tag => s.version.to_s }
-    s.source_files = 'ios/Plugin/**/*.{swift,h,m,c,cc,mm,cpp}'
+    s.source_files = 'ios/Sources/**/*.{swift,h,m}'
     s.ios.deployment_target = '15.0'
     s.dependency 'Capacitor'
-    s.dependency 'RadarSDK', '~> 3.25.1'
+    s.vendored_frameworks = 'ios/Frameworks/RadarSDK.xcframework', 'ios/Frameworks/RadarSDKFraud.xcframework'
     s.static_framework = true
   end

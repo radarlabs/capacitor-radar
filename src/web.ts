@@ -24,8 +24,10 @@ import type {
 import Radar from 'radar-sdk-js';
 
 export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
-  initialize(options: { publishableKey: string }): void {
-    Radar.initialize(options.publishableKey);
+  initialize(options: { publishableKey?: string }): void {
+    if (options.publishableKey) {
+      Radar.initialize(options.publishableKey);
+    }
   }
 
   setLogLevel(options: { level: string }): void {
@@ -197,12 +199,44 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     // not implemented
   }
 
+  updateTripLeg(options: { tripId?: string, legId: string, status: string }): Promise<any> {
+    // not implemented
+  }
+
+  updateCurrentTripLeg(options: { status: string }): Promise<any> {
+    // not implemented
+  }
+
+  reorderTripLegs(options: { tripId?: string, legIds: string[] }): Promise<any> {
+    // not implemented
+  }
+
   acceptEvent(): void {
     // not implemented
   }
 
   rejectEvent(): void {
     // not implemented
+  }
+
+  setUserLanguage(options: { userLanguage?: string }): void {
+    // not implemented
+  }
+
+  getUserLanguage(): Promise<{ userLanguage: string }> {
+    // not implemented
+  }
+
+  isSharing(): Promise<{ isSharing: boolean }> {
+    // not implemented
+  }
+
+  clearSharing(): void {
+    // not implemented
+  }
+
+  revealRisk(): Promise<{ status: string; token: object }> {
+    throw this.unimplemented('revealRisk is not implemented on web.');
   }
 
   getTripOptions(): Promise<object> {

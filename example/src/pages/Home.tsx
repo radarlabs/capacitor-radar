@@ -28,6 +28,19 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
     }
   }, [displayText]);
 
+  useEffect(() => {
+    const ipChangedPromise = Radar.addListener('ipChanged', () => {
+      setDisplayText('event: ipChanged');
+    });
+    const sharingChangedPromise = Radar.addListener('sharingChanged', (result: { sharing: boolean }) => {
+      setDisplayText('event: sharingChanged ' + stringify(result));
+    });
+    return () => {
+      ipChangedPromise.then((handle) => handle.remove());
+      sharingChangedPromise.then((handle) => handle.remove());
+    };
+  }, [setDisplayText]);
+
   const getUserId = async () => {
     try {
       const result = await Radar.getUserId();
@@ -97,6 +110,20 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
       setDisplayText('getProduct: ' + stringify(result));
     } catch (err) {
       setDisplayText('getProduct error: ' + err);
+    }
+  };
+
+  const setUserLanguage = () => {
+    Radar.setUserLanguage({ userLanguage: 'en' });
+    setDisplayText('setUserLanguage called');
+  };
+
+  const getUserLanguage = async () => {
+    try {
+      const result = await Radar.getUserLanguage();
+      setDisplayText('getUserLanguage: ' + stringify(result));
+    } catch (err) {
+      setDisplayText('getUserLanguage error: ' + err);
     }
   };
 
@@ -174,6 +201,15 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
     }
   };
 
+  const revealRisk = async () => {
+    try {
+      const result = await Radar.revealRisk();
+      setDisplayText('revealRisk: ' + stringify(result));
+    } catch (err) {
+      setDisplayText('revealRisk error: ' + err);
+    }
+  };
+
   const clearVerifiedLocationToken = () => {
     Radar.clearVerifiedLocationToken();
     setDisplayText('clearVerifiedLocationToken called');
@@ -201,6 +237,20 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
   const setExpectedJurisdiction = () => {
     Radar.setExpectedJurisdiction({ countryCode: 'US', stateCode: 'NY' });
     setDisplayText('setExpectedJurisdiction called');
+  };
+
+  const isSharing = async () => {
+    try {
+      const result = await Radar.isSharing();
+      setDisplayText('isSharing: ' + stringify(result));
+    } catch (err) {
+      setDisplayText('isSharing error: ' + err);
+    }
+  };
+
+  const clearSharing = () => {
+    Radar.clearSharing();
+    setDisplayText('clearSharing called');
   };
 
   const startTrackingEfficient = () => {
@@ -652,9 +702,10 @@ const showTestInAppMessage = () => {
     const fns = [
       getUserId, getDescription, getMetadata,
       setTags, getTags, addTags, removeTags, getProduct,
+      setUserLanguage, getUserLanguage,
       getLocationPermissionsStatus,
       getLocation, trackOnce,
-      trackVerified, getVerifiedLocationToken, isTrackingVerified,
+      trackVerified, revealRisk, getVerifiedLocationToken, isSharing, isTrackingVerified,
       startTrackingCustom, isTracking, getTrackingOptions,
       isUsingRemoteTrackingOptions, stopTracking,
       startTrip, getTripOptions, updateTrip, completeTrip, cancelTrip,
@@ -718,6 +769,8 @@ const showTestInAppMessage = () => {
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={addTags}>addTags</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={removeTags}>removeTags</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={getProduct}>getProduct</IonButton>
+          <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={setUserLanguage}>setUserLanguage</IonButton>
+          <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={getUserLanguage}>getUserLanguage</IonButton>
           <IonListHeader>
             <IonLabel>Permissions</IonLabel>
           </IonListHeader>
@@ -735,12 +788,15 @@ const showTestInAppMessage = () => {
             <IonLabel>Verified Location</IonLabel>
           </IonListHeader>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={trackVerified}>trackVerified</IonButton>
+          <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={revealRisk}>revealRisk</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={getVerifiedLocationToken}>getVerifiedLocationToken</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={clearVerifiedLocationToken}>clearVerifiedLocationToken</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={startTrackingVerified}>startTrackingVerified</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={isTrackingVerified}>isTrackingVerified</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={stopTrackingVerified}>stopTrackingVerified</IonButton>
           <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={setExpectedJurisdiction}>setExpectedJurisdiction</IonButton>
+          <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={isSharing}>isSharing</IonButton>
+          <IonButton expand="block" style={{ margin: '6px 12px' }} onClick={clearSharing}>clearSharing</IonButton>
           <IonListHeader>
             <IonLabel>Tracking</IonLabel>
           </IonListHeader>

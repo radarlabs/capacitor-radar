@@ -1,6 +1,6 @@
 {
   "name": "capacitor-radar",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Capacitor plugin for Radar, the leading geofencing and location tracking platform",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -27,7 +27,10 @@
     "android/src/main/",
     "android/build.gradle",
     "dist/",
-    "ios/Plugin/",
+    "ios/Sources/",
+    "ios/Tests/",
+    "ios/Frameworks/",
+    "Package.swift",
     "CapacitorRadar.podspec"
   ],
   "keywords": [

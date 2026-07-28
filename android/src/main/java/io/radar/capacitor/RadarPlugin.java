@@ -62,8 +62,11 @@ import io.radar.sdk.model.RadarPlace;
 import io.radar.sdk.model.RadarRouteMatrix;
 import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarTrip;
+import io.radar.sdk.model.RadarTripLeg;
 import io.radar.sdk.model.RadarUser;
 import io.radar.sdk.model.RadarVerifiedLocationToken;
+import io.radar.sdk.model.RadarRevealRiskToken;
+import io.radar.sdk.RadarInitializeOptions;
 
 @CapacitorPlugin(name = "Radar")
 public class RadarPlugin extends Plugin {
@@ -176,6 +179,24 @@ public class RadarPlugin extends Plugin {
                     Log.e(TAG, "Exception", e);
                 }
             }
+
+            @Override
+            public void onIpChanged(@NonNull Context context) {
+                if (sPlugin == null) {
+                    return;
+                }
+                sPlugin.notifyListeners("ipChanged", new JSObject());
+            }
+            
+            @Override
+            public void onSharingChanged(@NonNull Context context, boolean sharing) {
+                if (sPlugin == null) {
+                    return;
+                }
+                JSObject ret = new JSObject();
+                ret.put("sharing", sharing);
+                sPlugin.notifyListeners("sharingChanged", ret);
+            }
         });
 
         Radar.setInAppMessageReceiver(new io.radar.sdk.RadarInAppMessageReceiver() {
@@ -245,12 +266,35 @@ public class RadarPlugin extends Plugin {
     @PluginMethod()
     public void initialize(PluginCall call) {
         String publishableKey = call.getString("publishableKey");
+        JSObject optionsObj = call.getObject("options");
+
+        String authToken = null;
+        if (optionsObj != null) {
+            authToken = optionsObj.has("authToken") ? optionsObj.optString("authToken", null) : null;
+        }
+
+        if (publishableKey == null && authToken == null) {
+            call.reject("publishableKey or authToken is required");
+            return;
+        }
+
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE)
-        .edit();
+            .edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
-        editor.putString("x_platform_sdk_version", "4.0.0");
+        editor.putString("x_platform_sdk_version", "4.1.0");
         editor.apply();
-        Radar.initialize(this.getContext(), publishableKey);
+
+        RadarInitializeOptions.Builder builder = RadarInitializeOptions.builder();
+        if (authToken != null) {
+            builder.authToken(authToken);
+        }
+        if (optionsObj != null && optionsObj.has("silentPush")) {
+            builder.silentPush(optionsObj.optBoolean("silentPush", false));
+        }
+
+        // initialize(context, publishableKey, options) copies publishableKey into
+        // options, then falls back to options.authToken when publishableKey is null.
+        Radar.initialize(this.getContext(), publishableKey, builder.build());
         call.resolve();
     }
 
@@ -411,6 +455,34 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void setUserLanguage(PluginCall call) {
+        String userLanguage = call.getString("userLanguage");
+        Radar.setUserLanguage(userLanguage);
+        call.resolve();
+    }
+
+    @PluginMethod()
+    public void getUserLanguage(PluginCall call) {
+        JSObject ret = new JSObject();
+        String userLanguage = Radar.getUserLanguage();
+        ret.put("userLanguage", userLanguage != null ? userLanguage : "");
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void isSharing(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("isSharing", Radar.isSharing());
+        call.resolve(ret);
+    }
+
+    @PluginMethod()
+    public void clearSharing(PluginCall call) {
+        Radar.clearSharing();
+        call.resolve();
+    }
+
+    @PluginMethod()
     public void setAnonymousTrackingEnabled(PluginCall call) {
         boolean enabled = call.getBoolean("enabled");
         Radar.setAnonymousTrackingEnabled(enabled);
@@ -553,6 +625,23 @@ public class RadarPlugin extends Plugin {
         } else {
             Radar.trackOnce(callback);
         }
+    }
+
+    @PluginMethod()
+    public void revealRisk(final PluginCall call) {
+        Radar.revealRisk(new Radar.RadarRevealRiskCallback() {
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarRevealRiskToken token) {
+                if (status == Radar.RadarStatus.SUCCESS && token != null) {
+                    JSObject ret = new JSObject();
+                    ret.put("status", status.toString());
+                    ret.put("token", RadarPlugin.jsObjectForJSONObject(token.toJson()));
+                    call.resolve(ret);
+                } else {
+                    call.reject(status.toString());
+                }
+            }
+        });
     }
 
     @PluginMethod()
@@ -881,6 +970,122 @@ public class RadarPlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void updateTripLeg(PluginCall call) {
+        String legId = call.getString("legId");
+        if (legId == null) {
+            call.reject("legId is required");
+            return;
+        }
+        String tripId = call.getString("tripId");
+        RadarTripLeg.RadarTripLegStatus status = tripLegStatusForString(call.getString("status"));
+
+        Radar.RadarTripLegCallback callback = new Radar.RadarTripLegCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status,
+                    @Nullable RadarTrip trip,
+                    @Nullable RadarTripLeg leg,
+                    @Nullable RadarEvent[] events) {
+                JSObject ret = new JSObject();
+                ret.put("status", status.toString());
+                if (trip != null) {
+                    ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
+                }
+                if (leg != null) {
+                    ret.put("leg", RadarPlugin.jsObjectForJSONObject(leg.toJson()));
+                }
+                if (events != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(events));
+                }
+                call.resolve(ret);
+            }
+        };
+
+        if (tripId != null) {
+            Radar.updateTripLeg(tripId, legId, status, callback);
+        } else {
+            Radar.updateTripLeg(legId, status, callback);
+        }
+    }
+
+    @PluginMethod()
+    public void updateCurrentTripLeg(PluginCall call) {
+        RadarTripLeg.RadarTripLegStatus status = tripLegStatusForString(call.getString("status"));
+        Radar.updateCurrentTripLeg(status, new Radar.RadarTripLegCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status,
+                    @Nullable RadarTrip trip,
+                    @Nullable RadarTripLeg leg,
+                    @Nullable RadarEvent[] events) {
+                JSObject ret = new JSObject();
+                ret.put("status", status.toString());
+                if (trip != null) {
+                    ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
+                }
+                if (leg != null) {
+                    ret.put("leg", RadarPlugin.jsObjectForJSONObject(leg.toJson()));
+                }
+                if (events != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(events));
+                }
+                call.resolve(ret);
+            }
+        });
+    }
+
+    @PluginMethod()
+    public void reorderTripLegs(PluginCall call) {
+        JSArray legIdsArr = call.getArray("legIds");
+        if (legIdsArr == null) {
+            call.reject("legIds is required");
+            return;
+        }
+        String[] legIds = new String[legIdsArr.length()];
+        for (int i = 0; i < legIdsArr.length(); i++) {
+            legIds[i] = legIdsArr.optString(i);
+        }
+        String tripId = call.getString("tripId");
+
+        Radar.RadarTripCallback callback = new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus status,
+                    @Nullable RadarTrip trip,
+                    @Nullable RadarEvent[] events) {
+                JSObject ret = new JSObject();
+                ret.put("status", status.toString());
+                if (trip != null) {
+                    ret.put("trip", RadarPlugin.jsObjectForJSONObject(trip.toJson()));
+                }
+                if (events != null) {
+                    ret.put("events", RadarPlugin.jsArrayForArray(events));
+                }
+                call.resolve(ret);
+            }
+        };
+
+        if (tripId != null) {
+            Radar.reorderTripLegs(tripId, legIds, callback);
+        } else {
+            Radar.reorderTripLegs(legIds, callback);
+        }
+    }
+
+    private static RadarTripLeg.RadarTripLegStatus tripLegStatusForString(String statusStr) {
+        if (statusStr == null) {
+            return RadarTripLeg.RadarTripLegStatus.UNKNOWN;
+        }
+        switch (statusStr.toLowerCase()) {
+            case "pending": return RadarTripLeg.RadarTripLegStatus.PENDING;
+            case "started": return RadarTripLeg.RadarTripLegStatus.STARTED;
+            case "approaching": return RadarTripLeg.RadarTripLegStatus.APPROACHING;
+            case "arrived": return RadarTripLeg.RadarTripLegStatus.ARRIVED;
+            case "completed": return RadarTripLeg.RadarTripLegStatus.COMPLETED;
+            case "canceled": return RadarTripLeg.RadarTripLegStatus.CANCELED;
+            case "expired": return RadarTripLeg.RadarTripLegStatus.EXPIRED;
+            default: return RadarTripLeg.RadarTripLegStatus.UNKNOWN;
+        }
+    }
+
+    @PluginMethod()
     public void acceptEvent(PluginCall call) {
         String eventId = call.getString("eventId");
         String verifiedPlaceId = call.getString("verifiedPlaceId");
@@ -1150,11 +1355,17 @@ public class RadarPlugin extends Plugin {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @PluginMethod()
     public void ipGeocode(final PluginCall call) throws JSONException {
         Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy) {
+                this.onComplete(status, address, proxy, null);
+            }
+
+            @Override
+            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy, @Nullable Throwable throwable) {
                 if (status == Radar.RadarStatus.SUCCESS && address != null) {
                     JSObject ret = new JSObject();
                     ret.put("status", status.toString());

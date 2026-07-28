@@ -7,10 +7,12 @@ export interface RadarPlugin {
   addListener(eventName: 'error', listenerFunc: (result: { status: string }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'log', listenerFunc: (result: { message: string }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'token', listenerFunc: (result: { token: RadarVerifiedLocationToken }) => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'ipChanged', listenerFunc: () => void): Promise<PluginListenerHandle>;
+  addListener(eventName: 'sharingChanged', listenerFunc: (result: { sharing: boolean }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'inAppMessage', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'inAppMessageDismissed', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
   addListener(eventName: 'inAppMessageButtonClicked', listenerFunc: (result: { message: RadarInAppMessage }) => void): Promise<PluginListenerHandle>;
-  initialize(options: { publishableKey: string, options?: RadarInitializeOptions }): void;
+  initialize(options: { publishableKey?: string, options?: RadarInitializeOptions }): void;
   initializeWithAppGroup(options: { appGroup: string }): void;
   nativeSetup(options?: { options?: RadarInitializeOptions }): void;
   setLogLevel(options: { level: string }): void;
@@ -20,6 +22,10 @@ export interface RadarPlugin {
   getDescription(): Promise<object>,
   setProduct(options: { product?: string }): void;
   getProduct(): Promise<{ product: string }>,
+  setUserLanguage(options: { userLanguage?: string }): void;
+  getUserLanguage(): Promise<{ userLanguage: string }>,
+  isSharing(): Promise<{ isSharing: boolean }>;
+  clearSharing(): void;
   setMetadata(options: { metadata?: object }): void;
   getMetadata(): Promise<object>,
   getTags(): Promise<{ tags: string[] }>;
@@ -35,6 +41,7 @@ export interface RadarPlugin {
   requestMotionActivityPermission(): void;
   getLocation(options: { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarLocationCallback>;
   trackOnce(options?: Location | { desiredAccuracy: RadarTrackingOptionsDesiredAccuracy, beacons: boolean}): Promise<RadarTrackCallback>;
+  revealRisk(): Promise<RadarRevealRiskCallback>;
   trackVerified(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy, reason?: string, transactionId?: string }): Promise<RadarTrackVerifiedCallback>;
   getVerifiedLocationToken(options?: { beacons?: boolean, desiredAccuracy?: RadarTrackingOptionsDesiredAccuracy }): Promise<RadarTrackVerifiedCallback>;
   isTrackingVerified(): Promise<{ isTrackingVerified: boolean }>;
@@ -56,6 +63,9 @@ export interface RadarPlugin {
   updateTrip(options: {options: RadarTripOptions, status?: RadarTripStatus}): Promise<RadarTripCallback>;
   completeTrip(): Promise<RadarTripCallback>;
   cancelTrip(): Promise<RadarTripCallback>;
+  updateTripLeg(options: { tripId?: string, legId: string, status: RadarTripLegStatus }): Promise<RadarTripLegCallback>;
+  updateCurrentTripLeg(options: { status: RadarTripLegStatus }): Promise<RadarTripLegCallback>;
+  reorderTripLegs(options: { tripId?: string, legIds: string[] }): Promise<RadarTripCallback>;
   acceptEvent(options: { eventId: string, verifiedPlaceId: string }): void;
   rejectEvent(options: { eventId: string }): void;
   getTripOptions(): Promise<RadarTripOptions>,
@@ -104,6 +114,13 @@ export interface RadarTrackVerifiedCallback {
 export interface RadarTripCallback {
   status: string;
   trip?: RadarTrip;
+  events?: RadarEvent[];
+}
+
+export interface RadarTripLegCallback {
+  status: string;
+  trip?: RadarTrip;
+  leg?: RadarTripLeg;
   events?: RadarEvent[];
 }
 
@@ -498,6 +515,7 @@ export interface RadarTrackingOptionsForegroundService {
 }
 
 export interface RadarInitializeOptions {
+  authToken?: string;
   autoLogNotificationConversions?: boolean;
   autoHandleNotificationDeepLinks?: boolean;
   silentPush?: boolean;
@@ -521,3 +539,46 @@ export type RadarTripStatus =
   | 'expired'
   | 'completed'
   | 'canceled'
+
+export type RadarTripLegStatus =
+  | 'unknown'
+  | 'pending'
+  | 'started'
+  | 'approaching'
+  | 'arrived'
+  | 'completed'
+  | 'canceled'
+  | 'expired'
+
+export interface RadarTripLeg {
+  _id?: string;
+  status?: RadarTripLegStatus;
+  destinationType?: 'unknown' | 'geofence' | 'address' | 'coordinates';
+  createdAt?: string;
+  updatedAt?: string;
+  etaDuration?: number;
+  etaDistance?: number;
+  destinationGeofenceTag?: string;
+  destinationGeofenceExternalId?: string;
+  destinationGeofenceId?: string;
+  address?: string;
+  coordinates?: { latitude: number; longitude: number };
+  arrivalRadius?: number;
+  stopDuration?: number;
+  metadata?: object;
+}
+
+export interface RadarRevealRiskCallback {
+  status: string;
+  token: RadarRevealRiskToken;
+}
+
+export interface RadarRevealRiskToken {
+  _id: string;
+  token?: string;
+  expiresAt?: string;
+  expiresIn?: number;
+  risk: { level: 'None' | 'Low' | 'Medium' | 'High'; reasons: string[] };
+  network: object;
+  device: object;
+}
