@@ -12,7 +12,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0"),
         .package(url: "https://github.com/radarlabs/radar-sdk-ios-spm.git", .upToNextMinor(from: "3.38.0")),
-        .package(url: "https://github.com/radarlabs/radar-sdk-ios-fraud-spm.git", .upToNextMinor(from: "1.3.0"))
+        .package(url: "https://github.com/radarlabs/radar-sdk-ios-fraud-spm.git", .upToNextMinor(from: "1.4.1"))
     ],
     targets: [
         .target(

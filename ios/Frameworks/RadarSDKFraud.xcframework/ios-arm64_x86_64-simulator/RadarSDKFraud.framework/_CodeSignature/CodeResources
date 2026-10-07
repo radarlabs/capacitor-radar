@@ -6,47 +6,47 @@
 	<dict>
 		<key>Info.plist</key>
 		<data>
-		SCpsy3sgjFP3L2bMFpOpkWtpyu0=
+		j+Vf+eR6xococGFwc1GDdvuNJoc=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
-		BkQxzOX4UC7UyLacgBHkjR7+XMY=
+		N+xtxkKATQWzYb67XVBU6zPoXvo=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		S19EFUZtQsWE9zPTLY2XprdjFiI=
+		HsNzIrIBa50sbjKRovlTMS3IEvE=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		fBTM+tj1pWUyOt9iOUhkqVlM26M=
+		tWXQJn03I1wXt8a2ltRjWX/03Y0=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		S19EFUZtQsWE9zPTLY2XprdjFiI=
+		HsNzIrIBa50sbjKRovlTMS3IEvE=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		EFwsFy/wLQbfucVvMQl0XPLtafU=
+		l2aLBAJoNfI85RH5ZHM2NSaLaUQ=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
-		BkQxzOX4UC7UyLacgBHkjR7+XMY=
+		N+xtxkKATQWzYb67XVBU6zPoXvo=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		Bq/PR04DYFSjA+9ipclhDWBSzPY=
+		thFS7dRWxyCq1rSfi4MLSAZXs68=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		ttZJQrnINRTYduc+gfHQVFxitFU=
+		um1Lhc4IDx9shCXmCGh2zY8Ob3M=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		Bq/PR04DYFSjA+9ipclhDWBSzPY=
+		thFS7dRWxyCq1rSfi4MLSAZXs68=
 		</data>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		lhQ6ChRrTmz/XawkSPcifL7Pdlc=
+		tSC/ng8VA5QB4guhQmY/uQk9OEk=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -55,70 +55,70 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			cR0AYPJiI208ylwsRNLCdJDH1lS95u4uPiiJYobXnqs=
+			8x5NfMzHSFSaWzJic4A88v+e8Epoo+vZepxEB2K0u9U=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			RGJsD9C3NNC0uUoJFwhfl/sSJ5eEc1wtd81hF5KXlEk=
+			wJb+KMabQ9EVQXQkyRNO2gHmLoLeS/+pgRIUIq93da0=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			F+BvilbOqOP4dVPsN5Pb+dKtG6K4e0SH5EvgDFUyoyI=
+			k/1i7iYqCyGMTC3J8jqa4BI/YzrDxTui8E9+9Te10Yc=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			RGJsD9C3NNC0uUoJFwhfl/sSJ5eEc1wtd81hF5KXlEk=
+			wJb+KMabQ9EVQXQkyRNO2gHmLoLeS/+pgRIUIq93da0=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			TvnMe/df4WaDy9TEl7Dx1sIFQHYHivOJJAJvWqcnFLY=
+			w++RlgY686W2qgmQF/d/s4N8iMKGb44cRRpCXxLit+I=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			cR0AYPJiI208ylwsRNLCdJDH1lS95u4uPiiJYobXnqs=
+			8x5NfMzHSFSaWzJic4A88v+e8Epoo+vZepxEB2K0u9U=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Q6BRqWt+W+k9n3F+fcnrAjRfrvzPUoHP1ecLBKnBw6E=
+			ZW4CxgEvfBh33FyuwTgPCKovDOCxHaxO6ai/PXKq1Ug=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			BHS0EUNdRPG3ts9M69U6bTY+nLErn3qtxeFeJODvX/0=
+			WZYpYeegLMGBlhKl9q6xeAZwPnzsZV5/oOCDYnysj3o=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Q6BRqWt+W+k9n3F+fcnrAjRfrvzPUoHP1ecLBKnBw6E=
+			ZW4CxgEvfBh33FyuwTgPCKovDOCxHaxO6ai/PXKq1Ug=
 			</data>
 		</dict>
 		<key>Modules/RadarSDKFraud.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			1l9KIPR3gzGXVWXVmx2hq9qZ3diAzMP+7Mbx1dM4z2M=
+			uSS8jTNIaRXSsqbiF6eMJaYXsDzDZm9gqhz1GEI2c+4=
 			</data>
 		</dict>
 	</dict>
