@@ -391,7 +391,9 @@ export interface RadarAddress {
   borough?: string;
   county?: string;
   neighborhood?: string;
+  street?: string;
   number?: string;
+  unit?: string;
   distance?: number;
   confidence?: string;
   layer?: string;
