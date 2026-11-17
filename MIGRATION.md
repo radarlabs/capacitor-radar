@@ -33,7 +33,7 @@ If you do not declare the service, the SDK logs an error and tracks without a fo
 
 These come from the native SDKs. You do not have to change code for them, but your app can behave differently.
 
-- `trackVerified()` now retries against a backup host by default when the response from the primary host does not come from Radar, for example when a proxy or captive portal returns its own page. To turn this off, pass `trackVerifiedAutoFailover: false` in the `options` of `initialize()`.
+- `trackVerified()` now retries against a backup host by default when the response from the primary host does not come from Radar, for example when a proxy or captive portal returns its own page. To turn this off, use the `trackVerifiedAutoFailover` option (see [New options](#new-options)).
 - On Android, `trackVerified()` now uses the `beacons` and `desiredAccuracy` values that you pass, and it no longer leaves beacon monitoring running after it completes.
 - The SDKs can now record traces for `trackOnce()`, `trackVerified()`, and location updates from `startTracking()`. They upload traces only when Radar turns on tracing for your project.
 - `validateAddress()` now sends the street and number when both are set, and the address label otherwise. Addresses from `autocomplete()` and `geocode()` no longer return `ERROR_BAD_REQUEST`.
@@ -42,7 +42,15 @@ These come from the native SDKs. You do not have to change code for them, but yo
 
 - Fraud SDKs are updated to Android `io.radar:sdk-fraud` 1.3.1 and iOS `RadarSDKFraud` 1.6.0. Verified tracking and reveal risk now encrypt the full request body and need these versions. The plugin includes them.
 - Radar Android SDK 4.x requires Android API 23 or later and Android Gradle Plugin 7.0 or later. Capacitor 8 apps already meet these requirements.
-- New `initialize()` option: `fraud` (Android only). On Android, `initialize()` from JS applies its options again, and an option that you do not pass goes back to its default. If you call `Radar.initialize()` with `fraud = true` in `MainActivity`, also pass `fraud: true` in the `options` of the JS `initialize()`. Otherwise, fraud detection signals turn off.
+
+### New options
+
+Pass these in the `options` of `initialize()`:
+
+- `trackVerifiedAutoFailover` (default `true`): set it to `false` to turn off the `trackVerified()` failover described in [Behavior changes](#behavior-changes).
+- `fraud` (Android only, default `false`): turns on additional fraud detection signals for location verification. On iOS, fraud detection turns on when `RadarSDKFraud` is linked.
+
+On Android, `initialize()` from JS applies its options again, and an option that you do not pass goes back to its default. If you set `fraud = true` or `trackVerifiedAutoFailover = false` in `MainActivity`, also pass the same value to the JS `initialize()`.
 
 See the native migration guides for more details: [Android](https://github.com/radarlabs/radar-sdk-android/blob/master/MIGRATION.md) and [iOS](https://github.com/radarlabs/radar-sdk-ios/blob/master/MIGRATION.md).
 
