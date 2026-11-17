@@ -1,5 +1,35 @@
 # Migration guides
 
+## 4.x to 5.0.0
+
+This release updates the native SDKs to Radar Android SDK 4.3.0 and Radar iOS SDK 3.46.0.
+
+### Breaking changes
+
+**Android: declare the foreground service in your app.** Radar Android SDK 4.x does not declare `RadarForegroundService` in its manifest. If you use continuous tracking, set `foregroundServiceEnabled: true`, or enable the foreground service in remote tracking options, add the service and the `FOREGROUND_SERVICE_LOCATION` permission to `android/app/src/main/AndroidManifest.xml`. If you do not declare the service, the SDK logs an error and tracks without a foreground service.
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <application>
+        <service
+            android:name="io.radar.sdk.RadarForegroundService"
+            android:foregroundServiceType="location"
+            tools:targetApi="26" />
+    </application>
+</manifest>
+```
+
+**`autocomplete()` no longer accepts `expandUnits`.** The native SDKs removed this option. Remove it from your calls.
+
+### Other changes
+
+- Fraud SDKs are updated to Android `io.radar:sdk-fraud` 1.3.1 and iOS `RadarSDKFraud` 1.6.0. Verified tracking and reveal risk now encrypt the full request body and need these versions. The plugin includes them.
+- Radar Android SDK 4.x requires Android API 23 or later and Android Gradle Plugin 7.0 or later. Capacitor 8 apps already meet these requirements.
+
+See the native migration guides for more details: [Android](https://github.com/radarlabs/radar-sdk-android/blob/master/MIGRATION.md) and [iOS](https://github.com/radarlabs/radar-sdk-ios/blob/master/MIGRATION.md).
+
 ## 3.x to 4.0.0
 
 ### Breaking changes

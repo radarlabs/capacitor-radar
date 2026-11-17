@@ -1250,10 +1250,9 @@ public class RadarPlugin extends Plugin {
         int limit = call.getInt("limit", 10);
         String country = call.getString("country");
         String[] layers = RadarPlugin.stringArrayForJSArray(call.getArray("layers"));
-        boolean expandUnits = call.getBoolean("expandUnits", false);
         boolean mailable = call.getBoolean("mailable", false);
 
-        Radar.autocomplete(query, near, layers, limit, country, expandUnits, mailable,
+        Radar.autocomplete(query, near, layers, limit, country, mailable,
                 new Radar.RadarGeocodeCallback() {
                     @Override
                     public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
@@ -1355,15 +1354,9 @@ public class RadarPlugin extends Plugin {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @PluginMethod()
     public void ipGeocode(final PluginCall call) throws JSONException {
         Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
-            @Override
-            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy) {
-                this.onComplete(status, address, proxy, null);
-            }
-
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy, @Nullable Throwable throwable) {
                 if (status == Radar.RadarStatus.SUCCESS && address != null) {

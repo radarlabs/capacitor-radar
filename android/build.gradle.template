@@ -4,28 +4,29 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:8.13.0'
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
+    namespace = "io.radar.capacitor"
+    compileSdk = 36
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 1
-        versionName '1.0'
+        minSdkVersion = 24
+        targetSdkVersion = 36
+        versionCode = 1
+        versionName = '1.0'
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    lintOptions {
-        abortOnError false
+    lint {
+        abortOnError = false
     }
 }
 
@@ -40,5 +41,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'io.radar:sdk:{{ version }}'
+    api 'io.radar:sdk:{{ version }}'
+    api 'io.radar:sdk-fraud:1.3.1'
+    implementation 'com.google.android.play:integrity:1.5.0'
+
+    implementation 'androidx.annotation:annotation:1.7.1'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.2.20'
 }

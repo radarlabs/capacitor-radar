@@ -72,7 +72,7 @@ export interface RadarPlugin {
   getContext(options?: Location): Promise<RadarContextCallback>;
   searchPlaces(options: { near?: Location, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], countryCodes?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: Location, radius?: number, metadata?: object, tags?: string[], limit?: number, includeGeometry: boolean }): Promise<RadarSearchGeofencesCallback>;
-  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string, expandUnits?: boolean, mailable?: boolean }): Promise<RadarGeocodeCallback>;
+  autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string, mailable?: boolean }): Promise<RadarGeocodeCallback>;
   validateAddress(options: { address: RadarAddress }): Promise<RadarValidateAddressCallback>;
   geocode(options: { query: string, layers?: string[], countries?: string[] }): Promise<RadarGeocodeCallback>;
   reverseGeocode(options?: { location?: Location, layers?: string[] }): Promise<RadarGeocodeCallback>;
