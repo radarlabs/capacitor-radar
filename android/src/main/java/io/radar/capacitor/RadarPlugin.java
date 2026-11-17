@@ -294,6 +294,11 @@ public class RadarPlugin extends Plugin {
         if (optionsObj != null && optionsObj.has("trackVerifiedAutoFailover")) {
             builder.trackVerifiedAutoFailover(optionsObj.optBoolean("trackVerifiedAutoFailover", true));
         }
+        // Radar.initialize() applies these options again on each call, so an option that is not set here
+        // goes back to its default, even if MainActivity set it in native code.
+        if (optionsObj != null && optionsObj.has("fraud")) {
+            builder.fraud(optionsObj.optBoolean("fraud", false));
+        }
 
         // initialize(context, publishableKey, options) copies publishableKey into
         // options, then falls back to options.authToken when publishableKey is null.

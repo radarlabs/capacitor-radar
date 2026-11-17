@@ -42,6 +42,7 @@ These come from the native SDKs. You do not have to change code for them, but yo
 
 - Fraud SDKs are updated to Android `io.radar:sdk-fraud` 1.3.1 and iOS `RadarSDKFraud` 1.6.0. Verified tracking and reveal risk now encrypt the full request body and need these versions. The plugin includes them.
 - Radar Android SDK 4.x requires Android API 23 or later and Android Gradle Plugin 7.0 or later. Capacitor 8 apps already meet these requirements.
+- New `initialize()` option: `fraud` (Android only). On Android, `initialize()` from JS applies its options again, and an option that you do not pass goes back to its default. If you call `Radar.initialize()` with `fraud = true` in `MainActivity`, also pass `fraud: true` in the `options` of the JS `initialize()`. Otherwise, fraud detection signals turn off.
 
 See the native migration guides for more details: [Android](https://github.com/radarlabs/radar-sdk-android/blob/master/MIGRATION.md) and [iOS](https://github.com/radarlabs/radar-sdk-ios/blob/master/MIGRATION.md).
 

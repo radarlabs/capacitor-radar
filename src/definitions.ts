@@ -521,6 +521,11 @@ export interface RadarInitializeOptions {
   silentPush?: boolean;
   /** Retry `trackVerified()` against a backup host when the primary host does not respond. Defaults to `true`. */
   trackVerifiedAutoFailover?: boolean;
+  /**
+   * Android only. Turns on additional fraud detection signals for location verification. Defaults to `false`.
+   * On iOS, fraud detection turns on when `RadarSDKFraud` is linked, so this option has no effect.
+   */
+  fraud?: boolean;
 }
 
 export interface RadarTripOptions {
