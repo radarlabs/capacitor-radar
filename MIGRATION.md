@@ -29,6 +29,15 @@ If you do not declare the service, the SDK logs an error and tracks without a fo
 
 **`autocomplete()` no longer accepts `expandUnits`.** The native SDKs removed this option. Remove it from your calls.
 
+### Behavior changes
+
+These come from the native SDKs. You do not have to change code for them, but your app can behave differently.
+
+- `trackVerified()` now retries against a backup host by default when the primary host does not respond. The native option `trackVerifiedAutoFailover` turns this off, but the plugin does not expose it yet.
+- `trackVerified()` uses continuous beacon ranging. On Android, it no longer leaves beacon monitoring running after it completes, and it uses the `beacons` and `desiredAccuracy` values that you pass.
+- The SDKs now record traces for `trackOnce()`, `trackVerified()`, and location updates from `startTracking()`, and upload them to Radar.
+- `validateAddress()` now sends the street and number when both are set, and the address label otherwise. Addresses from `autocomplete()` and `geocode()` no longer return `ERROR_BAD_REQUEST`.
+
 ### Other changes
 
 - Fraud SDKs are updated to Android `io.radar:sdk-fraud` 1.3.1 and iOS `RadarSDKFraud` 1.6.0. Verified tracking and reveal risk now encrypt the full request body and need these versions. The plugin includes them.

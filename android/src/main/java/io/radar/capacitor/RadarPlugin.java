@@ -1268,6 +1268,10 @@ public class RadarPlugin extends Plugin {
                 });
     }
 
+    // Radar SDK 4.3 deprecates validateAddress(address). The JS API passes a full address, and only
+    // this overload maps it to a street and number or an address label. Keep it until the JS API
+    // takes those fields.
+    @SuppressWarnings("deprecation")
     @PluginMethod()
     public void validateAddress(final PluginCall call) throws JSONException {
         if (!call.hasOption("address")) {

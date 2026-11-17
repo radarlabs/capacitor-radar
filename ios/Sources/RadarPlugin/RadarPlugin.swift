@@ -1136,6 +1136,9 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
                 return
             }
 
+            // RadarSDK 3.46 deprecates validateAddress(address:). The JS API passes a full address, and
+            // only this method maps it to a street and number or an address label. Keep it until the JS
+            // API takes those fields.
             Radar.validateAddress(address: address) { (status: RadarStatus, address: RadarAddress?, verificationStatus: RadarAddressVerificationStatus) in
                 if status == .success && address != nil {
 
