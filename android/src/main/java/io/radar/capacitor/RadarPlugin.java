@@ -299,6 +299,11 @@ public class RadarPlugin extends Plugin {
         if (optionsObj != null && optionsObj.has("fraud")) {
             builder.fraud(optionsObj.optBoolean("fraud", false));
         }
+        // The app's activity has already resumed when JS calls initialize(). Pass it, so that with fraud
+        // on, the SDK watches its touch input now and not only after the next resume.
+        if (getActivity() != null) {
+            builder.activity(getActivity());
+        }
 
         // initialize(context, publishableKey, options) copies publishableKey into
         // options, then falls back to options.authToken when publishableKey is null.
