@@ -571,6 +571,7 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
           stateCode: 'NY',
           postalCode: '10003',
           countryCode: 'US',
+          street: 'Broadway',
           number: '841',
         },
       });
