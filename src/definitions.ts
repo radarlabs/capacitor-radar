@@ -519,7 +519,10 @@ export interface RadarInitializeOptions {
   autoLogNotificationConversions?: boolean;
   autoHandleNotificationDeepLinks?: boolean;
   silentPush?: boolean;
-  /** Retry `trackVerified()` against a backup host when the primary host does not respond. Defaults to `true`. */
+  /**
+   * Retry `trackVerified()` against a backup host when the response from the primary host does not come from
+   * Radar, for example from a proxy or captive portal. Defaults to `true`.
+   */
   trackVerifiedAutoFailover?: boolean;
   /**
    * Android only. Turns on additional fraud detection signals for location verification. Defaults to `false`.

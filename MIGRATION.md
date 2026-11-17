@@ -33,7 +33,7 @@ If you do not declare the service, the SDK logs an error and tracks without a fo
 
 These come from the native SDKs. You do not have to change code for them, but your app can behave differently.
 
-- `trackVerified()` now retries against a backup host by default when the primary host does not respond. To turn this off, pass `trackVerifiedAutoFailover: false` in the `options` of `initialize()`.
+- `trackVerified()` now retries against a backup host by default when the response from the primary host does not come from Radar, for example when a proxy or captive portal returns its own page. To turn this off, pass `trackVerifiedAutoFailover: false` in the `options` of `initialize()`.
 - On Android, `trackVerified()` now uses the `beacons` and `desiredAccuracy` values that you pass, and it no longer leaves beacon monitoring running after it completes.
 - The SDKs can now record traces for `trackOnce()`, `trackVerified()`, and location updates from `startTracking()`. They upload traces only when Radar turns on tracing for your project.
 - `validateAddress()` now sends the street and number when both are set, and the address label otherwise. Addresses from `autocomplete()` and `geocode()` no longer return `ERROR_BAD_REQUEST`.
