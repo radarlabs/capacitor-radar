@@ -301,8 +301,11 @@ public class RadarPlugin extends Plugin {
         }
         // The app's activity has already resumed when JS calls initialize(). Pass it, so that with fraud
         // on, the SDK watches its touch input now and not only after the next resume.
-        if (getActivity() != null) {
-            builder.activity(getActivity());
+        // Use getContext(), not getActivity(): getActivity() returns AppCompatActivity, which is not on
+        // this module's compile classpath.
+        Context context = getContext();
+        if (context instanceof android.app.Activity) {
+            builder.activity((android.app.Activity) context);
         }
 
         // initialize(context, publishableKey, options) copies publishableKey into
