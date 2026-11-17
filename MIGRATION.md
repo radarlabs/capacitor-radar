@@ -6,7 +6,13 @@ This release updates the native SDKs to Radar Android SDK 4.3.0 and Radar iOS SD
 
 ### Breaking changes
 
-**Android: declare the foreground service in your app.** Radar Android SDK 4.x does not declare `RadarForegroundService` in its manifest. If you use continuous tracking, set `foregroundServiceEnabled: true`, or enable the foreground service in remote tracking options, add the service and the `FOREGROUND_SERVICE_LOCATION` permission to `android/app/src/main/AndroidManifest.xml`. If you do not declare the service, the SDK logs an error and tracks without a foreground service.
+**Android: declare the foreground service in your app.** Radar Android SDK 4.x does not declare `RadarForegroundService` in its manifest. Add the service and the `FOREGROUND_SERVICE_LOCATION` permission to `android/app/src/main/AndroidManifest.xml` if one of these is true:
+
+- You use continuous tracking.
+- You set `foregroundServiceEnabled: true` in your tracking options.
+- Your remote tracking options enable the foreground service.
+
+If you do not declare the service, the SDK logs an error and tracks without a foreground service.
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"

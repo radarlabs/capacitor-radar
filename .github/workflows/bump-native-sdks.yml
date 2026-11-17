@@ -9,39 +9,42 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.client_payload.platform == 'android'
     steps:
-      - name: Event Information
-        run: echo ${{ github.event.client_payload.release }}
+      # Read the release version from an env var, not from inline ${{ }} in shell,
+      # and accept only a semver value.
+      - name: Validate release version
+        id: release
+        env:
+          RELEASE: ${{ github.event.client_payload.release }}
+        run: |
+          if [[ ! "$RELEASE" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "Invalid release version: $RELEASE" >&2
+            exit 1
+          fi
+          echo "Android SDK release $RELEASE"
+          echo "version=$RELEASE" >> "$GITHUB_OUTPUT"
 
-      # checkout the repo
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      # copy the build.gradle template file to its final destination
-      - name: Copy android/build.gradle template file
-        uses: canastro/copy-action@master
-        with:
-          source: 'android/build.gradle.template'
-          target: 'android/build.gradle'
-
-      # render the build.gradle template using the input sdk version
-      - name: Render radar-sdk-android release version onto android/build.gradle
-        uses: jayamanikharyono/jinja-action@v0.1
-        with:
-          data: version=${{ github.event.client_payload.release }}
-          path: 'android/build.gradle'
+      - name: Bump io.radar:sdk in android/build.gradle
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          sed -i -E "s|'io\.radar:sdk:[^']+'|'io.radar:sdk:${VERSION}'|" android/build.gradle
+          grep -q "'io.radar:sdk:${VERSION}'" android/build.gradle
 
       # The example app gets the SDK through the plugin, so it needs no change.
       # The plugin version is separate from the native SDK version. Set it by hand at release time.
 
-      # open a pull request with the new sdk version
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v6
         with:
-          title: Automated radar-sdk-android version bump to ${{ github.event.client_payload.release }}
+          branch: bump/radar-sdk-android-${{ steps.release.outputs.version }}
+          title: Automated radar-sdk-android version bump to ${{ steps.release.outputs.version }}
           body: |
-            Bumps `io.radar:sdk` to ${{ github.event.client_payload.release }}.
+            Bumps `io.radar:sdk` to ${{ steps.release.outputs.version }}.
 
             Before you merge:
-            - [ ] Make sure `io.radar:sdk-fraud` in `android/build.gradle.template` is compatible with this core SDK version. See the native `MIGRATION.md`.
+            - [ ] Make sure `io.radar:sdk-fraud` in `android/build.gradle` is compatible with this core SDK version. See the native `MIGRATION.md`.
             - [ ] Set the plugin version in `package.json` if this PR goes into a release.
           reviewers: radarlabs/eng
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,41 +52,59 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.client_payload.platform == 'ios'
     steps:
-      - name: Event Information
-        run: echo "iOS SDK release ${{ github.event.client_payload.release }}"
+      # Read the release version from an env var, not from inline ${{ }} in shell,
+      # and accept only a semver value.
+      - name: Validate release version
+        id: release
+        env:
+          RELEASE: ${{ github.event.client_payload.release }}
+        run: |
+          if [[ ! "$RELEASE" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "Invalid release version: $RELEASE" >&2
+            exit 1
+          fi
+          echo "iOS SDK release $RELEASE"
+          echo "version=$RELEASE" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v4
 
       # Download the new core xcframework zip and compute its sha256
       # (SPM binaryTarget checksum == sha256 of the zip, so this matches the script's expectation)
-      - name: Compute new RadarSDK version + checksum
+      - name: Compute RadarSDK checksum
         id: sdk
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
         run: |
-          VERSION="${{ github.event.client_payload.release }}"
           URL="https://github.com/radarlabs/radar-sdk-ios/releases/download/${VERSION}/RadarSDK.xcframework.zip"
           curl -fsSL -o /tmp/RadarSDK.zip "$URL"
           SHA=$(sha256sum /tmp/RadarSDK.zip | awk '{print $1}')
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
 
       - name: Update download script (version + checksum)
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          SHA: ${{ steps.sdk.outputs.sha }}
         run: |
-          sed -i "s|^SDK_VERSION=.*|SDK_VERSION=\"\${1:-${{ steps.sdk.outputs.version }}}\"|" scripts/download-xcframeworks.sh
-          sed -i "s|^SDK_SHA256=.*|SDK_SHA256=\"${{ steps.sdk.outputs.sha }}\"|" scripts/download-xcframeworks.sh
+          sed -i "s|^SDK_VERSION=.*|SDK_VERSION=\"\${1:-${VERSION}}\"|" scripts/download-xcframeworks.sh
+          sed -i "s|^SDK_SHA256=.*|SDK_SHA256=\"${SHA}\"|" scripts/download-xcframeworks.sh
 
       - name: Refresh vendored xcframeworks
         run: bash scripts/download-xcframeworks.sh
 
       - name: Bump RadarSDK SPM constraint in Package.swift
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
         run: |
-          sed -i "s|radar-sdk-ios-spm.git\", .upToNextMinor(from: \"[0-9.]*\")|radar-sdk-ios-spm.git\", .upToNextMinor(from: \"${{ steps.sdk.outputs.version }}\")|" Package.swift
+          sed -i -E "s|(radar-sdk-ios-spm\.git\", \.upToNextMinor\(from: \")[^\"]+\"|\1${VERSION}\"|" Package.swift
+          grep -q "radar-sdk-ios-spm.git\", .upToNextMinor(from: \"${VERSION}\")" Package.swift
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          title: Automated radar-sdk-ios version bump to ${{ github.event.client_payload.release }}
+          branch: bump/radar-sdk-ios-${{ steps.release.outputs.version }}
+          title: Automated radar-sdk-ios version bump to ${{ steps.release.outputs.version }}
           body: |
-            Bumps `RadarSDK` to ${{ github.event.client_payload.release }}.
+            Bumps `RadarSDK` to ${{ steps.release.outputs.version }}.
 
             Before you merge:
             - [ ] Make sure `RadarSDKFraud` (`FRAUD_VERSION` in `scripts/download-xcframeworks.sh` and `Package.swift`) is compatible with this core SDK version. See the native `MIGRATION.md`.
