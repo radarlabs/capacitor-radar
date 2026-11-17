@@ -291,6 +291,9 @@ public class RadarPlugin extends Plugin {
         if (optionsObj != null && optionsObj.has("silentPush")) {
             builder.silentPush(optionsObj.optBoolean("silentPush", false));
         }
+        if (optionsObj != null && optionsObj.has("trackVerifiedAutoFailover")) {
+            builder.trackVerifiedAutoFailover(optionsObj.optBoolean("trackVerifiedAutoFailover", true));
+        }
 
         // initialize(context, publishableKey, options) copies publishableKey into
         // options, then falls back to options.authToken when publishableKey is null.
@@ -1270,8 +1273,12 @@ public class RadarPlugin extends Plugin {
 
     // Radar SDK 4.3 deprecates validateAddress(address). The JS API passes a full address, and only
     // this overload maps it to a street and number or an address label. Keep it until the JS API
-    // takes those fields.
+    // takes those fields. The suppression is on this helper only, so other deprecations still show.
     @SuppressWarnings("deprecation")
+    private static void validateFullAddress(@Nullable RadarAddress address, Radar.RadarValidateAddressCallback callback) {
+        Radar.validateAddress(address, callback);
+    }
+
     @PluginMethod()
     public void validateAddress(final PluginCall call) throws JSONException {
         if (!call.hasOption("address")) {
@@ -1281,7 +1288,7 @@ public class RadarPlugin extends Plugin {
         }
         RadarAddress address = RadarAddress.fromJson(call.getObject("address"));
 
-        Radar.validateAddress(address, new Radar.RadarValidateAddressCallback() {
+        validateFullAddress(address, new Radar.RadarValidateAddressCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address,
                     @Nullable RadarAddressVerificationStatus verificationStatus

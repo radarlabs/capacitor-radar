@@ -519,6 +519,8 @@ export interface RadarInitializeOptions {
   autoLogNotificationConversions?: boolean;
   autoHandleNotificationDeepLinks?: boolean;
   silentPush?: boolean;
+  /** Retry `trackVerified()` against a backup host when the primary host does not respond. Defaults to `true`. */
+  trackVerifiedAutoFailover?: boolean;
 }
 
 export interface RadarTripOptions {
