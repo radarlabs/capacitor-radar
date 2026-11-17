@@ -29,29 +29,20 @@ jobs:
           data: version=${{ github.event.client_payload.release }}
           path: 'android/build.gradle'
 
-      # copy the template file to its final destination
-      - name: Copy example/android/app/build.gradle template file
-        uses: canastro/copy-action@master
-        with:
-          source: 'example/android/app/build.gradle.template'
-          target: 'example/android/app/build.gradle'
-
-      # render the template using the input sdk version
-      - name: Render radar-sdk-android release version onto example/android/app/build.gradle
-        uses: jayamanikharyono/jinja-action@v0.1
-        with:
-          data: version=${{ github.event.client_payload.release }}
-          path: 'example/android/app/build.gradle'
-
-      # Update package.json to latest version
-      - name: Update package.json to latest
-        run: npm version ${{ github.event.client_payload.release }} --commit-hooks false --git-tag-version false
+      # The example app gets the SDK through the plugin, so it needs no change.
+      # The plugin version is separate from the native SDK version. Set it by hand at release time.
 
       # open a pull request with the new sdk version
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           title: Automated radar-sdk-android version bump to ${{ github.event.client_payload.release }}
+          body: |
+            Bumps `io.radar:sdk` to ${{ github.event.client_payload.release }}.
+
+            Before you merge:
+            - [ ] Make sure `io.radar:sdk-fraud` in `android/build.gradle.template` is compatible with this core SDK version. See the native `MIGRATION.md`.
+            - [ ] Set the plugin version in `package.json` if this PR goes into a release.
           reviewers: radarlabs/eng
           token: ${{ secrets.GITHUB_TOKEN }}
   update_ios_sdk_version:
@@ -91,5 +82,11 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           title: Automated radar-sdk-ios version bump to ${{ github.event.client_payload.release }}
+          body: |
+            Bumps `RadarSDK` to ${{ github.event.client_payload.release }}.
+
+            Before you merge:
+            - [ ] Make sure `RadarSDKFraud` (`FRAUD_VERSION` in `scripts/download-xcframeworks.sh` and `Package.swift`) is compatible with this core SDK version. See the native `MIGRATION.md`.
+            - [ ] Set the plugin version in `package.json` if this PR goes into a release.
           reviewers: radarlabs/eng
           token: ${{ secrets.GITHUB_TOKEN }}

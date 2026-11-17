@@ -301,7 +301,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string }): Promise<RadarGeocodeCallback> {
+  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string, mailable?: boolean }): Promise<RadarGeocodeCallback> {
     return new Promise((resolve, reject) => {
       Radar.autocomplete(options, (err, { status, addresses }) => {
         if (err) {
