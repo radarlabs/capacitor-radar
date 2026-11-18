@@ -1359,7 +1359,9 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
 
                 return
             }
-            let revenue = call.getString("revenue") != nil ? NSNumber(value: Double(call.getString("revenue")!)!) : nil
+            // revenue is a number in the TS types. getString returns nil for a number, so read it as a Double.
+            // Also accept a numeric string, which was the only form that worked before.
+            let revenue = (call.getDouble("revenue") ?? call.getString("revenue").flatMap { Double($0) }).map { NSNumber(value: $0) }
             let metadata = call.getObject("metadata")
             
             if revenue != nil {
