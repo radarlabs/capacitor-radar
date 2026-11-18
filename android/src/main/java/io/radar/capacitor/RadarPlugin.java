@@ -1544,9 +1544,18 @@ public class RadarPlugin extends Plugin {
         }
 
         String name = call.getString("name");
+        // revenue is a number in the TS types. Also accept a numeric string. Do not use getDouble(): it returns
+        // null for a string, a Long, or null, and unboxing that null crashes the app.
         double revenue = 0;
-        if (call.hasOption("revenue")) {
-            revenue = call.getDouble("revenue");
+        Object revenueValue = call.getData().opt("revenue");
+        if (revenueValue instanceof Number) {
+            revenue = ((Number) revenueValue).doubleValue();
+        } else if (revenueValue instanceof String) {
+            try {
+                revenue = Double.parseDouble((String) revenueValue);
+            } catch (NumberFormatException e) {
+                revenue = 0;
+            }
         }
         JSObject metadataObj = call.getObject("metadata");
         JSONObject metadataJson = RadarPlugin.jsonObjectForJSObject(metadataObj);
