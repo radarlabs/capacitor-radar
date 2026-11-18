@@ -41,6 +41,7 @@ These come from the native SDKs. You do not have to change code for them, but yo
 ### Other changes
 
 - Fraud SDKs are updated to Android `io.radar:sdk-fraud` 1.3.1 and iOS `RadarSDKFraud` 1.6.0. Verified tracking and reveal risk now encrypt the full request body and need these versions. The plugin includes them.
+- On iOS, `logConversion()` now sends `revenue` when you pass it as a number. Before, iOS dropped a number `revenue`, and the conversion had no revenue.
 - Radar Android SDK 4.x requires Android API 23 or later and Android Gradle Plugin 7.0 or later. Capacitor 8 apps already meet these requirements.
 
 ### New options
