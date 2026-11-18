@@ -1284,24 +1284,18 @@ public class RadarPlugin extends Plugin {
                 });
     }
 
-    // Radar SDK 4.3 deprecates validateAddress(address). The JS API passes a full address, and only
-    // this overload maps it to a street and number or an address label. Keep it until the JS API
-    // takes those fields. The suppression is on this helper only, so other deprecations still show.
-    @SuppressWarnings("deprecation")
-    private static void validateFullAddress(@Nullable RadarAddress address, Radar.RadarValidateAddressCallback callback) {
-        Radar.validateAddress(address, callback);
-    }
-
     @PluginMethod()
     public void validateAddress(final PluginCall call) throws JSONException {
-        if (!call.hasOption("address")) {
-            call.reject("address is required");
+        String street = call.getString("street");
+        String number = call.getString("number");
+        String unit = call.getString("unit");
+        // The SDK returns ERROR_BAD_REQUEST for an empty required field, so pass "" for a missing one.
+        String city = call.getString("city", "");
+        String stateCode = call.getString("stateCode", "");
+        String postalCode = call.getString("postalCode", "");
+        String countryCode = call.getString("countryCode", "");
 
-            return;
-        }
-        RadarAddress address = RadarAddress.fromJson(call.getObject("address"));
-
-        validateFullAddress(address, new Radar.RadarValidateAddressCallback() {
+        Radar.RadarValidateAddressCallback callback = new Radar.RadarValidateAddressCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address,
                     @Nullable RadarAddressVerificationStatus verificationStatus
@@ -1316,7 +1310,16 @@ public class RadarPlugin extends Plugin {
                     call.reject(status.toString());
                 }
             }
-        });
+        };
+
+        // Use the street and number when either is set. Otherwise, use the address label.
+        if (street != null || number != null) {
+            Radar.validateAddress(street != null ? street : "", number != null ? number : "", unit,
+                    city, stateCode, postalCode, countryCode, callback);
+        } else {
+            String addressLabel = call.getString("addressLabel", "");
+            Radar.validateAddress(addressLabel, unit, city, stateCode, postalCode, countryCode, callback);
+        }
     }
 
     @PluginMethod()

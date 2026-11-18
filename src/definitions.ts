@@ -73,7 +73,7 @@ export interface RadarPlugin {
   searchPlaces(options: { near?: Location, radius: number, chains?: string[], chainMetadata?: object, categories?: string[], groups?: string[], countryCodes?: string[], limit: number }): Promise<RadarSearchPlacesCallback>;
   searchGeofences(options: { near?: Location, radius?: number, metadata?: object, tags?: string[], limit?: number, includeGeometry: boolean }): Promise<RadarSearchGeofencesCallback>;
   autocomplete(options: { query: string, near?: Location, layers?: string[], limit: number, country?: string, mailable?: boolean }): Promise<RadarGeocodeCallback>;
-  validateAddress(options: { address: RadarAddress }): Promise<RadarValidateAddressCallback>;
+  validateAddress(options: RadarValidateAddressOptions): Promise<RadarValidateAddressCallback>;
   geocode(options: { query: string, layers?: string[], countries?: string[] }): Promise<RadarGeocodeCallback>;
   reverseGeocode(options?: { location?: Location, layers?: string[] }): Promise<RadarGeocodeCallback>;
   ipGeocode(): Promise<RadarIPGeocodeCallback>;
@@ -146,6 +146,40 @@ export interface RadarGeocodeCallback {
   status: string;
   addresses?: RadarAddress[];
 }
+
+interface RadarValidateAddressBaseOptions {
+  /** The unit, such as an apartment or suite number. */
+  unit?: string;
+  city: string;
+  /** The state code, such as `"NY"`. */
+  stateCode: string;
+  postalCode: string;
+  /** The two-letter country code, such as `"US"`. */
+  countryCode: string;
+}
+
+/** Validate an address from its street and number. */
+export interface RadarValidateAddressStreetOptions extends RadarValidateAddressBaseOptions {
+  /** The street name, such as `"Jay St"`. */
+  street: string;
+  /** The street number, such as `"20"`. */
+  number: string;
+  addressLabel?: never;
+}
+
+/** Validate an address from its street address on one line. */
+export interface RadarValidateAddressLabelOptions extends RadarValidateAddressBaseOptions {
+  /** The street address on one line, such as `"20 Jay St"`. */
+  addressLabel: string;
+  street?: never;
+  number?: never;
+}
+
+/**
+ * Pass `street` and `number`, or `addressLabel`, but not both. Every other field except `unit` is required.
+ * If a required field is empty, `validateAddress()` returns `ERROR_BAD_REQUEST`.
+ */
+export type RadarValidateAddressOptions = RadarValidateAddressStreetOptions | RadarValidateAddressLabelOptions;
 
 export interface RadarValidateAddressCallback {
   status: string;

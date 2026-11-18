@@ -16,8 +16,8 @@ import type {
   RadarRouteMatrix,
   RadarPlugin,
   RadarTrackingOptions,
-  RadarAddress,
   RadarValidateAddressCallback,
+  RadarValidateAddressOptions,
   RadarNotificationOptions
 } from './definitions';
 
@@ -316,7 +316,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async validateAddress(options: { address: RadarAddress; }): Promise<RadarValidateAddressCallback> {
+  async validateAddress(options: RadarValidateAddressOptions): Promise<RadarValidateAddressCallback> {
     return new Promise((resolve, reject) => {
       Radar.validateAddress(options, (err, { status, address, verificationStatus }) => {
         if (err) {

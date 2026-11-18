@@ -564,16 +564,12 @@ const Home: React.FC<HomeProps> = ({ displayText, setDisplayText }) => {
   const validateAddress = async () => {
     try {
       const result = await Radar.validateAddress({
-        address: {
-          latitude: 0,
-          longitude: 0,
-          city: 'New York',
-          stateCode: 'NY',
-          postalCode: '10003',
-          countryCode: 'US',
-          street: 'Broadway',
-          number: '841',
-        },
+        street: 'Broadway',
+        number: '841',
+        city: 'New York',
+        stateCode: 'NY',
+        postalCode: '10003',
+        countryCode: 'US',
       });
       setDisplayText('validateAddress: ' + stringify(result));
     } catch (err) {

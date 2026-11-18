@@ -29,6 +29,37 @@ If you do not declare the service, the SDK logs an error and tracks without a fo
 
 **`autocomplete()` no longer accepts `expandUnits`.** The native SDKs removed this option. Remove it from your calls.
 
+**`validateAddress()` takes the address fields directly.** It no longer accepts `{ address }`. Pass `street` and `number`, or `addressLabel`, but not both. `city`, `stateCode`, `postalCode`, and `countryCode` are required, and `unit` is optional. If a required field is empty, `validateAddress()` returns `ERROR_BAD_REQUEST`.
+
+Change:
+```javascript
+Radar.validateAddress({
+  address: { number: '841', street: 'Broadway', city: 'New York', stateCode: 'NY', postalCode: '10003', countryCode: 'US' },
+});
+```
+to:
+```javascript
+Radar.validateAddress({
+  street: 'Broadway',
+  number: '841',
+  city: 'New York',
+  stateCode: 'NY',
+  postalCode: '10003',
+  countryCode: 'US',
+});
+
+// or, with the street address on one line:
+Radar.validateAddress({
+  addressLabel: '841 Broadway',
+  city: 'New York',
+  stateCode: 'NY',
+  postalCode: '10003',
+  countryCode: 'US',
+});
+```
+
+To validate an address from `autocomplete()` or `geocode()`, pass its `street` and `number` when both are set, and its `addressLabel` otherwise.
+
 ### Behavior changes
 
 These come from the native SDKs. You do not have to change code for them, but your app can behave differently.
@@ -36,8 +67,6 @@ These come from the native SDKs. You do not have to change code for them, but yo
 - `trackVerified()` now retries against a backup host by default when the response from the primary host does not come from Radar, for example when a proxy or captive portal returns its own page. To turn this off, use the `trackVerifiedAutoFailover` option (see [New options](#new-options)).
 - On Android, `trackVerified()` now uses the `beacons` and `desiredAccuracy` values that you pass, and it no longer leaves beacon monitoring running after it completes.
 - The SDKs can now record traces for `trackOnce()`, `trackVerified()`, and location updates from `startTracking()`. They upload traces only when Radar turns on tracing for your project.
-- On iOS and Android, `validateAddress()` now sends the street and number when both are set, and the address label otherwise. Addresses from `autocomplete()` and `geocode()` no longer return `ERROR_BAD_REQUEST`. An address must now have `street` and `number`, or `addressLabel`. If it has neither, `validateAddress()` returns `ERROR_BAD_REQUEST`. For example, an address with `number` but no `street` fails.
-
 ### Other changes
 
 - Fraud SDKs are updated to Android `io.radar:sdk-fraud` 1.3.1 and iOS `RadarSDKFraud` 1.6.0. Verified tracking and reveal risk now encrypt the full request body and need these versions. The plugin includes them.

@@ -1130,16 +1130,16 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
 
     @objc func validateAddress(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let address = RadarAddress(from: call.getObject("address") as Any) else { 
-                call.reject("address is required")
+            let street = call.getString("street")
+            let number = call.getString("number")
+            let unit = call.getString("unit")
+            // The SDK returns ERROR_BAD_REQUEST for an empty required field, so pass "" for a missing one.
+            let city = call.getString("city") ?? ""
+            let stateCode = call.getString("stateCode") ?? ""
+            let postalCode = call.getString("postalCode") ?? ""
+            let countryCode = call.getString("countryCode") ?? ""
 
-                return
-            }
-
-            // RadarSDK 3.46 deprecates validateAddress(address:). The JS API passes a full address, and
-            // only this method maps it to a street and number or an address label. Keep it until the JS
-            // API takes those fields.
-            Radar.validateAddress(address: address) { (status: RadarStatus, address: RadarAddress?, verificationStatus: RadarAddressVerificationStatus) in
+            let completionHandler: @Sendable (RadarStatus, RadarAddress?, RadarAddressVerificationStatus) -> Void = { status, address, verificationStatus in
                 if status == .success && address != nil {
 
                     call.resolve([
@@ -1150,6 +1150,13 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
                 } else {
                     call.reject(Radar.stringForStatus(status))
                 }
+            }
+
+            // Use the street and number when either is set. Otherwise, use the address label.
+            if street != nil || number != nil {
+                Radar.validateAddress(street: street ?? "", number: number ?? "", unit: unit, city: city, stateCode: stateCode, postalCode: postalCode, countryCode: countryCode, completionHandler: completionHandler)
+            } else {
+                Radar.validateAddress(addressLabel: call.getString("addressLabel") ?? "", unit: unit, city: city, stateCode: stateCode, postalCode: postalCode, countryCode: countryCode, completionHandler: completionHandler)
             }
         }
     }
