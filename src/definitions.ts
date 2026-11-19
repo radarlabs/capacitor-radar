@@ -199,7 +199,8 @@ export interface RadarRouteCallback {
 
 export interface RadarLogConversionCallback {
   status: string;
-  event: RadarEvent;
+  /** Not set when the SDK returns no event. */
+  event?: RadarEvent;
 }
 
 export interface RadarIndoorScanCallback {
@@ -313,7 +314,7 @@ export interface RadarEvent {
   metadata?: object;
   replayed: boolean;
   createdAt: string;
-  actualCreatedAt: string;
+  actualCreatedAt?: string;
 }
 
 export enum RadarEventConfidence {
@@ -476,13 +477,35 @@ export interface RadarFraud {
   sharing: boolean;
 }
 
+/**
+ * The response format of `trackVerified()` and `revealRisk()`. You set it on the Radar project.
+ * `jws` is the legacy full response. `jwe` is an encrypted token. `id` is an evaluation ID only.
+ * A response without `format` is a `jws` response.
+ */
+export type RadarResponseFormat = 'jws' | 'jwe' | 'id';
+
 export interface RadarVerifiedLocationToken {
-  user: RadarUser;
-  events: RadarEvent[];
-  token: string;
-  expiresAt: Date;
-  expiresIn: number;
-  passed: boolean;
+  /** Not set for `jwe` and `id` responses. */
+  user?: RadarUser;
+  /** Not set for `jwe` and `id` responses. */
+  events?: RadarEvent[];
+  /** Not set for `id` responses. */
+  token?: string;
+  /** An ISO 8601 date string. Not set for `id` responses. */
+  expiresAt?: string;
+  /** Not set for `id` responses. */
+  expiresIn?: number;
+  /** Not set for `id` responses. Verify the result on your backend. */
+  passed?: boolean;
+  /** Not set for `jwe` and `id` responses. */
+  failureReasons?: string[];
+  /** Not set for `jwe` and `id` responses. */
+  warningReasons?: string[];
+  /** Not set for `jwe` and `id` responses. */
+  nearbyGeofences?: RadarGeofence[];
+  meta?: object;
+  _id?: string;
+  format?: RadarResponseFormat;
 }
 
 export type RadarTrackingOptionsReplay = 
@@ -624,7 +647,11 @@ export interface RadarRevealRiskToken {
   token?: string;
   expiresAt?: string;
   expiresIn?: number;
-  risk: { level: 'None' | 'Low' | 'Medium' | 'High'; reasons: string[] };
-  network: object;
-  device: object;
+  /** Not set for `jwe` and `id` responses. */
+  risk?: { level: 'none' | 'low' | 'medium' | 'high'; reasons: string[] };
+  /** Not set for `jwe` and `id` responses. */
+  network?: object;
+  /** Not set for `jwe` and `id` responses. */
+  device?: object;
+  format?: RadarResponseFormat;
 }

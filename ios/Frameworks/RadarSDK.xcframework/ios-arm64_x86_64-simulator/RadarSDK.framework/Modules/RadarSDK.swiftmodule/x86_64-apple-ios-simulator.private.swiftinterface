@@ -218,6 +218,7 @@ extension RadarSDK.RadarLogType : Swift.Codable {
   @objc deinit
 }
 @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(RadarVerifiedLocationToken) @objcMembers final public class RadarVerifiedLocationToken : ObjectiveC.NSObject {
+  @objc final public let format: RadarSDK.RadarResponseFormat
   @objc final public let user: RadarSDK.RadarUser?
   @objc final public let events: [RadarSDK.RadarEvent]?
   @objc final public let token: Swift.String?
@@ -456,6 +457,18 @@ extension RadarSDK.Radar {
   #if compiler(>=5.3) && $NonescapableTypes
   @objc public static func validateAddress(addressLabel: Swift.String, unit: Swift.String? = nil, city: Swift.String, stateCode: Swift.String, postalCode: Swift.String, countryCode: Swift.String, completionHandler: @escaping @Sendable (RadarSDK.RadarStatus, RadarSDK.RadarAddress?, RadarSDK.RadarAddressVerificationStatus) -> Swift.Void)
   #endif
+}
+@objc(RadarResponseFormat) public enum RadarResponseFormat : Swift.Int {
+  case jws = 0
+  case jwe = 1
+  case id = 2
+  #if compiler(>=5.3) && $NonescapableTypes
+  public init?(rawValue: Swift.Int)
+  #endif
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
 }
 @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(RadarRouteDistance) @objcMembers final public class RadarRouteDistance : ObjectiveC.NSObject {
   @objc final public var value: Swift.Double {
@@ -714,6 +727,39 @@ extension RadarSDK.Radar {
   @objc final public func dictionaryValue() -> [Swift.AnyHashable : Any]
   @objc deinit
 }
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(RadarEvent) @objcMembers final public class RadarEvent : ObjectiveC.NSObject {
+  @objc final public let _id: Swift.String
+  @objc final public let createdAt: Foundation.Date
+  @objc final public let actualCreatedAt: Foundation.Date?
+  @objc final public let live: Swift.Bool
+  @objc final public let type: RadarSDK.RadarEventType
+  @objc final public let conversionName: Swift.String?
+  @objc final public let geofence: RadarSDK.RadarGeofence?
+  @objc final public let place: RadarSDK.RadarPlace?
+  @objc final public let region: RadarSDK.RadarRegion?
+  @objc final public let beacon: RadarSDK.RadarBeacon?
+  @objc final public let trip: RadarSDK.RadarTrip?
+  @objc final public let fraud: RadarSDK.RadarFraud?
+  @objc final public let alternatePlaces: [RadarSDK.RadarPlace]?
+  @objc final public let verifiedPlace: RadarSDK.RadarPlace?
+  @objc final public let verification: RadarSDK.RadarEventVerification
+  @objc final public let confidence: RadarSDK.RadarEventConfidence
+  @objc final public let duration: Swift.Float
+  @objc final public let location: _LocationEssentials.CLLocation?
+  @objc final public let replayed: Swift.Bool
+  @objc final public var metadata: [Swift.AnyHashable : Any] {
+    @objc get
+  }
+  @objc override dynamic public init()
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc(stringForType:) public static func string(for type: RadarSDK.RadarEventType) -> Swift.String?
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  @objc(arrayForEvents:) public static func array(for events: [RadarSDK.RadarEvent]?) -> [[Swift.AnyHashable : Any]]?
+  #endif
+  @objc final public func dictionaryValue() -> [Swift.AnyHashable : Any]
+  @objc deinit
+}
 @objc(RadarInAppMessage_Swift) @objcMembers final public class RadarInAppMessage_Swift : RadarSDK.RadarInAppMessage {
   public struct Text : Swift.Sendable {
     public var text: Swift.String
@@ -754,12 +800,13 @@ extension RadarSDK.Radar {
     @objc get
   }
   #endif
-  @objc final public let risk: RadarSDK.RadarRevealRiskTokenRisk
-  @objc final public let network: RadarSDK.RadarRevealRiskTokenNetwork
-  @objc final public let device: RadarSDK.RadarRevealRiskTokenDevice
+  @objc final public let risk: RadarSDK.RadarRevealRiskTokenRisk?
+  @objc final public let network: RadarSDK.RadarRevealRiskTokenNetwork?
+  @objc final public let device: RadarSDK.RadarRevealRiskTokenDevice?
+  @objc final public let format: RadarSDK.RadarResponseFormat
+  public init(from decoder: any Swift.Decoder) throws
   @objc final public func dictionaryValue() -> [Swift.AnyHashable : Any]
   @objc deinit
-  public init(from decoder: any Swift.Decoder) throws
 }
 @objc(RadarRevealRiskLevel) public enum RadarRevealRiskLevel : Swift.Int, Swift.Sendable, Swift.Decodable {
   case none
@@ -931,6 +978,9 @@ extension RadarSDK.RadarInAppMessageDelegate : Swift.Sendable {}
 extension RadarSDK.RadarIndoorsActor : _Concurrency.GlobalActor {}
 extension RadarSDK.RadarDelegateActor : _Concurrency.GlobalActor {}
 extension RadarSDK.RadarDelegateHolder : Swift.Sendable {}
+extension RadarSDK.RadarResponseFormat : Swift.Equatable {}
+extension RadarSDK.RadarResponseFormat : Swift.Hashable {}
+extension RadarSDK.RadarResponseFormat : Swift.RawRepresentable {}
 extension RadarSDK.RadarAddressConfidence : Swift.Equatable {}
 extension RadarSDK.RadarAddressConfidence : Swift.Hashable {}
 extension RadarSDK.RadarAddressConfidence : Swift.RawRepresentable {}
