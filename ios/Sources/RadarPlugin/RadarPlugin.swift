@@ -176,7 +176,7 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
             }
 
             UserDefaults.standard.set("Capacitor", forKey: "radar-xPlatformSDKType")
-            UserDefaults.standard.set("4.1.1", forKey: "radar-xPlatformSDKVersion")
+            UserDefaults.standard.set("5.0.0", forKey: "radar-xPlatformSDKVersion")
 
             let options = optionsDict != nil ? RadarInitializeOptions(dict: optionsDict!) : nil
 
@@ -1130,13 +1130,16 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
 
     @objc func validateAddress(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            guard let address = RadarAddress(from: call.getObject("address") as Any) else { 
-                call.reject("address is required")
+            let street = call.getString("street")
+            let number = call.getString("number")
+            let unit = call.getString("unit")
+            // The SDK returns ERROR_BAD_REQUEST for an empty required field, so pass "" for a missing one.
+            let city = call.getString("city") ?? ""
+            let stateCode = call.getString("stateCode") ?? ""
+            let postalCode = call.getString("postalCode") ?? ""
+            let countryCode = call.getString("countryCode") ?? ""
 
-                return
-            }
-
-            Radar.validateAddress(address: address) { (status: RadarStatus, address: RadarAddress?, verificationStatus: RadarAddressVerificationStatus) in
+            let completionHandler: @Sendable (RadarStatus, RadarAddress?, RadarAddressVerificationStatus) -> Void = { status, address, verificationStatus in
                 if status == .success && address != nil {
 
                     call.resolve([
@@ -1147,6 +1150,13 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
                 } else {
                     call.reject(Radar.stringForStatus(status))
                 }
+            }
+
+            // Use the street and number when either is set. Otherwise, use the address label.
+            if street != nil || number != nil {
+                Radar.validateAddress(street: street ?? "", number: number ?? "", unit: unit, city: city, stateCode: stateCode, postalCode: postalCode, countryCode: countryCode, completionHandler: completionHandler)
+            } else {
+                Radar.validateAddress(addressLabel: call.getString("addressLabel") ?? "", unit: unit, city: city, stateCode: stateCode, postalCode: postalCode, countryCode: countryCode, completionHandler: completionHandler)
             }
         }
     }
@@ -1356,11 +1366,14 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
 
                 return
             }
-            let revenue = call.getString("revenue") != nil ? NSNumber(value: Double(call.getString("revenue")!)!) : nil
+            // revenue is a number in the TS types. getString returns nil for a number, so read it as a Double.
+            // Also accept a numeric string, which was the only form that worked before. Send revenue only when it
+            // is greater than 0, the same as Android.
+            let revenue = call.getDouble("revenue") ?? call.getString("revenue").flatMap { Double($0) }
             let metadata = call.getObject("metadata")
-            
-            if revenue != nil {
-                Radar.logConversion(name: name, revenue: revenue!, metadata: metadata, completionHandler: completionHandler)
+
+            if let revenue = revenue, revenue > 0 {
+                Radar.logConversion(name: name, revenue: NSNumber(value: revenue), metadata: metadata, completionHandler: completionHandler)
             } else {
                 Radar.logConversion(name: name, metadata: metadata, completionHandler: completionHandler)
             }

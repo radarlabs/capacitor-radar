@@ -16,8 +16,8 @@ import type {
   RadarRouteMatrix,
   RadarPlugin,
   RadarTrackingOptions,
-  RadarAddress,
   RadarValidateAddressCallback,
+  RadarValidateAddressOptions,
   RadarNotificationOptions
 } from './definitions';
 
@@ -301,7 +301,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string, expandUnits?: boolean }): Promise<RadarGeocodeCallback> {
+  async autocomplete(options: { query: string, near?: { latitude: number, longitude: number }, layers?: string[], limit: number, country?: string, mailable?: boolean }): Promise<RadarGeocodeCallback> {
     return new Promise((resolve, reject) => {
       Radar.autocomplete(options, (err, { status, addresses }) => {
         if (err) {
@@ -316,7 +316,7 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  async validateAddress(options: { address: RadarAddress; }): Promise<RadarValidateAddressCallback> {
+  async validateAddress(options: RadarValidateAddressOptions): Promise<RadarValidateAddressCallback> {
     return new Promise((resolve, reject) => {
       Radar.validateAddress(options, (err, { status, address, verificationStatus }) => {
         if (err) {

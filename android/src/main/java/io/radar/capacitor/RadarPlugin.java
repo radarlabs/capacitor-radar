@@ -281,7 +281,7 @@ public class RadarPlugin extends Plugin {
         SharedPreferences.Editor editor = this.getContext().getSharedPreferences("RadarSDK", Context.MODE_PRIVATE)
             .edit();
         editor.putString("x_platform_sdk_type", "Capacitor");
-        editor.putString("x_platform_sdk_version", "4.1.1");
+        editor.putString("x_platform_sdk_version", "5.0.0");
         editor.apply();
 
         RadarInitializeOptions.Builder builder = RadarInitializeOptions.builder();
@@ -290,6 +290,22 @@ public class RadarPlugin extends Plugin {
         }
         if (optionsObj != null && optionsObj.has("silentPush")) {
             builder.silentPush(optionsObj.optBoolean("silentPush", false));
+        }
+        if (optionsObj != null && optionsObj.has("trackVerifiedAutoFailover")) {
+            builder.trackVerifiedAutoFailover(optionsObj.optBoolean("trackVerifiedAutoFailover", true));
+        }
+        // Radar.initialize() applies these options again on each call, so an option that is not set here
+        // goes back to its default, even if MainActivity set it in native code.
+        if (optionsObj != null && optionsObj.has("fraud")) {
+            builder.fraud(optionsObj.optBoolean("fraud", false));
+        }
+        // The app's activity has already resumed when JS calls initialize(). Pass it, so that with fraud
+        // on, the SDK watches its touch input now and not only after the next resume.
+        // Use getContext(), not getActivity(): getActivity() returns AppCompatActivity, which is not on
+        // this module's compile classpath.
+        Context context = getContext();
+        if (context instanceof android.app.Activity) {
+            builder.activity((android.app.Activity) context);
         }
 
         // initialize(context, publishableKey, options) copies publishableKey into
@@ -1250,10 +1266,9 @@ public class RadarPlugin extends Plugin {
         int limit = call.getInt("limit", 10);
         String country = call.getString("country");
         String[] layers = RadarPlugin.stringArrayForJSArray(call.getArray("layers"));
-        boolean expandUnits = call.getBoolean("expandUnits", false);
         boolean mailable = call.getBoolean("mailable", false);
 
-        Radar.autocomplete(query, near, layers, limit, country, expandUnits, mailable,
+        Radar.autocomplete(query, near, layers, limit, country, mailable,
                 new Radar.RadarGeocodeCallback() {
                     @Override
                     public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress[] addresses) {
@@ -1271,14 +1286,16 @@ public class RadarPlugin extends Plugin {
 
     @PluginMethod()
     public void validateAddress(final PluginCall call) throws JSONException {
-        if (!call.hasOption("address")) {
-            call.reject("address is required");
+        String street = call.getString("street");
+        String number = call.getString("number");
+        String unit = call.getString("unit");
+        // The SDK returns ERROR_BAD_REQUEST for an empty required field, so pass "" for a missing one.
+        String city = call.getString("city", "");
+        String stateCode = call.getString("stateCode", "");
+        String postalCode = call.getString("postalCode", "");
+        String countryCode = call.getString("countryCode", "");
 
-            return;
-        }
-        RadarAddress address = RadarAddress.fromJson(call.getObject("address"));
-
-        Radar.validateAddress(address, new Radar.RadarValidateAddressCallback() {
+        Radar.RadarValidateAddressCallback callback = new Radar.RadarValidateAddressCallback() {
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address,
                     @Nullable RadarAddressVerificationStatus verificationStatus
@@ -1293,7 +1310,16 @@ public class RadarPlugin extends Plugin {
                     call.reject(status.toString());
                 }
             }
-        });
+        };
+
+        // Use the street and number when either is set. Otherwise, use the address label.
+        if (street != null || number != null) {
+            Radar.validateAddress(street != null ? street : "", number != null ? number : "", unit,
+                    city, stateCode, postalCode, countryCode, callback);
+        } else {
+            String addressLabel = call.getString("addressLabel", "");
+            Radar.validateAddress(addressLabel, unit, city, stateCode, postalCode, countryCode, callback);
+        }
     }
 
     @PluginMethod()
@@ -1355,15 +1381,9 @@ public class RadarPlugin extends Plugin {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @PluginMethod()
     public void ipGeocode(final PluginCall call) throws JSONException {
         Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
-            @Override
-            public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy) {
-                this.onComplete(status, address, proxy, null);
-            }
-
             @Override
             public void onComplete(@NotNull Radar.RadarStatus status, @Nullable RadarAddress address, boolean proxy, @Nullable Throwable throwable) {
                 if (status == Radar.RadarStatus.SUCCESS && address != null) {
@@ -1527,9 +1547,18 @@ public class RadarPlugin extends Plugin {
         }
 
         String name = call.getString("name");
+        // revenue is a number in the TS types. Also accept a numeric string. Do not use getDouble(): it returns
+        // null for a string, a Long, or null, and unboxing that null crashes the app.
         double revenue = 0;
-        if (call.hasOption("revenue")) {
-            revenue = call.getDouble("revenue");
+        Object revenueValue = call.getData().opt("revenue");
+        if (revenueValue instanceof Number) {
+            revenue = ((Number) revenueValue).doubleValue();
+        } else if (revenueValue instanceof String) {
+            try {
+                revenue = Double.parseDouble((String) revenueValue);
+            } catch (NumberFormatException e) {
+                revenue = 0;
+            }
         }
         JSObject metadataObj = call.getObject("metadata");
         JSONObject metadataJson = RadarPlugin.jsonObjectForJSObject(metadataObj);
