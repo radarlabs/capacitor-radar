@@ -1351,11 +1351,13 @@ public class RadarPlugin: CAPPlugin, CAPBridgedPlugin, RadarDelegate, RadarVerif
     @objc func logConversion(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             let completionHandler: RadarLogConversionCompletionHandler  = { (status: RadarStatus, event: RadarEvent? ) in
-                if status == .success { 
-                    call.resolve([
-                        "status": Radar.stringForStatus(status),
-                        "event": event?.dictionaryValue() ?? [:]
-                    ])
+                if status == .success {
+                    // Leave out event when the SDK returns none, the same as Android.
+                    var ret: [String: Any] = ["status": Radar.stringForStatus(status)]
+                    if let event = event {
+                        ret["event"] = event.dictionaryValue()
+                    }
+                    call.resolve(ret)
                 } else {
                     call.reject(Radar.stringForStatus(status))
                 }

@@ -31,7 +31,8 @@ If you do not declare the service, the SDK logs an error and tracks without a fo
 
 - `RadarVerifiedLocationToken`: `user`, `events`, `token`, `expiresAt`, `expiresIn`, `passed`, and `failureReasons`.
 - `RadarRevealRiskToken`: `risk`, `network`, and `device`.
-- `RadarEvent`: `location` and `actualCreatedAt`. For example, conversion events from `logConversion()` do not have them.
+- `RadarEvent`: `location` and `actualCreatedAt`. For example, conversion events from `logConversion()` do not have `location`.
+- `logConversion()`: `event`. Before, the type said that `event` was always set.
 
 The TypeScript types now mark these fields as optional. Change:
 ```javascript
@@ -62,7 +63,7 @@ If your project uses the legacy response, you only have to handle the optional f
 
 - `RadarRevealRiskToken.risk.level` is lowercase: `'none'`, `'low'`, `'medium'`, or `'high'`. Before, the type used `'High'` and other capitalized values, but the plugin always returned lowercase values. Update your comparisons.
 - `RadarVerifiedLocationToken.expiresAt` is a `string` (ISO 8601). Before, the type was `Date`, but the plugin always returned a string. Use `new Date(token.expiresAt)` if you need a `Date`.
-- `RadarVerifiedLocationToken` now has `warningReasons`, `nearbyGeofences`, and `meta`. `RadarRevealRiskToken` now has `meta`.
+- `RadarVerifiedLocationToken` now has `warningReasons`, `nearbyGeofences`, and `meta`.
 
 **`autocomplete()` no longer accepts `expandUnits`.** The native SDKs removed this option. Remove it from your calls.
 
@@ -109,6 +110,8 @@ These come from the native SDKs. You do not have to change code for them, but yo
 ### Other changes
 
 - Fraud SDKs are updated to Android `io.radar:sdk-fraud` 1.3.1 and iOS `RadarSDKFraud` 1.6.0. Verified tracking and reveal risk now encrypt the full request body and need these versions. The plugin includes them.
+- On iOS, `logConversion()` no longer returns `event: {}` when the SDK returns no event. It leaves out `event`, the same as Android.
+- On web, `trackVerified()` and `getVerifiedLocationToken()` now reject with an "unimplemented" error. Before, they returned `undefined`.
 - On iOS, `logConversion()` now sends `revenue` when you pass it as a number. Before, iOS dropped a number `revenue`, and the conversion had no revenue.
 - Radar Android SDK 5.x requires Android API 23 or later and Android Gradle Plugin 7.0 or later. Capacitor 8 apps already meet these requirements.
 

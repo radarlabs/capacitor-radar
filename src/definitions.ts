@@ -199,7 +199,8 @@ export interface RadarRouteCallback {
 
 export interface RadarLogConversionCallback {
   status: string;
-  event: RadarEvent;
+  /** Not set when the SDK returns no event. */
+  event?: RadarEvent;
 }
 
 export interface RadarIndoorScanCallback {
@@ -652,6 +653,5 @@ export interface RadarRevealRiskToken {
   network?: object;
   /** Not set for `jwe` and `id` responses. */
   device?: object;
-  meta?: object;
   format?: RadarResponseFormat;
 }

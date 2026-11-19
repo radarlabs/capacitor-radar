@@ -18,7 +18,8 @@ import type {
   RadarTrackingOptions,
   RadarValidateAddressCallback,
   RadarValidateAddressOptions,
-  RadarNotificationOptions
+  RadarNotificationOptions,
+  RadarTrackVerifiedCallback
 } from './definitions';
 
 import Radar from 'radar-sdk-js';
@@ -126,12 +127,12 @@ export class RadarPluginWeb extends WebPlugin implements RadarPlugin {
     });
   }
 
-  trackVerified(options?: { beacons?: boolean }): void {
-    // not implemented
+  async trackVerified(options?: { beacons?: boolean }): Promise<RadarTrackVerifiedCallback> {
+    throw this.unimplemented('trackVerified is not implemented on web.');
   }
 
-  getVerifiedLocationToken(): void {
-    // not implemented
+  async getVerifiedLocationToken(): Promise<RadarTrackVerifiedCallback> {
+    throw this.unimplemented('getVerifiedLocationToken is not implemented on web.');
   }
 
   setExpectedJurisdiction(options?: { countryCode: string; stateCode: string; }): void {
