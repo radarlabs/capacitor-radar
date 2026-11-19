@@ -6,7 +6,7 @@ This release updates the native SDKs to Radar Android SDK 5.0.0 and Radar iOS SD
 
 ### Breaking changes
 
-**Android: declare the foreground service in your app.** Radar Android SDK 4.x and later do not declare `RadarForegroundService` in its manifest. Add the service and the `FOREGROUND_SERVICE_LOCATION` permission to `android/app/src/main/AndroidManifest.xml` if one of these is true:
+**Android: declare the foreground service in your app.** Radar Android SDK 4.x and later does not declare `RadarForegroundService` in its manifest. Add the service and the `FOREGROUND_SERVICE_LOCATION` permission to `android/app/src/main/AndroidManifest.xml` if one of these is true:
 
 - You use continuous tracking.
 - You set `foregroundServiceEnabled: true` in your tracking options.
@@ -29,7 +29,7 @@ If you do not declare the service, the SDK logs an error and tracks without a fo
 
 **Some token and event fields can be missing.** Check for these fields before you use them:
 
-- `RadarVerifiedLocationToken`: `user`, `events`, `token`, `expiresAt`, and `failureReasons`.
+- `RadarVerifiedLocationToken`: `user`, `events`, `token`, `expiresAt`, `expiresIn`, `passed`, and `failureReasons`.
 - `RadarRevealRiskToken`: `risk`, `network`, and `device`.
 - `RadarEvent`: `location` and `actualCreatedAt`. For example, conversion events from `logConversion()` do not have them.
 
@@ -41,7 +41,7 @@ const userId = token.user.userId;
 to:
 ```javascript
 const { token } = await Radar.trackVerified();
-const userId = token.user?.userId;
+const userId = token?.user?.userId;
 ```
 
 **Verified tracking and reveal risk can return new response formats.** You set the response format on your Radar project. The tokens have a new `format` field:
@@ -53,10 +53,16 @@ const userId = token.user?.userId;
 | `id` | The evaluation `_id` only. | Get the result with a secret API key. |
 
 - For `jwe` and `id`, the verified token does not have `user`, `events`, or `failureReasons`, and the reveal risk token does not have `risk`, `network`, or `device`.
-- For `id`, the token does not have `token` or `expiresAt`. `expiresIn` is `0` and `passed` is `false`. These are placeholders, not the result.
+- For `id`, the token does not have `token`, `expiresAt`, `expiresIn`, or `passed`. Use `format` to find the response type.
 - Send `token` and `_id` to your backend. Do not use `passed` in the app to allow or deny access without a check on your backend.
 
 If your project uses the legacy response, you only have to handle the optional fields.
+
+**TypeScript type fixes.** These types now match the values that the plugin returns:
+
+- `RadarRevealRiskToken.risk.level` is lowercase: `'none'`, `'low'`, `'medium'`, or `'high'`. Before, the type used `'High'` and other capitalized values, but the plugin always returned lowercase values. Update your comparisons.
+- `RadarVerifiedLocationToken.expiresAt` is a `string` (ISO 8601). Before, the type was `Date`, but the plugin always returned a string. Use `new Date(token.expiresAt)` if you need a `Date`.
+- `RadarVerifiedLocationToken` now has `warningReasons`, `nearbyGeofences`, and `meta`. `RadarRevealRiskToken` now has `meta`.
 
 **`autocomplete()` no longer accepts `expandUnits`.** The native SDKs removed this option. Remove it from your calls.
 

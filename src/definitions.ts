@@ -490,14 +490,19 @@ export interface RadarVerifiedLocationToken {
   events?: RadarEvent[];
   /** Not set for `id` responses. */
   token?: string;
+  /** An ISO 8601 date string. Not set for `id` responses. */
+  expiresAt?: string;
   /** Not set for `id` responses. */
-  expiresAt?: Date;
-  /** `0` for `id` responses. */
-  expiresIn: number;
-  /** `false` for `id` responses. Verify the result on your backend. */
-  passed: boolean;
+  expiresIn?: number;
+  /** Not set for `id` responses. Verify the result on your backend. */
+  passed?: boolean;
   /** Not set for `jwe` and `id` responses. */
   failureReasons?: string[];
+  /** Not set for `jwe` and `id` responses. */
+  warningReasons?: string[];
+  /** Not set for `jwe` and `id` responses. */
+  nearbyGeofences?: RadarGeofence[];
+  meta?: object;
   _id?: string;
   format?: RadarResponseFormat;
 }
@@ -642,10 +647,11 @@ export interface RadarRevealRiskToken {
   expiresAt?: string;
   expiresIn?: number;
   /** Not set for `jwe` and `id` responses. */
-  risk?: { level: 'None' | 'Low' | 'Medium' | 'High'; reasons: string[] };
+  risk?: { level: 'none' | 'low' | 'medium' | 'high'; reasons: string[] };
   /** Not set for `jwe` and `id` responses. */
   network?: object;
   /** Not set for `jwe` and `id` responses. */
   device?: object;
+  meta?: object;
   format?: RadarResponseFormat;
 }
