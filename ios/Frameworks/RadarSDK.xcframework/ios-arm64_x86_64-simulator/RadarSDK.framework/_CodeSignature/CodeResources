@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/Radar.h</key>
 		<data>
-		bY3LuoFl67IJub4+b717fSBXWs8=
+		UEctHvsJivpluxCunkdTTJ7IczQ=
 		</data>
 		<key>Headers/RadarAddress.h</key>
 		<data>
@@ -34,11 +34,11 @@
 		</data>
 		<key>Headers/RadarDelegate.h</key>
 		<data>
-		scNcXgkHLDcxdXfkRvksWFp8/+w=
+		/K0qFTZa48cuJYqYN1Wuy1Bs3Pk=
 		</data>
 		<key>Headers/RadarEvent.h</key>
 		<data>
-		DW98tRrhKKp4Sn24rgJHL4D/+nM=
+		BqrrYYG2zLXuYwoejUo57N2X0NE=
 		</data>
 		<key>Headers/RadarFraud.h</key>
 		<data>
@@ -122,7 +122,7 @@
 		</data>
 		<key>Headers/RadarSDK-Swift.h</key>
 		<data>
-		vpGYxJhTdGih931j/+fp4WdO8A4=
+		y4F+QqLkrMpcDYl1OcVL7JWgdz4=
 		</data>
 		<key>Headers/RadarSDK.h</key>
 		<data>
@@ -178,47 +178,47 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		5Yo5j114/2houf2BzbiNoEI7qo0=
+		Lyy1Cqm/VUq+YXt5rnQqrw2uTdg=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
-		gBJDADCUbW+v9pYhrAoiOfMBYnQ=
+		AOmgQRruLKgzqBgxMiHmHIB7n+w=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		O7XPY8MFF4USaMhX6lqz+0EnH0k=
+		RixkE+UNqE+SlBHc93ofqSx1QDo=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		1nPLdrWfgfj6cLUS0gM6VYsT+l8=
+		39hREjUywq0Snqct9KNDqFwCgTg=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		O7XPY8MFF4USaMhX6lqz+0EnH0k=
+		RixkE+UNqE+SlBHc93ofqSx1QDo=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		bxwDrI7fRIbloBoK23w9Z3WbVlo=
+		jzQGRc1Hmdl7udbxVrhRlTOaJUg=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
-		gBJDADCUbW+v9pYhrAoiOfMBYnQ=
+		AOmgQRruLKgzqBgxMiHmHIB7n+w=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		9DX7BA1pS61UIR8PCMjqpGwUiTQ=
+		n/ZFO/Q1mTslY9lipAtxSHAUtlA=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		t7RetL0j4txPRSWZU7c7ZZzmulw=
+		/Hq6jahPQlKRTU4XZ9hHIqKa++w=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		9DX7BA1pS61UIR8PCMjqpGwUiTQ=
+		n/ZFO/Q1mTslY9lipAtxSHAUtlA=
 		</data>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		j2VXzSXy37x/4NwQDwOBQu+xbms=
+		UtmPiS2EzGpAO9hI5yRLr/AB7Bg=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -235,7 +235,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			XuEJv+XHPTK79YK75ErN77kmfKN+oa3SDiAKAU1f4aQ=
+			IYQEKGbtgzpk1+ByZUMxfiYq6QY14xyeGAjyFEvnLBs=
 			</data>
 		</dict>
 		<key>Headers/RadarAddress.h</key>
@@ -284,14 +284,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			h/5tfN77W3s/9pZCA07bbV4wZ3TRlRQ2RuGTBfpP5HM=
+			2Q0Fq9drYIH3C51x91LvC90pKtWTb627eaFKUaxQ18k=
 			</data>
 		</dict>
 		<key>Headers/RadarEvent.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ESCOr044NU4B83DzQBuOwLCU1KAWr2dhG6rMvvMK+tA=
+			FkKoDCeue74m403LHud1u/Ps4e2LfBL/moCb77YIe7s=
 			</data>
 		</dict>
 		<key>Headers/RadarFraud.h</key>
@@ -438,7 +438,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Y6Meq9/znBxvg/rtlvO1lbkUQ6bF37pPuTCjijDDmpM=
+			g/M9JPb+2Fo7DNwcpZ/3RUfbMPl2mfMKOm8CqQWbUuE=
 			</data>
 		</dict>
 		<key>Headers/RadarSDK.h</key>
@@ -536,70 +536,70 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			7v1oiBwcbki1v7i2jdk1DOdNKu5+8p40mhMdz2h00Uo=
+			MO2/mypQ9ckRJs5i1SQvmQc5UHr3ZmUP/IGnwBOrfXY=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			orx5sXTVb1FbD82kzUVuOhUeGY8S/OTwIPlN9W31md8=
+			XKkyi8NwSbYdDNP6sMmgdheozPxaXtt0CI9J6LGu3Ms=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			MXJS9N5ItwQggkSAgpbkBT34NktbrDnTVqVA8dWe4rE=
+			/9FNnt/F0dxO2RHcWuJ0jXYY+xelNoW3mhe4J0rz8FY=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			orx5sXTVb1FbD82kzUVuOhUeGY8S/OTwIPlN9W31md8=
+			XKkyi8NwSbYdDNP6sMmgdheozPxaXtt0CI9J6LGu3Ms=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			laNUoLgsgOm5vIkzSwjVmwkc9UquQuqfvdCbXJZUKVg=
+			RNfcarPzhJBSLdYdlwibbSGqxc42oPCk3NIgNW0buOI=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			7v1oiBwcbki1v7i2jdk1DOdNKu5+8p40mhMdz2h00Uo=
+			MO2/mypQ9ckRJs5i1SQvmQc5UHr3ZmUP/IGnwBOrfXY=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			IMJFQR2Zjzd3D49IfnvoZmJVj4yt9Bz9PtW6gdoHsc4=
+			AO1Kngffbev50ApnCfcP2Ydm9tt3hXKVW+TzughggG0=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			9CfrgZqADemCS6DdWqlBB6kGdRw2kuUVS2tkxtDcCNA=
+			gMQe7eojrPIfAVgces5Z+IPTr5q83cD36Ggqwi6AuTc=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			IMJFQR2Zjzd3D49IfnvoZmJVj4yt9Bz9PtW6gdoHsc4=
+			AO1Kngffbev50ApnCfcP2Ydm9tt3hXKVW+TzughggG0=
 			</data>
 		</dict>
 		<key>Modules/RadarSDK.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			H0R3uIOPwLF9hGWTWAHKgYZv+q/2HRuz1dZaV7gSjH4=
+			Dw3M77f/Sk0SktaeoB+i3owosaTvpZ5HWiJtNS4sPJ8=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

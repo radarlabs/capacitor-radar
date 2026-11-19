@@ -641,7 +641,61 @@ SWIFT_CLASS_NAMED("RadarDelegateHolder")
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
-@class RadarEvent;
+@class NSDate;
+@class RadarBeacon;
+@class RadarTrip;
+@class RadarFraud;
+/// Represents a change in user state.
+SWIFT_CLASS_NAMED("RadarEvent")
+@interface RadarEvent : NSObject
+/// The Radar ID of the event.
+@property (nonatomic, readonly, copy) NSString * _Nonnull _id;
+/// The datetime when the event occurred on the device.
+@property (nonatomic, readonly, copy) NSDate * _Nonnull createdAt;
+/// The datetime when the event was created on the server. May be <code>nil</code> if the server did not return it,
+/// for example for conversion events.
+@property (nonatomic, readonly, copy) NSDate * _Nullable actualCreatedAt;
+/// A boolean indicating whether the event was generated with your live API key.
+@property (nonatomic, readonly) BOOL live;
+/// The type of the event.
+@property (nonatomic, readonly) RadarEventType type;
+/// The name of the conversion event. This will only be set if the <code>type</code> is <code>RadarEventTypeConversion</code>.
+@property (nonatomic, readonly, copy) NSString * _Nullable conversionName;
+/// The geofence for which the event was generated. May be <code>nil</code> for non-geofence events.
+@property (nonatomic, readonly, strong) RadarGeofence * _Nullable geofence;
+/// The place for which the event was generated. May be <code>nil</code> for non-place events.
+@property (nonatomic, readonly, strong) RadarPlace * _Nullable place;
+/// The region for which the event was generated. May be <code>null</code> for non-region events.
+@property (nonatomic, readonly, strong) RadarRegion * _Nullable region;
+/// The beacon for which the event was generated. May be <code>nil</code> for non-beacon events.
+@property (nonatomic, readonly, strong) RadarBeacon * _Nullable beacon;
+/// The trip for which the event was generated. May be <code>nil</code> for non-trip events.
+@property (nonatomic, readonly, strong) RadarTrip * _Nullable trip;
+/// The fraud checks for which the event was generated. May be <code>nil</code> for non-fraud events.
+@property (nonatomic, readonly, strong) RadarFraud * _Nullable fraud;
+/// For place entry events, alternate place candidates. May be <code>nil</code> for non-place events.
+@property (nonatomic, readonly, copy) NSArray<RadarPlace *> * _Nullable alternatePlaces;
+/// For accepted place entry events, the verified place. May be <code>nil</code> for non-place events or unverified events.
+@property (nonatomic, readonly, strong) RadarPlace * _Nullable verifiedPlace;
+/// The verification of the event.
+@property (nonatomic, readonly) RadarEventVerification verification;
+/// The confidence level of the event.
+@property (nonatomic, readonly) RadarEventConfidence confidence;
+/// The duration between entry and exit events, in minutes, for exit events. 0 for entry events.
+@property (nonatomic, readonly) float duration;
+/// The location of the event. May be <code>nil</code> if the event has no location, for example for conversion
+/// events logged with <code>Radar.logConversion</code>.
+@property (nonatomic, readonly, strong) CLLocation * _Nullable location;
+/// A boolean indicating whether the event came from a replayed location.
+@property (nonatomic, readonly) BOOL replayed;
+/// The metadata of the event. Present on conversion events only.
+@property (nonatomic, readonly, copy) NSDictionary * _Nonnull metadata;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
++ (NSString * _Nullable)stringForType:(RadarEventType)type SWIFT_WARN_UNUSED_RESULT;
++ (NSArray<NSDictionary *> * _Nullable)arrayForEvents:(NSArray<RadarEvent *> * _Nullable)events SWIFT_WARN_UNUSED_RESULT;
+- (NSDictionary * _Nonnull)dictionaryValue SWIFT_WARN_UNUSED_RESULT;
+@end
+
 @class UNMutableNotificationContent;
 SWIFT_CLASS("_TtC8RadarSDK23RadarEventNotifications")
 @interface RadarEventNotifications : NSObject
@@ -872,6 +926,15 @@ SWIFT_CLASS_NAMED("RadarRegion")
 - (NSDictionary * _Nonnull)dictionaryValue SWIFT_WARN_UNUSED_RESULT;
 @end
 
+typedef SWIFT_ENUM_NAMED(NSInteger, RadarResponseFormat, "RadarResponseFormat", open) {
+/// A legacy response with  readable result fields and an optional signed token.
+  RadarResponseFormatJws = 0,
+/// An encrypted token that the customer backend decrypts and verifies.
+  RadarResponseFormatJwe = 1,
+/// An evaluation identifier that the customer backend uses to retrieve the result.
+  RadarResponseFormatId = 2,
+};
+
 SWIFT_CLASS_NAMED("RadarRevealRiskIpGeometry")
 @interface RadarRevealRiskIpGeometry : NSObject
 @property (nonatomic, readonly, copy) NSString * _Nonnull type;
@@ -886,7 +949,6 @@ typedef SWIFT_ENUM_NAMED(NSInteger, RadarRevealRiskLevel, "RadarRevealRiskLevel"
   RadarRevealRiskLevelHigh = 3,
 };
 
-@class NSDate;
 @class RadarRevealRiskTokenRisk;
 @class RadarRevealRiskTokenNetwork;
 @class RadarRevealRiskTokenDevice;
@@ -899,10 +961,14 @@ SWIFT_CLASS_NAMED("RadarRevealRiskToken")
 @property (nonatomic, readonly, copy) NSString * _Nullable token;
 @property (nonatomic, readonly, copy) NSDate * _Nullable expiresAt;
 @property (nonatomic, readonly, strong) NSNumber * _Nullable expiresIn;
-@property (nonatomic, readonly, strong) RadarRevealRiskTokenRisk * _Nonnull risk;
-@property (nonatomic, readonly, strong) RadarRevealRiskTokenNetwork * _Nonnull network;
-@property (nonatomic, readonly, strong) RadarRevealRiskTokenDevice * _Nonnull device;
+@property (nonatomic, readonly, strong) RadarRevealRiskTokenRisk * _Nullable risk;
+@property (nonatomic, readonly, strong) RadarRevealRiskTokenNetwork * _Nullable network;
+@property (nonatomic, readonly, strong) RadarRevealRiskTokenDevice * _Nullable device;
+/// The response format selected by the server.
+@property (nonatomic, readonly) enum RadarResponseFormat format;
 - (NSDictionary * _Nonnull)dictionaryValue SWIFT_WARN_UNUSED_RESULT;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 SWIFT_CLASS_NAMED("RadarRevealRiskTokenDevice")
@@ -1089,7 +1155,6 @@ SWIFT_CLASS_NAMED("RadarRoutes")
 
 @class RadarTrackingOptions;
 @class RadarUser;
-@class RadarBeacon;
 SWIFT_CLASS_NAMED("RadarSyncManager")
 @interface RadarSyncManager : NSObject
 + (void)startWithInterval:(NSTimeInterval)interval;
@@ -1590,23 +1655,27 @@ SWIFT_CLASS_NAMED("RadarUserLocationInsights")
 /// https://radar.com/documentation/fraud
 SWIFT_CLASS_NAMED("RadarVerifiedLocationToken")
 @interface RadarVerifiedLocationToken : NSObject
-/// The user.
+/// The response format selected by the server.
+@property (nonatomic, readonly) enum RadarResponseFormat format;
+/// The user. Available for JWS responses.
 @property (nonatomic, readonly, strong) RadarUser * _Nullable user;
-/// An array of events.
+/// The events. Available for JWS responses.
 @property (nonatomic, readonly, copy) NSArray<RadarEvent *> * _Nullable events;
-/// A signed JSON Web Token (JWT) containing the user and array of events. Verify the token server-side using your secret key.
+/// The response token. Relay it to the customer backend for verification.
+/// JWE tokens must first be decrypted by the customer backend.
 @property (nonatomic, readonly, copy) NSString * _Nullable token;
-/// The datetime when the token expires.
+/// The datetime when the token expires. Unavailable for ID responses.
 @property (nonatomic, readonly, copy) NSDate * _Nullable expiresAt;
-/// The number of seconds until the token expires.
+/// The number of seconds until the token expires. Zero for ID responses.
 @property (nonatomic, readonly) NSTimeInterval expiresIn;
-/// A boolean indicating whether the user passed all jurisdiction and fraud detection checks.
+/// Whether the evaluation passed. Unavailable for ID responses, which return false.
+/// Authorization decisions require backend verification.
 @property (nonatomic, readonly) BOOL passed;
-/// An array of failure reasons for jurisdiction and fraud detection checks.
+/// Failure reasons. Available for JWS responses.
 @property (nonatomic, readonly, copy) NSArray<NSString *> * _Nullable failureReasons;
 /// The Radar ID of the location check.
 @property (nonatomic, readonly, copy) NSString * _Nullable _id;
-/// The full dictionary value of the token.
+/// The response dictionary.
 @property (nonatomic, readonly, copy) NSDictionary * _Nullable fullDict;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
@@ -2264,7 +2333,61 @@ SWIFT_CLASS_NAMED("RadarDelegateHolder")
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
-@class RadarEvent;
+@class NSDate;
+@class RadarBeacon;
+@class RadarTrip;
+@class RadarFraud;
+/// Represents a change in user state.
+SWIFT_CLASS_NAMED("RadarEvent")
+@interface RadarEvent : NSObject
+/// The Radar ID of the event.
+@property (nonatomic, readonly, copy) NSString * _Nonnull _id;
+/// The datetime when the event occurred on the device.
+@property (nonatomic, readonly, copy) NSDate * _Nonnull createdAt;
+/// The datetime when the event was created on the server. May be <code>nil</code> if the server did not return it,
+/// for example for conversion events.
+@property (nonatomic, readonly, copy) NSDate * _Nullable actualCreatedAt;
+/// A boolean indicating whether the event was generated with your live API key.
+@property (nonatomic, readonly) BOOL live;
+/// The type of the event.
+@property (nonatomic, readonly) RadarEventType type;
+/// The name of the conversion event. This will only be set if the <code>type</code> is <code>RadarEventTypeConversion</code>.
+@property (nonatomic, readonly, copy) NSString * _Nullable conversionName;
+/// The geofence for which the event was generated. May be <code>nil</code> for non-geofence events.
+@property (nonatomic, readonly, strong) RadarGeofence * _Nullable geofence;
+/// The place for which the event was generated. May be <code>nil</code> for non-place events.
+@property (nonatomic, readonly, strong) RadarPlace * _Nullable place;
+/// The region for which the event was generated. May be <code>null</code> for non-region events.
+@property (nonatomic, readonly, strong) RadarRegion * _Nullable region;
+/// The beacon for which the event was generated. May be <code>nil</code> for non-beacon events.
+@property (nonatomic, readonly, strong) RadarBeacon * _Nullable beacon;
+/// The trip for which the event was generated. May be <code>nil</code> for non-trip events.
+@property (nonatomic, readonly, strong) RadarTrip * _Nullable trip;
+/// The fraud checks for which the event was generated. May be <code>nil</code> for non-fraud events.
+@property (nonatomic, readonly, strong) RadarFraud * _Nullable fraud;
+/// For place entry events, alternate place candidates. May be <code>nil</code> for non-place events.
+@property (nonatomic, readonly, copy) NSArray<RadarPlace *> * _Nullable alternatePlaces;
+/// For accepted place entry events, the verified place. May be <code>nil</code> for non-place events or unverified events.
+@property (nonatomic, readonly, strong) RadarPlace * _Nullable verifiedPlace;
+/// The verification of the event.
+@property (nonatomic, readonly) RadarEventVerification verification;
+/// The confidence level of the event.
+@property (nonatomic, readonly) RadarEventConfidence confidence;
+/// The duration between entry and exit events, in minutes, for exit events. 0 for entry events.
+@property (nonatomic, readonly) float duration;
+/// The location of the event. May be <code>nil</code> if the event has no location, for example for conversion
+/// events logged with <code>Radar.logConversion</code>.
+@property (nonatomic, readonly, strong) CLLocation * _Nullable location;
+/// A boolean indicating whether the event came from a replayed location.
+@property (nonatomic, readonly) BOOL replayed;
+/// The metadata of the event. Present on conversion events only.
+@property (nonatomic, readonly, copy) NSDictionary * _Nonnull metadata;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
++ (NSString * _Nullable)stringForType:(RadarEventType)type SWIFT_WARN_UNUSED_RESULT;
++ (NSArray<NSDictionary *> * _Nullable)arrayForEvents:(NSArray<RadarEvent *> * _Nullable)events SWIFT_WARN_UNUSED_RESULT;
+- (NSDictionary * _Nonnull)dictionaryValue SWIFT_WARN_UNUSED_RESULT;
+@end
+
 @class UNMutableNotificationContent;
 SWIFT_CLASS("_TtC8RadarSDK23RadarEventNotifications")
 @interface RadarEventNotifications : NSObject
@@ -2495,6 +2618,15 @@ SWIFT_CLASS_NAMED("RadarRegion")
 - (NSDictionary * _Nonnull)dictionaryValue SWIFT_WARN_UNUSED_RESULT;
 @end
 
+typedef SWIFT_ENUM_NAMED(NSInteger, RadarResponseFormat, "RadarResponseFormat", open) {
+/// A legacy response with  readable result fields and an optional signed token.
+  RadarResponseFormatJws = 0,
+/// An encrypted token that the customer backend decrypts and verifies.
+  RadarResponseFormatJwe = 1,
+/// An evaluation identifier that the customer backend uses to retrieve the result.
+  RadarResponseFormatId = 2,
+};
+
 SWIFT_CLASS_NAMED("RadarRevealRiskIpGeometry")
 @interface RadarRevealRiskIpGeometry : NSObject
 @property (nonatomic, readonly, copy) NSString * _Nonnull type;
@@ -2509,7 +2641,6 @@ typedef SWIFT_ENUM_NAMED(NSInteger, RadarRevealRiskLevel, "RadarRevealRiskLevel"
   RadarRevealRiskLevelHigh = 3,
 };
 
-@class NSDate;
 @class RadarRevealRiskTokenRisk;
 @class RadarRevealRiskTokenNetwork;
 @class RadarRevealRiskTokenDevice;
@@ -2522,10 +2653,14 @@ SWIFT_CLASS_NAMED("RadarRevealRiskToken")
 @property (nonatomic, readonly, copy) NSString * _Nullable token;
 @property (nonatomic, readonly, copy) NSDate * _Nullable expiresAt;
 @property (nonatomic, readonly, strong) NSNumber * _Nullable expiresIn;
-@property (nonatomic, readonly, strong) RadarRevealRiskTokenRisk * _Nonnull risk;
-@property (nonatomic, readonly, strong) RadarRevealRiskTokenNetwork * _Nonnull network;
-@property (nonatomic, readonly, strong) RadarRevealRiskTokenDevice * _Nonnull device;
+@property (nonatomic, readonly, strong) RadarRevealRiskTokenRisk * _Nullable risk;
+@property (nonatomic, readonly, strong) RadarRevealRiskTokenNetwork * _Nullable network;
+@property (nonatomic, readonly, strong) RadarRevealRiskTokenDevice * _Nullable device;
+/// The response format selected by the server.
+@property (nonatomic, readonly) enum RadarResponseFormat format;
 - (NSDictionary * _Nonnull)dictionaryValue SWIFT_WARN_UNUSED_RESULT;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 SWIFT_CLASS_NAMED("RadarRevealRiskTokenDevice")
@@ -2712,7 +2847,6 @@ SWIFT_CLASS_NAMED("RadarRoutes")
 
 @class RadarTrackingOptions;
 @class RadarUser;
-@class RadarBeacon;
 SWIFT_CLASS_NAMED("RadarSyncManager")
 @interface RadarSyncManager : NSObject
 + (void)startWithInterval:(NSTimeInterval)interval;
@@ -3213,23 +3347,27 @@ SWIFT_CLASS_NAMED("RadarUserLocationInsights")
 /// https://radar.com/documentation/fraud
 SWIFT_CLASS_NAMED("RadarVerifiedLocationToken")
 @interface RadarVerifiedLocationToken : NSObject
-/// The user.
+/// The response format selected by the server.
+@property (nonatomic, readonly) enum RadarResponseFormat format;
+/// The user. Available for JWS responses.
 @property (nonatomic, readonly, strong) RadarUser * _Nullable user;
-/// An array of events.
+/// The events. Available for JWS responses.
 @property (nonatomic, readonly, copy) NSArray<RadarEvent *> * _Nullable events;
-/// A signed JSON Web Token (JWT) containing the user and array of events. Verify the token server-side using your secret key.
+/// The response token. Relay it to the customer backend for verification.
+/// JWE tokens must first be decrypted by the customer backend.
 @property (nonatomic, readonly, copy) NSString * _Nullable token;
-/// The datetime when the token expires.
+/// The datetime when the token expires. Unavailable for ID responses.
 @property (nonatomic, readonly, copy) NSDate * _Nullable expiresAt;
-/// The number of seconds until the token expires.
+/// The number of seconds until the token expires. Zero for ID responses.
 @property (nonatomic, readonly) NSTimeInterval expiresIn;
-/// A boolean indicating whether the user passed all jurisdiction and fraud detection checks.
+/// Whether the evaluation passed. Unavailable for ID responses, which return false.
+/// Authorization decisions require backend verification.
 @property (nonatomic, readonly) BOOL passed;
-/// An array of failure reasons for jurisdiction and fraud detection checks.
+/// Failure reasons. Available for JWS responses.
 @property (nonatomic, readonly, copy) NSArray<NSString *> * _Nullable failureReasons;
 /// The Radar ID of the location check.
 @property (nonatomic, readonly, copy) NSString * _Nullable _id;
-/// The full dictionary value of the token.
+/// The response dictionary.
 @property (nonatomic, readonly, copy) NSDictionary * _Nullable fullDict;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");

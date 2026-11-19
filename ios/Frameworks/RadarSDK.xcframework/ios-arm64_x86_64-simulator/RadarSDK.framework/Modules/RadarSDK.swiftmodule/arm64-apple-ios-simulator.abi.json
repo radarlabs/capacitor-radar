@@ -6000,7 +6000,7 @@
                     "kind": "TypeNominal",
                     "name": "RadarEvent",
                     "printedName": "RadarSDK.RadarEvent",
-                    "usr": "c:objc(cs)RadarEvent"
+                    "usr": "c:@M@RadarSDK@objc(cs)RadarEvent"
                   }
                 ],
                 "usr": "s:Sa"
@@ -6008,7 +6008,7 @@
             ],
             "declKind": "Func",
             "usr": "c:@M@RadarSDK@objc(cs)RadarEventNotifications(cm)showNotificationsFor:",
-            "mangledName": "$s8RadarSDK0A18EventNotificationsC04showD03forySaySo0aC0CG_tFZ",
+            "mangledName": "$s8RadarSDK0A18EventNotificationsC04showD03forySayAA0aC0CG_tFZ",
             "moduleName": "RadarSDK",
             "static": true,
             "objc_name": "showNotificationsFor:",
@@ -7455,6 +7455,57 @@
         "children": [
           {
             "kind": "Var",
+            "name": "format",
+            "printedName": "format",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "RadarResponseFormat",
+                "printedName": "RadarSDK.RadarResponseFormat",
+                "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarVerifiedLocationToken(py)format",
+            "mangledName": "$s8RadarSDK0A21VerifiedLocationTokenC6formatAA0A14ResponseFormatOvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarResponseFormat",
+                    "printedName": "RadarSDK.RadarResponseFormat",
+                    "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarVerifiedLocationToken(im)format",
+                "mangledName": "$s8RadarSDK0A21VerifiedLocationTokenC6formatAA0A14ResponseFormatOvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "user",
             "printedName": "user",
             "children": [
@@ -7539,7 +7590,7 @@
                         "kind": "TypeNominal",
                         "name": "RadarEvent",
                         "printedName": "RadarSDK.RadarEvent",
-                        "usr": "c:objc(cs)RadarEvent"
+                        "usr": "c:@M@RadarSDK@objc(cs)RadarEvent"
                       }
                     ],
                     "usr": "s:Sa"
@@ -7550,7 +7601,7 @@
             ],
             "declKind": "Var",
             "usr": "c:@M@RadarSDK@objc(cs)RadarVerifiedLocationToken(py)events",
-            "mangledName": "$s8RadarSDK0A21VerifiedLocationTokenC6eventsSaySo0A5EventCGSgvp",
+            "mangledName": "$s8RadarSDK0A21VerifiedLocationTokenC6eventsSayAA0A5EventCGSgvp",
             "moduleName": "RadarSDK",
             "declAttributes": [
               "Final",
@@ -7581,7 +7632,7 @@
                             "kind": "TypeNominal",
                             "name": "RadarEvent",
                             "printedName": "RadarSDK.RadarEvent",
-                            "usr": "c:objc(cs)RadarEvent"
+                            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent"
                           }
                         ],
                         "usr": "s:Sa"
@@ -7592,7 +7643,7 @@
                 ],
                 "declKind": "Accessor",
                 "usr": "c:@M@RadarSDK@objc(cs)RadarVerifiedLocationToken(im)events",
-                "mangledName": "$s8RadarSDK0A21VerifiedLocationTokenC6eventsSaySo0A5EventCGSgvg",
+                "mangledName": "$s8RadarSDK0A21VerifiedLocationTokenC6eventsSayAA0A5EventCGSgvg",
                 "moduleName": "RadarSDK",
                 "implicit": true,
                 "declAttributes": [
@@ -16812,6 +16863,16 @@
       },
       {
         "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "RadarSDK",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
         "name": "CoreLocation",
         "printedName": "CoreLocation",
         "declKind": "Import",
@@ -16893,6 +16954,284 @@
         "moduleName": "RadarSDK",
         "declAttributes": [
           "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "RadarSDK",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "RadarResponseFormat",
+        "printedName": "RadarResponseFormat",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "jws",
+            "printedName": "jws",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(RadarSDK.RadarResponseFormat.Type) -> RadarSDK.RadarResponseFormat",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarResponseFormat",
+                    "printedName": "RadarSDK.RadarResponseFormat",
+                    "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "RadarSDK.RadarResponseFormat.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarResponseFormat",
+                        "printedName": "RadarSDK.RadarResponseFormat",
+                        "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "c:@M@RadarSDK@E@RadarResponseFormat@RadarResponseFormatJws",
+            "mangledName": "$s8RadarSDK0A14ResponseFormatO3jwsyA2CmF",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "RawDocComment",
+              "ObjC"
+            ],
+            "fixedbinaryorder": 0
+          },
+          {
+            "kind": "Var",
+            "name": "jwe",
+            "printedName": "jwe",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(RadarSDK.RadarResponseFormat.Type) -> RadarSDK.RadarResponseFormat",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarResponseFormat",
+                    "printedName": "RadarSDK.RadarResponseFormat",
+                    "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "RadarSDK.RadarResponseFormat.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarResponseFormat",
+                        "printedName": "RadarSDK.RadarResponseFormat",
+                        "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "c:@M@RadarSDK@E@RadarResponseFormat@RadarResponseFormatJwe",
+            "mangledName": "$s8RadarSDK0A14ResponseFormatO3jweyA2CmF",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "RawDocComment",
+              "ObjC"
+            ],
+            "fixedbinaryorder": 1
+          },
+          {
+            "kind": "Var",
+            "name": "id",
+            "printedName": "id",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(RadarSDK.RadarResponseFormat.Type) -> RadarSDK.RadarResponseFormat",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarResponseFormat",
+                    "printedName": "RadarSDK.RadarResponseFormat",
+                    "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "RadarSDK.RadarResponseFormat.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarResponseFormat",
+                        "printedName": "RadarSDK.RadarResponseFormat",
+                        "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "c:@M@RadarSDK@E@RadarResponseFormat@RadarResponseFormatId",
+            "mangledName": "$s8RadarSDK0A14ResponseFormatO2idyA2CmF",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "RawDocComment",
+              "ObjC"
+            ],
+            "fixedbinaryorder": 2
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(rawValue:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarResponseFormat?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarResponseFormat",
+                    "printedName": "RadarSDK.RadarResponseFormat",
+                    "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:8RadarSDK0A14ResponseFormatO8rawValueACSgSi_tcfc",
+            "mangledName": "$s8RadarSDK0A14ResponseFormatO8rawValueACSgSi_tcfc",
+            "moduleName": "RadarSDK",
+            "implicit": true,
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Var",
+            "name": "rawValue",
+            "printedName": "rawValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:8RadarSDK0A14ResponseFormatO8rawValueSivp",
+            "mangledName": "$s8RadarSDK0A14ResponseFormatO8rawValueSivp",
+            "moduleName": "RadarSDK",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:8RadarSDK0A14ResponseFormatO8rawValueSivg",
+                "mangledName": "$s8RadarSDK0A14ResponseFormatO8rawValueSivg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "c:@M@RadarSDK@E@RadarResponseFormat",
+        "mangledName": "$s8RadarSDK0A14ResponseFormatO",
+        "moduleName": "RadarSDK",
+        "objc_name": "RadarResponseFormat",
+        "declAttributes": [
+          "AccessControl",
+          "ObjC",
+          "RawDocComment"
+        ],
+        "enumRawTypeName": "Int",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "RawRepresentable",
+            "printedName": "RawRepresentable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "RawValue",
+                "printedName": "RawValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:SY",
+            "mangledName": "$sSY"
+          }
         ]
       },
       {
@@ -27266,6 +27605,1525 @@
       },
       {
         "kind": "Import",
+        "name": "CoreLocation",
+        "printedName": "CoreLocation",
+        "declKind": "Import",
+        "moduleName": "RadarSDK",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "RadarSDK"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "RadarEvent",
+        "printedName": "RadarEvent",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "_id",
+            "printedName": "_id",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)_id",
+            "mangledName": "$s8RadarSDK0A5EventC3_idSSvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)_id",
+                "mangledName": "$s8RadarSDK0A5EventC3_idSSvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "createdAt",
+            "printedName": "createdAt",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Date",
+                "printedName": "Foundation.Date",
+                "usr": "s:10Foundation4DateV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)createdAt",
+            "mangledName": "$s8RadarSDK0A5EventC9createdAt10Foundation4DateVvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Date",
+                    "printedName": "Foundation.Date",
+                    "usr": "s:10Foundation4DateV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)createdAt",
+                "mangledName": "$s8RadarSDK0A5EventC9createdAt10Foundation4DateVvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "actualCreatedAt",
+            "printedName": "actualCreatedAt",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.Date?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Date",
+                    "printedName": "Foundation.Date",
+                    "usr": "s:10Foundation4DateV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)actualCreatedAt",
+            "mangledName": "$s8RadarSDK0A5EventC15actualCreatedAt10Foundation4DateVSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Foundation.Date?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Date",
+                        "printedName": "Foundation.Date",
+                        "usr": "s:10Foundation4DateV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)actualCreatedAt",
+                "mangledName": "$s8RadarSDK0A5EventC15actualCreatedAt10Foundation4DateVSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "live",
+            "printedName": "live",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)live",
+            "mangledName": "$s8RadarSDK0A5EventC4liveSbvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)live",
+                "mangledName": "$s8RadarSDK0A5EventC4liveSbvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "type",
+            "printedName": "type",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "RadarEventType",
+                "printedName": "RadarSDK.RadarEventType",
+                "usr": "c:@E@RadarEventType"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)type",
+            "mangledName": "$s8RadarSDK0A5EventC4typeSo0aC4TypeVvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarEventType",
+                    "printedName": "RadarSDK.RadarEventType",
+                    "usr": "c:@E@RadarEventType"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)type",
+                "mangledName": "$s8RadarSDK0A5EventC4typeSo0aC4TypeVvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "conversionName",
+            "printedName": "conversionName",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)conversionName",
+            "mangledName": "$s8RadarSDK0A5EventC14conversionNameSSSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)conversionName",
+                "mangledName": "$s8RadarSDK0A5EventC14conversionNameSSSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "geofence",
+            "printedName": "geofence",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarGeofence?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarGeofence",
+                    "printedName": "RadarSDK.RadarGeofence",
+                    "usr": "c:objc(cs)RadarGeofence"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)geofence",
+            "mangledName": "$s8RadarSDK0A5EventC8geofenceSo0A8GeofenceCSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarGeofence?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarGeofence",
+                        "printedName": "RadarSDK.RadarGeofence",
+                        "usr": "c:objc(cs)RadarGeofence"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)geofence",
+                "mangledName": "$s8RadarSDK0A5EventC8geofenceSo0A8GeofenceCSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "place",
+            "printedName": "place",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarPlace?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarPlace",
+                    "printedName": "RadarSDK.RadarPlace",
+                    "usr": "c:objc(cs)RadarPlace"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)place",
+            "mangledName": "$s8RadarSDK0A5EventC5placeSo0A5PlaceCSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarPlace?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarPlace",
+                        "printedName": "RadarSDK.RadarPlace",
+                        "usr": "c:objc(cs)RadarPlace"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)place",
+                "mangledName": "$s8RadarSDK0A5EventC5placeSo0A5PlaceCSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "region",
+            "printedName": "region",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarRegion?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarRegion",
+                    "printedName": "RadarSDK.RadarRegion",
+                    "usr": "c:@M@RadarSDK@objc(cs)RadarRegion"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)region",
+            "mangledName": "$s8RadarSDK0A5EventC6regionAA0A6RegionCSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarRegion?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarRegion",
+                        "printedName": "RadarSDK.RadarRegion",
+                        "usr": "c:@M@RadarSDK@objc(cs)RadarRegion"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)region",
+                "mangledName": "$s8RadarSDK0A5EventC6regionAA0A6RegionCSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "beacon",
+            "printedName": "beacon",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarBeacon?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarBeacon",
+                    "printedName": "RadarSDK.RadarBeacon",
+                    "usr": "c:objc(cs)RadarBeacon"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)beacon",
+            "mangledName": "$s8RadarSDK0A5EventC6beaconSo0A6BeaconCSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarBeacon?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarBeacon",
+                        "printedName": "RadarSDK.RadarBeacon",
+                        "usr": "c:objc(cs)RadarBeacon"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)beacon",
+                "mangledName": "$s8RadarSDK0A5EventC6beaconSo0A6BeaconCSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "trip",
+            "printedName": "trip",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarTrip?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarTrip",
+                    "printedName": "RadarSDK.RadarTrip",
+                    "usr": "c:@M@RadarSDK@objc(cs)RadarTrip"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)trip",
+            "mangledName": "$s8RadarSDK0A5EventC4tripAA0A4TripCSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarTrip?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarTrip",
+                        "printedName": "RadarSDK.RadarTrip",
+                        "usr": "c:@M@RadarSDK@objc(cs)RadarTrip"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)trip",
+                "mangledName": "$s8RadarSDK0A5EventC4tripAA0A4TripCSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "fraud",
+            "printedName": "fraud",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarFraud?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarFraud",
+                    "printedName": "RadarSDK.RadarFraud",
+                    "usr": "c:@M@RadarSDK@objc(cs)RadarFraud"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)fraud",
+            "mangledName": "$s8RadarSDK0A5EventC5fraudAA0A5FraudCSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarFraud?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarFraud",
+                        "printedName": "RadarSDK.RadarFraud",
+                        "usr": "c:@M@RadarSDK@objc(cs)RadarFraud"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)fraud",
+                "mangledName": "$s8RadarSDK0A5EventC5fraudAA0A5FraudCSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "alternatePlaces",
+            "printedName": "alternatePlaces",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "[RadarSDK.RadarPlace]?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[RadarSDK.RadarPlace]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarPlace",
+                        "printedName": "RadarSDK.RadarPlace",
+                        "usr": "c:objc(cs)RadarPlace"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)alternatePlaces",
+            "mangledName": "$s8RadarSDK0A5EventC15alternatePlacesSaySo0A5PlaceCGSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "[RadarSDK.RadarPlace]?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Array",
+                        "printedName": "[RadarSDK.RadarPlace]",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "RadarPlace",
+                            "printedName": "RadarSDK.RadarPlace",
+                            "usr": "c:objc(cs)RadarPlace"
+                          }
+                        ],
+                        "usr": "s:Sa"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)alternatePlaces",
+                "mangledName": "$s8RadarSDK0A5EventC15alternatePlacesSaySo0A5PlaceCGSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "verifiedPlace",
+            "printedName": "verifiedPlace",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarPlace?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarPlace",
+                    "printedName": "RadarSDK.RadarPlace",
+                    "usr": "c:objc(cs)RadarPlace"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)verifiedPlace",
+            "mangledName": "$s8RadarSDK0A5EventC13verifiedPlaceSo0aE0CSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarPlace?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarPlace",
+                        "printedName": "RadarSDK.RadarPlace",
+                        "usr": "c:objc(cs)RadarPlace"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)verifiedPlace",
+                "mangledName": "$s8RadarSDK0A5EventC13verifiedPlaceSo0aE0CSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "verification",
+            "printedName": "verification",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "RadarEventVerification",
+                "printedName": "RadarSDK.RadarEventVerification",
+                "usr": "c:@E@RadarEventVerification"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)verification",
+            "mangledName": "$s8RadarSDK0A5EventC12verificationSo0aC12VerificationVvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarEventVerification",
+                    "printedName": "RadarSDK.RadarEventVerification",
+                    "usr": "c:@E@RadarEventVerification"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)verification",
+                "mangledName": "$s8RadarSDK0A5EventC12verificationSo0aC12VerificationVvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "confidence",
+            "printedName": "confidence",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "RadarEventConfidence",
+                "printedName": "RadarSDK.RadarEventConfidence",
+                "usr": "c:@E@RadarEventConfidence"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)confidence",
+            "mangledName": "$s8RadarSDK0A5EventC10confidenceSo0aC10ConfidenceVvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarEventConfidence",
+                    "printedName": "RadarSDK.RadarEventConfidence",
+                    "usr": "c:@E@RadarEventConfidence"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)confidence",
+                "mangledName": "$s8RadarSDK0A5EventC10confidenceSo0aC10ConfidenceVvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "duration",
+            "printedName": "duration",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Float",
+                "printedName": "Swift.Float",
+                "usr": "s:Sf"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)duration",
+            "mangledName": "$s8RadarSDK0A5EventC8durationSfvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Float",
+                    "printedName": "Swift.Float",
+                    "usr": "s:Sf"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)duration",
+                "mangledName": "$s8RadarSDK0A5EventC8durationSfvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "location",
+            "printedName": "location",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "_LocationEssentials.CLLocation?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CLLocation",
+                    "printedName": "_LocationEssentials.CLLocation",
+                    "usr": "c:objc(cs)CLLocation"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)location",
+            "mangledName": "$s8RadarSDK0A5EventC8locationSo10CLLocationCSgvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "_LocationEssentials.CLLocation?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CLLocation",
+                        "printedName": "_LocationEssentials.CLLocation",
+                        "usr": "c:objc(cs)CLLocation"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)location",
+                "mangledName": "$s8RadarSDK0A5EventC8locationSo10CLLocationCSgvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "replayed",
+            "printedName": "replayed",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)replayed",
+            "mangledName": "$s8RadarSDK0A5EventC8replayedSbvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)replayed",
+                "mangledName": "$s8RadarSDK0A5EventC8replayedSbvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "metadata",
+            "printedName": "metadata",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.AnyHashable : Any]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AnyHashable",
+                    "printedName": "Swift.AnyHashable",
+                    "usr": "s:s11AnyHashableV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:SD"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(py)metadata",
+            "mangledName": "$s8RadarSDK0A5EventC8metadataSDys11AnyHashableVypGvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Dictionary",
+                    "printedName": "[Swift.AnyHashable : Any]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "AnyHashable",
+                        "printedName": "Swift.AnyHashable",
+                        "usr": "s:s11AnyHashableV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ProtocolComposition",
+                        "printedName": "Any"
+                      }
+                    ],
+                    "usr": "s:SD"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)metadata",
+                "mangledName": "$s8RadarSDK0A5EventC8metadataSDys11AnyHashableVypGvg",
+                "moduleName": "RadarSDK",
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "RadarEvent",
+                "printedName": "RadarSDK.RadarEvent",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarEvent"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)init",
+            "mangledName": "$s8RadarSDK0A5EventCACycfc",
+            "moduleName": "RadarSDK",
+            "overriding": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "string",
+            "printedName": "string(for:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "RadarEventType",
+                "printedName": "RadarSDK.RadarEventType",
+                "usr": "c:@E@RadarEventType"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(cm)stringForType:",
+            "mangledName": "$s8RadarSDK0A5EventC6string3forSSSgSo0aC4TypeV_tFZ",
+            "moduleName": "RadarSDK",
+            "static": true,
+            "objc_name": "stringForType:",
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "array",
+            "printedName": "array(for:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "[[Swift.AnyHashable : Any]]?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[[Swift.AnyHashable : Any]]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Dictionary",
+                        "printedName": "[Swift.AnyHashable : Any]",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "AnyHashable",
+                            "printedName": "Swift.AnyHashable",
+                            "usr": "s:s11AnyHashableV"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "ProtocolComposition",
+                            "printedName": "Any"
+                          }
+                        ],
+                        "usr": "s:SD"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "[RadarSDK.RadarEvent]?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[RadarSDK.RadarEvent]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarEvent",
+                        "printedName": "RadarSDK.RadarEvent",
+                        "usr": "c:@M@RadarSDK@objc(cs)RadarEvent"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(cm)arrayForEvents:",
+            "mangledName": "$s8RadarSDK0A5EventC5array3forSaySDys11AnyHashableVypGGSgSayACGSg_tFZ",
+            "moduleName": "RadarSDK",
+            "static": true,
+            "objc_name": "arrayForEvents:",
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "dictionaryValue",
+            "printedName": "dictionaryValue()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.AnyHashable : Any]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AnyHashable",
+                    "printedName": "Swift.AnyHashable",
+                    "usr": "s:s11AnyHashableV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:SD"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarEvent(im)dictionaryValue",
+            "mangledName": "$s8RadarSDK0A5EventC15dictionaryValueSDys11AnyHashableVypGyF",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "ObjC"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@RadarSDK@objc(cs)RadarEvent",
+        "mangledName": "$s8RadarSDK0A5EventC",
+        "moduleName": "RadarSDK",
+        "objc_name": "RadarEvent",
+        "declAttributes": [
+          "Final",
+          "AccessControl",
+          "ObjCMembers",
+          "ObjC",
+          "RawDocComment"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "hasMissingDesignatedInitializers": true,
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
         "name": "Foundation",
         "printedName": "Foundation",
         "declKind": "Import",
@@ -29363,14 +31221,22 @@
             "children": [
               {
                 "kind": "TypeNominal",
-                "name": "RadarRevealRiskTokenRisk",
-                "printedName": "RadarSDK.RadarRevealRiskTokenRisk",
-                "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenRisk"
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarRevealRiskTokenRisk?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarRevealRiskTokenRisk",
+                    "printedName": "RadarSDK.RadarRevealRiskTokenRisk",
+                    "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenRisk"
+                  }
+                ],
+                "usr": "s:Sq"
               }
             ],
             "declKind": "Var",
             "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(py)risk",
-            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC4riskAA0acdeD0Cvp",
+            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC4riskAA0acdeD0CSgvp",
             "moduleName": "RadarSDK",
             "declAttributes": [
               "Final",
@@ -29388,14 +31254,22 @@
                 "children": [
                   {
                     "kind": "TypeNominal",
-                    "name": "RadarRevealRiskTokenRisk",
-                    "printedName": "RadarSDK.RadarRevealRiskTokenRisk",
-                    "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenRisk"
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarRevealRiskTokenRisk?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarRevealRiskTokenRisk",
+                        "printedName": "RadarSDK.RadarRevealRiskTokenRisk",
+                        "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenRisk"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
                 "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(im)risk",
-                "mangledName": "$s8RadarSDK0A15RevealRiskTokenC4riskAA0acdeD0Cvg",
+                "mangledName": "$s8RadarSDK0A15RevealRiskTokenC4riskAA0acdeD0CSgvg",
                 "moduleName": "RadarSDK",
                 "implicit": true,
                 "declAttributes": [
@@ -29413,14 +31287,22 @@
             "children": [
               {
                 "kind": "TypeNominal",
-                "name": "RadarRevealRiskTokenNetwork",
-                "printedName": "RadarSDK.RadarRevealRiskTokenNetwork",
-                "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenNetwork"
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarRevealRiskTokenNetwork?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarRevealRiskTokenNetwork",
+                    "printedName": "RadarSDK.RadarRevealRiskTokenNetwork",
+                    "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenNetwork"
+                  }
+                ],
+                "usr": "s:Sq"
               }
             ],
             "declKind": "Var",
             "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(py)network",
-            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC7networkAA0acdE7NetworkCvp",
+            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC7networkAA0acdE7NetworkCSgvp",
             "moduleName": "RadarSDK",
             "declAttributes": [
               "Final",
@@ -29438,14 +31320,22 @@
                 "children": [
                   {
                     "kind": "TypeNominal",
-                    "name": "RadarRevealRiskTokenNetwork",
-                    "printedName": "RadarSDK.RadarRevealRiskTokenNetwork",
-                    "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenNetwork"
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarRevealRiskTokenNetwork?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarRevealRiskTokenNetwork",
+                        "printedName": "RadarSDK.RadarRevealRiskTokenNetwork",
+                        "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenNetwork"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
                 "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(im)network",
-                "mangledName": "$s8RadarSDK0A15RevealRiskTokenC7networkAA0acdE7NetworkCvg",
+                "mangledName": "$s8RadarSDK0A15RevealRiskTokenC7networkAA0acdE7NetworkCSgvg",
                 "moduleName": "RadarSDK",
                 "implicit": true,
                 "declAttributes": [
@@ -29463,14 +31353,22 @@
             "children": [
               {
                 "kind": "TypeNominal",
-                "name": "RadarRevealRiskTokenDevice",
-                "printedName": "RadarSDK.RadarRevealRiskTokenDevice",
-                "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenDevice"
+                "name": "Optional",
+                "printedName": "RadarSDK.RadarRevealRiskTokenDevice?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarRevealRiskTokenDevice",
+                    "printedName": "RadarSDK.RadarRevealRiskTokenDevice",
+                    "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenDevice"
+                  }
+                ],
+                "usr": "s:Sq"
               }
             ],
             "declKind": "Var",
             "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(py)device",
-            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC6deviceAA0acdE6DeviceCvp",
+            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC6deviceAA0acdE6DeviceCSgvp",
             "moduleName": "RadarSDK",
             "declAttributes": [
               "Final",
@@ -29488,14 +31386,22 @@
                 "children": [
                   {
                     "kind": "TypeNominal",
-                    "name": "RadarRevealRiskTokenDevice",
-                    "printedName": "RadarSDK.RadarRevealRiskTokenDevice",
-                    "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenDevice"
+                    "name": "Optional",
+                    "printedName": "RadarSDK.RadarRevealRiskTokenDevice?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "RadarRevealRiskTokenDevice",
+                        "printedName": "RadarSDK.RadarRevealRiskTokenDevice",
+                        "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskTokenDevice"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
                 "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(im)device",
-                "mangledName": "$s8RadarSDK0A15RevealRiskTokenC6deviceAA0acdE6DeviceCvg",
+                "mangledName": "$s8RadarSDK0A15RevealRiskTokenC6deviceAA0acdE6DeviceCSgvg",
                 "moduleName": "RadarSDK",
                 "implicit": true,
                 "declAttributes": [
@@ -29505,6 +31411,85 @@
                 "accessorKind": "get"
               }
             ]
+          },
+          {
+            "kind": "Var",
+            "name": "format",
+            "printedName": "format",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "RadarResponseFormat",
+                "printedName": "RadarSDK.RadarResponseFormat",
+                "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(py)format",
+            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC6formatAA0A14ResponseFormatOvp",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "RadarResponseFormat",
+                    "printedName": "RadarSDK.RadarResponseFormat",
+                    "usr": "c:@M@RadarSDK@E@RadarResponseFormat"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(im)format",
+                "mangledName": "$s8RadarSDK0A15RevealRiskTokenC6formatAA0A14ResponseFormatOvg",
+                "moduleName": "RadarSDK",
+                "implicit": true,
+                "declAttributes": [
+                  "Final",
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(from:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "RadarRevealRiskToken",
+                "printedName": "RadarSDK.RadarRevealRiskToken",
+                "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Decoder",
+                "printedName": "any Swift.Decoder",
+                "usr": "s:s7DecoderP"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:8RadarSDK0A15RevealRiskTokenC4fromACs7Decoder_p_tKcfc",
+            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC4fromACs7Decoder_p_tKcfc",
+            "moduleName": "RadarSDK",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "throwing": true,
+            "init_kind": "Designated"
           },
           {
             "kind": "Function",
@@ -29545,27 +31530,27 @@
           {
             "kind": "Constructor",
             "name": "init",
-            "printedName": "init(from:)",
+            "printedName": "init()",
             "children": [
               {
                 "kind": "TypeNominal",
                 "name": "RadarRevealRiskToken",
                 "printedName": "RadarSDK.RadarRevealRiskToken",
                 "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "Decoder",
-                "printedName": "any Swift.Decoder",
-                "usr": "s:s7DecoderP"
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:8RadarSDK0A15RevealRiskTokenC4fromACs7Decoder_p_tKcfc",
-            "mangledName": "$s8RadarSDK0A15RevealRiskTokenC4fromACs7Decoder_p_tKcfc",
+            "usr": "c:@M@RadarSDK@objc(cs)RadarRevealRiskToken(im)init",
+            "mangledName": "$s8RadarSDK0A15RevealRiskTokenCACycfc",
             "moduleName": "RadarSDK",
+            "overriding": true,
             "implicit": true,
-            "throwing": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override"
+            ],
             "init_kind": "Designated"
           }
         ],
@@ -37562,6 +39547,27 @@
       "value": "\"radar_beacon_notification_\""
     },
     {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarResponseFormat.swift",
+      "kind": "IntegerLiteral",
+      "offset": 397,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarResponseFormat.swift",
+      "kind": "IntegerLiteral",
+      "offset": 491,
+      "length": 1,
+      "value": "1"
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarResponseFormat.swift",
+      "kind": "IntegerLiteral",
+      "offset": 596,
+      "length": 1,
+      "value": "2"
+    },
+    {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRoute.swift",
       "kind": "IntegerLiteral",
       "offset": 724,
@@ -37849,6 +39855,237 @@
       "value": "false"
     },
     {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "Dictionary",
+      "offset": 3190,
+      "length": 3,
+      "value": "[]"
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 9564,
+      "length": 23,
+      "value": "\"user.entered_geofence\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 9620,
+      "length": 22,
+      "value": "\"user.exited_geofence\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 9678,
+      "length": 26,
+      "value": "\"user.dwelled_in_geofence\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 9735,
+      "length": 20,
+      "value": "\"user.entered_place\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 9785,
+      "length": 19,
+      "value": "\"user.exited_place\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 9843,
+      "length": 29,
+      "value": "\"user.entered_region_country\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 9910,
+      "length": 28,
+      "value": "\"user.exited_region_country\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 9973,
+      "length": 25,
+      "value": "\"user.entered_region_dma\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10032,
+      "length": 24,
+      "value": "\"user.exited_region_dma\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10093,
+      "length": 27,
+      "value": "\"user.entered_region_state\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10156,
+      "length": 26,
+      "value": "\"user.exited_region_state\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10224,
+      "length": 33,
+      "value": "\"user.entered_region_postal_code\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10298,
+      "length": 32,
+      "value": "\"user.exited_region_postal_code\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10365,
+      "length": 25,
+      "value": "\"user.nearby_place_chain\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10422,
+      "length": 21,
+      "value": "\"user.entered_beacon\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10474,
+      "length": 20,
+      "value": "\"user.exited_beacon\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10524,
+      "length": 19,
+      "value": "\"user.started_trip\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10573,
+      "length": 19,
+      "value": "\"user.updated_trip\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10622,
+      "length": 19,
+      "value": "\"user.stopped_trip\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10686,
+      "length": 35,
+      "value": "\"user.approaching_trip_destination\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10764,
+      "length": 34,
+      "value": "\"user.arrived_at_trip_destination\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10846,
+      "length": 40,
+      "value": "\"user.arrived_at_wrong_trip_destination\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10916,
+      "length": 19,
+      "value": "\"user.failed_fraud\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 10969,
+      "length": 24,
+      "value": "\"user.fired_trip_orders\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 11023,
+      "length": 19,
+      "value": "\"user.entered_home\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 11071,
+      "length": 18,
+      "value": "\"user.exited_home\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 11119,
+      "length": 19,
+      "value": "\"user.entered_work\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 11167,
+      "length": 18,
+      "value": "\"user.exited_work\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 11220,
+      "length": 24,
+      "value": "\"user.started_traveling\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 11279,
+      "length": 24,
+      "value": "\"user.stopped_traveling\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 11338,
+      "length": 24,
+      "value": "\"user.started_commuting\""
+    },
+    {
+      "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarEvent.swift",
+      "kind": "StringLiteral",
+      "offset": 11397,
+      "length": 24,
+      "value": "\"user.stopped_commuting\""
+    },
+    {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarSettings.swift",
       "kind": "StringLiteral",
       "offset": 275,
@@ -37942,161 +40179,161 @@
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 1382,
+      "offset": 1302,
       "length": 11,
       "value": "\"expiresIn\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "IntegerLiteral",
-      "offset": 3572,
+      "offset": 6478,
       "length": 3,
       "value": "1"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "IntegerLiteral",
-      "offset": 3585,
+      "offset": 6491,
       "length": 6,
       "value": "2"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "IntegerLiteral",
-      "offset": 3601,
+      "offset": 6507,
       "length": 4,
       "value": "3"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "BooleanLiteral",
-      "offset": 5774,
+      "offset": 8680,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "BooleanLiteral",
-      "offset": 5878,
+      "offset": 8784,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 6237,
+      "offset": 9143,
       "length": 10,
       "value": "\"latitude\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 6278,
+      "offset": 9184,
       "length": 11,
       "value": "\"longitude\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 6472,
+      "offset": 9378,
       "length": 14,
       "value": "\"stateAllowed\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 6522,
+      "offset": 9428,
       "length": 16,
       "value": "\"countryAllowed\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 6956,
+      "offset": 9862,
       "length": 13,
       "value": "\"coordinates\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "BooleanLiteral",
-      "offset": 7196,
+      "offset": 10102,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "BooleanLiteral",
-      "offset": 7274,
+      "offset": 10180,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "BooleanLiteral",
-      "offset": 7352,
+      "offset": 10258,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "BooleanLiteral",
-      "offset": 7457,
+      "offset": 10363,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "BooleanLiteral",
-      "offset": 7529,
+      "offset": 10435,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "BooleanLiteral",
-      "offset": 7640,
+      "offset": 10546,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 7718,
+      "offset": 10624,
       "length": 9,
       "value": "\"hosting\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 7754,
+      "offset": 10660,
       "length": 7,
       "value": "\"proxy\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 7788,
+      "offset": 10694,
       "length": 7,
       "value": "\"relay\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 7841,
+      "offset": 10747,
       "length": 5,
       "value": "\"tor\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 7871,
+      "offset": 10777,
       "length": 5,
       "value": "\"vpn\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarRevealRiskToken.swift",
       "kind": "StringLiteral",
-      "offset": 7914,
+      "offset": 10820,
       "length": 18,
       "value": "\"residentialProxy\""
     },
@@ -38643,237 +40880,237 @@
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
       "offset": 1976,
-      "length": 8,
-      "value": "\"3.46.0\""
+      "length": 7,
+      "value": "\"4.0.0\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 5058,
+      "offset": 5057,
       "length": 5,
       "value": "\"iOS\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 5100,
+      "offset": 5099,
       "length": 7,
       "value": "\"Apple\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "Dictionary",
-      "offset": 6730,
+      "offset": 6729,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "Dictionary",
-      "offset": 6792,
+      "offset": 6791,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "Dictionary",
-      "offset": 6860,
+      "offset": 6859,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 6896,
+      "offset": 6895,
       "length": 6,
       "value": "\"name\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 6909,
+      "offset": 6908,
       "length": 21,
       "value": "\"CFBundleDisplayName\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 6946,
+      "offset": 6945,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 6966,
+      "offset": 6965,
       "length": 9,
       "value": "\"version\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 6982,
+      "offset": 6981,
       "length": 28,
       "value": "\"CFBundleShortVersionString\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 7026,
+      "offset": 7025,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 7046,
+      "offset": 7045,
       "length": 7,
       "value": "\"build\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 7060,
+      "offset": 7059,
       "length": 17,
       "value": "\"CFBundleVersion\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 7093,
+      "offset": 7092,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 7113,
+      "offset": 7112,
       "length": 11,
       "value": "\"namespace\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 7158,
+      "offset": 7157,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "BooleanLiteral",
-      "offset": 7259,
+      "offset": 7258,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 7471,
+      "offset": 7470,
       "length": 19,
       "value": "\"UIBackgroundModes\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "BooleanLiteral",
-      "offset": 7539,
+      "offset": 7538,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 7595,
+      "offset": 7594,
       "length": 10,
       "value": "\"location\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8055,
+      "offset": 8054,
       "length": 20,
       "value": "\"GRANTED_FOREGROUND\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8127,
+      "offset": 8126,
       "length": 20,
       "value": "\"GRANTED_BACKGROUND\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8189,
+      "offset": 8188,
       "length": 8,
       "value": "\"DENIED\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8243,
+      "offset": 8242,
       "length": 8,
       "value": "\"DENIED\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8300,
+      "offset": 8299,
       "length": 16,
       "value": "\"NOT_DETERMINED\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8362,
+      "offset": 8361,
       "length": 16,
       "value": "\"NOT_DETERMINED\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8645,
+      "offset": 8644,
       "length": 9,
       "value": "\"REDUCED\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8710,
+      "offset": 8709,
       "length": 6,
       "value": "\"FULL\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8770,
+      "offset": 8769,
       "length": 6,
       "value": "\"FULL\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 8827,
+      "offset": 8826,
       "length": 6,
       "value": "\"FULL\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 11859,
+      "offset": 11858,
       "length": 13,
       "value": "\"en_US_POSIX\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "StringLiteral",
-      "offset": 11905,
+      "offset": 11904,
       "length": 28,
       "value": "\"yyyy-MM-dd'T'HH:mm:ss.SSSZ\""
     },
     {
       "filePath": "\/Users\/runner\/work\/radar-sdk-ios\/radar-sdk-ios\/RadarSDK\/RadarUtils.swift",
       "kind": "IntegerLiteral",
-      "offset": 11988,
+      "offset": 11987,
       "length": 1,
       "value": "0"
     }

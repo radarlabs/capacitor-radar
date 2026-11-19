@@ -2,11 +2,11 @@
 
 ## 4.x to 5.0.0
 
-This release updates the native SDKs to Radar Android SDK 4.3.0 and Radar iOS SDK 3.46.0.
+This release updates the native SDKs to Radar Android SDK 5.0.0 and Radar iOS SDK 4.0.0.
 
 ### Breaking changes
 
-**Android: declare the foreground service in your app.** Radar Android SDK 4.x does not declare `RadarForegroundService` in its manifest. Add the service and the `FOREGROUND_SERVICE_LOCATION` permission to `android/app/src/main/AndroidManifest.xml` if one of these is true:
+**Android: declare the foreground service in your app.** Radar Android SDK 4.x and later do not declare `RadarForegroundService` in its manifest. Add the service and the `FOREGROUND_SERVICE_LOCATION` permission to `android/app/src/main/AndroidManifest.xml` if one of these is true:
 
 - You use continuous tracking.
 - You set `foregroundServiceEnabled: true` in your tracking options.
@@ -26,6 +26,37 @@ If you do not declare the service, the SDK logs an error and tracks without a fo
     </application>
 </manifest>
 ```
+
+**Some token and event fields can be missing.** Check for these fields before you use them:
+
+- `RadarVerifiedLocationToken`: `user`, `events`, `token`, `expiresAt`, and `failureReasons`.
+- `RadarRevealRiskToken`: `risk`, `network`, and `device`.
+- `RadarEvent`: `location` and `actualCreatedAt`. For example, conversion events from `logConversion()` do not have them.
+
+The TypeScript types now mark these fields as optional. Change:
+```javascript
+const { token } = await Radar.trackVerified();
+const userId = token.user.userId;
+```
+to:
+```javascript
+const { token } = await Radar.trackVerified();
+const userId = token.user?.userId;
+```
+
+**Verified tracking and reveal risk can return new response formats.** You set the response format on your Radar project. The tokens have a new `format` field:
+
+| `format` | Response | What to do on your backend |
+| --- | --- | --- |
+| `jws`, or no `format` | The full legacy response. It has a signed token if you configured signing. | No change. Verify the signed token. |
+| `jwe` | An encrypted token and the response metadata. | Decrypt and verify the token. |
+| `id` | The evaluation `_id` only. | Get the result with a secret API key. |
+
+- For `jwe` and `id`, the verified token does not have `user`, `events`, or `failureReasons`, and the reveal risk token does not have `risk`, `network`, or `device`.
+- For `id`, the token does not have `token` or `expiresAt`. `expiresIn` is `0` and `passed` is `false`. These are placeholders, not the result.
+- Send `token` and `_id` to your backend. Do not use `passed` in the app to allow or deny access without a check on your backend.
+
+If your project uses the legacy response, you only have to handle the optional fields.
 
 **`autocomplete()` no longer accepts `expandUnits`.** The native SDKs removed this option. Remove it from your calls.
 
@@ -66,12 +97,14 @@ These come from the native SDKs. You do not have to change code for them, but yo
 
 - `trackVerified()` now retries against a backup host by default when the response from the primary host does not come from Radar, for example when a proxy or captive portal returns its own page. To turn this off, use the `trackVerifiedAutoFailover` option (see [New options](#new-options)).
 - On Android, `trackVerified()` now uses the `beacons` and `desiredAccuracy` values that you pass, and it no longer leaves beacon monitoring running after it completes.
+- On Android, background location updates now report the correct location time.
 - The SDKs can now record traces for `trackOnce()`, `trackVerified()`, and location updates from `startTracking()`. They upload traces only when Radar turns on tracing for your project.
+
 ### Other changes
 
 - Fraud SDKs are updated to Android `io.radar:sdk-fraud` 1.3.1 and iOS `RadarSDKFraud` 1.6.0. Verified tracking and reveal risk now encrypt the full request body and need these versions. The plugin includes them.
 - On iOS, `logConversion()` now sends `revenue` when you pass it as a number. Before, iOS dropped a number `revenue`, and the conversion had no revenue.
-- Radar Android SDK 4.x requires Android API 23 or later and Android Gradle Plugin 7.0 or later. Capacitor 8 apps already meet these requirements.
+- Radar Android SDK 5.x requires Android API 23 or later and Android Gradle Plugin 7.0 or later. Capacitor 8 apps already meet these requirements.
 
 ### New options
 
